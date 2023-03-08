@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <dirent.h>
 #include <getopt.h>
+#include <string.h>
 
 #define MAX_PROCS  114514
 #define NAME_LEN  256

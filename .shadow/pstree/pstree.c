@@ -7,7 +7,7 @@
 
 #define MAX_PROCS   114514
 #define NAME_LEN    256
-#define PATH_LEN    320
+#define PATH_LEN  320
 
 struct Proc{
   int pid, ppid;
@@ -32,8 +32,8 @@ void get_procs(){
     while((entry = readdir(dp)) != NULL) {
       if (atoll(entry->d_name) > 0) {
         // printf("PID:%s\t", entry->d_name);
-        char path[PATH_LEN];
-        pid_t pid = 0, ppid; char proc_name[NAME_LEN];
+        char path[280];
+        pid_t pid = 0, ppid; char proc_name[256];
         sprintf(path, "/proc/%s/status", entry->d_name);
         FILE *fp = fopen(path, "r");
         if (fp == NULL) {
@@ -41,10 +41,10 @@ void get_procs(){
         }
         fscanf(fp, "Name:\t%s", proc_name);
         while (fscanf(fp, "Pid:\t%d", &pid) != 1){
-          fgets(path, PATH_LEN, fp);
+          fgets(path, 280, fp);
         }
         while (fscanf(fp, "PPid:\t%d", &ppid) != 1){
-          fgets(path, PATH_LEN, fp);
+          fgets(path, 280, fp);
         }
         strcpy(procs[cnt].name, proc_name);
         procs[cnt].pid = pid;

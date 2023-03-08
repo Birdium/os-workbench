@@ -110,6 +110,6 @@ int main(int argc, char *argv[]) {
   assert(!argv[argc]);
   parse_args(argc, argv);
   get_procs();
-  // print_tree();
+  print_tree();
   return 0;
 }

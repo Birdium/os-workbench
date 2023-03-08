@@ -87,11 +87,11 @@ void print_tree(){
 void parse_args(int argc, char *argv[]) {
   int o;
   static struct option table[] = {
-    {"show-pids", no_argument, 0, 'p'},
-    {"numeric-sort", no_argument, 0, 'n'},
-    {"version", no_argument, 0, 'V'}
+    {"show-pids",     no_argument, 0, 'p'},
+    {"numeric-sort",  no_argument, 0, 'n'},
+    {"version",       no_argument, 0, 'V'}
   };
-  while ( (o = getopt_long(argc, argv, "", table, NULL)) != -1 ) {
+  while ( (o = getopt_long(argc, argv, "pnV", table, NULL)) != -1 ) {
     switch (o) {
       case 'p': show_pids = 1; break;
       case 'n': numeric_sort = 1; break;

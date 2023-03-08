@@ -92,7 +92,7 @@ void parse_args(int argc, char *argv[]) {
     {"version", no_argument, 0, 'V'}
   };
   while ( (o = getopt_long(argc, argv, "", table, NULL)) != -1 ) {
-    printf("%d\n", o);
+    printf("%c\n", (char)o);
     switch (o) {
       case 'p': show_pids = 1; break;
       case 'n': numeric_sort = 1; break;

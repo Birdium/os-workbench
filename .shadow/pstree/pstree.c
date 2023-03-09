@@ -54,7 +54,6 @@ void get_procs(){
         fclose(fp);
       }
     }
-
     closedir(dp);
     return;
   }

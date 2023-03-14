@@ -94,18 +94,26 @@ void Tworker(int id) {
 
 int main(int argc, char *argv[]) {
   // No need to change
+#ifndef DEBUG
   assert(scanf("%s%s", A, B) == 2);
   N = strlen(A);
   M = strlen(B);
   T = !argv[1] ? 1 : atoi(argv[1]);
-
   // Add preprocessing code here
 
-#ifdef DEBUG
-  time_t start, end;
-  start = time(NULL);
+#else
+  for (int i = 0; i < MAXN; i++) {
+    A[i] = 'A';
+    B[i] = 'A';
+  }
+  A[MAXN] = '\0';
+  B[MAXN] = '\0';
+  N = strlen(A);
+  M = strlen(B);
+  T = !argv[1] ? 1 : atoi(argv[1]);
+  clock_t start, end;
+  start = clock();
 #endif
-
 
   for (int i = 0; i < T; i++) {
     create(Tworker);
@@ -113,8 +121,8 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
 #ifdef DEBUG
-  end = time(NULL);
-  printf("time=%d\n", difftime(end, start));
+  end = clock();
+  printf("time=%lf\n", (double)(end-start));
 #endif
 
   printf("%d\n", result);

@@ -42,6 +42,7 @@ int flag[4] = {1, 1, 1, 1};
 
 // Always try to make DP code more readable
 inline void calc(int i, int j) {
+  printf("%d %d", i, j);
   int skip_a = DP(i - 1, j);
   int skip_b = DP(i, j - 1);
   int take_both = DP(i - 1, j - 1) + (A[i] == B[j]);
@@ -80,8 +81,14 @@ void Tworker(int id) {
       unlock();
     }
     unlock();
-    for (int j = id - 1 + MAX(0, k - N + 1); j <= MIN(k, M - 1); j += T) { 
+    int L = id - 1 + MAX(0, k - N + 1), R = MIN(k + 1, M);
+    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
+    for (int j = l; j < r; j++) { 
       calc(k - j, j);
+      // int skip_a = DP(k - j - 1, j);
+      // int skip_b = DP(k - j, j - 1);
+      // int take_both = DP(k - j - 1, j - 1) + (A[k - j] == B[j]);
+      // dp[k - j][j] = MAX3(skip_a, skip_b, take_both);
     }
     lock();
     commit_cnt++;

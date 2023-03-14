@@ -81,7 +81,7 @@ void Tworker(int id) {
       unlock();
     }
     unlock();
-    int L = id - 1 + MAX(0, k - N + 1), R = MIN(k + 1, M);
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     printf("%d %d %d %d\n", L, R, l, r);
     for (int j = l; j < r; j++) { 

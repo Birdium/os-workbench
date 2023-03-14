@@ -11,26 +11,7 @@ char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN][MAXN];
 int result;
 
-int xchg(int volatile *ptr, int newval) {
-  int result;
-  asm volatile(
-    "lock xchgl %0, %1"
-    : "+m"(*ptr), "=a"(result)
-    : "1"(newval)
-    : "memory"
-  );
-  return result;
-}
-
-int locked = 0;
-
-void lock() {
-  while (xchg(&locked, 1)) ;
-}
-
-void unlock() {
-  xchg(&locked, 0);
-}
+mutex_t lock = MUTEX_INIT();
 
 int commit_cnt = 0;
 int flag[4] = {1, 1, 1, 1};
@@ -42,7 +23,7 @@ int flag[4] = {1, 1, 1, 1};
 
 // Always try to make DP code more readable
 inline void calc(int i, int j) {
-  printf("%d %d", i, j);
+  // printf("%d %d\n", i, j);
   int skip_a = DP(i - 1, j);
   int skip_b = DP(i, j - 1);
   int take_both = DP(i - 1, j - 1) + (A[i] == B[j]);
@@ -64,26 +45,26 @@ void Tworker(int id) {
   }
 #else
   for (int k = 0; k < M + N - 1; k++) {
-    lock();
+    mutex_lock(&lock);
     if (commit_cnt == T) {
       commit_cnt = 0;
       for (int i = 0; i < T; i++) {
         flag[i] = 1;
       }
     }
-    unlock();
+    mutex_unlock(&lock);
     while (1) {
-      lock();
+      mutex_lock(&lock);
       if (flag[id - 1]) {
         flag[id - 1] = 0;
         break;
       }
-      unlock();
+      mutex_unlock(&lock);
     }
-    unlock();
+    mutex_unlock(&lock);
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
-    printf("%d %d %d %d\n", L, R, l, r);
+    // printf("%d %d %d %d\n", L, R, l, r);
     for (int j = l; j < r; j++) { 
       calc(k - j, j);
       // int skip_a = DP(k - j - 1, j);
@@ -91,9 +72,9 @@ void Tworker(int id) {
       // int take_both = DP(k - j - 1, j - 1) + (A[k - j] == B[j]);
       // dp[k - j][j] = MAX3(skip_a, skip_b, take_both);
     }
-    lock();
+    mutex_lock(&lock);
     commit_cnt++;
-    unlock();
+    mutex_unlock(&lock);
   }
 #endif
 
@@ -119,8 +100,8 @@ int main(int argc, char *argv[]) {
   N = strlen(A);
   M = strlen(B);
   T = !argv[1] ? 1 : atoi(argv[1]);
-  clock_t start, end;
-  start = clock();
+  // clock_t start, end;
+  // start = clock();
 #endif
 
   for (int i = 0; i < T; i++) {
@@ -129,8 +110,8 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
 #ifdef DEBUG
-  end = clock();
-  printf("time=%lf\n", (double)(end-start));
+  // end = clock();
+  // printf("time=%lf\n", (double)(end-start));
 #endif
 
   printf("%d\n", result);

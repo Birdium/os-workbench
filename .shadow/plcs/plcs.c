@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 #include "thread.h"
 #include "thread-sync.h"
 
@@ -100,10 +101,21 @@ int main(int argc, char *argv[]) {
 
   // Add preprocessing code here
 
+#ifdef DEBUG
+  time_t start, end;
+  start = time(NULL);
+#endif
+
+
   for (int i = 0; i < T; i++) {
     create(Tworker);
   }
   join();  // Wait for all workers
+
+#ifdef DEBUG
+  end = time(NULL);
+  printf("time=%d\n", difftime(end, start));
+#endif
 
   printf("%d\n", result);
 }

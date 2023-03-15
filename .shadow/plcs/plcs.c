@@ -45,7 +45,14 @@ void Tworker(int id) {
   }
 #else
   for (int k = 0; k < M + N - 1; k++) {
-    if (T > 1) {
+    if (T == 1) {
+      int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+      // printf("%d %d %d %d\n", L, R, l, r);
+      for (int j = L; j < R; j++) { 
+        calc(k - j, j);
+      }
+    }
+    else {
       mutex_lock(&lock);
       if (commit_cnt == T) {
         commit_cnt = 0;
@@ -63,18 +70,12 @@ void Tworker(int id) {
         mutex_unlock(&lock);
       }
       mutex_unlock(&lock);
-    }
-    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
-    // printf("%d %d %d %d\n", L, R, l, r);
-    for (int j = l; j < r; j++) { 
-      calc(k - j, j);
-      // int skip_a = DP(k - j - 1, j);
-      // int skip_b = DP(k - j, j - 1);
-      // int take_both = DP(k - j - 1, j - 1) + (A[k - j] == B[j]);
-      // dp[k - j][j] = MAX3(skip_a, skip_b, take_both);
-    }
-    if (T > 1) {
+      int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+      int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
+      // printf("%d %d %d %d\n", L, R, l, r);
+      for (int j = l; j < r; j++) { 
+        calc(k - j, j);
+      }
       mutex_lock(&lock);
       commit_cnt++;
       mutex_unlock(&lock);

@@ -2,6 +2,7 @@ NAME := kernel
 SRCS := kernel.c
 export MODULE  := L0
 export AM_HOME := $(PWD)/../abstract-machine
+export TOKEN := AszQxQZP
 ifeq ($(ARCH),)
 export ARCH := x86_64-qemu
 endif

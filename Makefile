@@ -28,6 +28,6 @@ $(NAME)-32.so: $(DEPS) # 32bit shared library
 	gcc -fPIC -shared -m32 $(CFLAGS) $(SRCS) -o $@ $(LDFLAGS)
 
 clean:
-	rm -f $(NAME)-64 $(NAME)-32 $(NAME)-64.so $(NAME)-32.so
+	rm -f $(NAME)-64* $(NAME)-32*
 
 include ../Makefile.lab

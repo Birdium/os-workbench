@@ -45,23 +45,25 @@ void Tworker(int id) {
   }
 #else
   for (int k = 0; k < M + N - 1; k++) {
-    mutex_lock(&lock);
-    if (commit_cnt == T) {
-      commit_cnt = 0;
-      for (int i = 0; i < T; i++) {
-        flag[i] = 1;
-      }
-    }
-    mutex_unlock(&lock);
-    while (1) {
+    if (T > 1) {
       mutex_lock(&lock);
-      if (flag[id - 1]) {
-        flag[id - 1] = 0;
-        break;
+      if (commit_cnt == T) {
+        commit_cnt = 0;
+        for (int i = 0; i < T; i++) {
+          flag[i] = 1;
+        }
+      }
+      mutex_unlock(&lock);
+      while (1) {
+        mutex_lock(&lock);
+        if (flag[id - 1]) {
+          flag[id - 1] = 0;
+          break;
+        }
+        mutex_unlock(&lock);
       }
       mutex_unlock(&lock);
     }
-    mutex_unlock(&lock);
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     // printf("%d %d %d %d\n", L, R, l, r);
@@ -72,9 +74,11 @@ void Tworker(int id) {
       // int take_both = DP(k - j - 1, j - 1) + (A[k - j] == B[j]);
       // dp[k - j][j] = MAX3(skip_a, skip_b, take_both);
     }
-    mutex_lock(&lock);
-    commit_cnt++;
-    mutex_unlock(&lock);
+    if (T > 1) {
+      mutex_lock(&lock);
+      commit_cnt++;
+      mutex_unlock(&lock);
+    }
   }
 #endif
 

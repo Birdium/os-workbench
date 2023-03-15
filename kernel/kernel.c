@@ -659,6 +659,13 @@ void print_key() {
 void check_key() {
   AM_INPUT_KEYBRD_T event = { .keycode = AM_KEY_NONE };
   ioe_read(AM_INPUT_KEYBRD, &event);
+
+  AM_GPU_CONFIG_T info = {0};
+  ioe_read(AM_GPU_CONFIG, &info);
+  w = info.width;
+  h = info.height;
+  // printf("%d %d\n", w, h);
+
   if (event.keycode == AM_KEY_ESCAPE && event.keydown) {
     halt(0);
   }
@@ -681,23 +688,23 @@ void splash() {
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
   h = info.height;
-  for (int x = 0; x < IMG_WIDTH; x ++) {
-    for (int y = 0; y < IMG_HEIGHT; y++) {
-      unsigned int col = (mrs_rgb[3 * (y * IMG_WIDTH + x)] << 16) + 
-                         (mrs_rgb[3 * (y * IMG_WIDTH + x) + 1] << 8) +
-                         (mrs_rgb[3 * (y * IMG_WIDTH + x) + 2]);
-      draw_tile(x * w / IMG_WIDTH, y * h / IMG_HEIGHT, w / IMG_WIDTH, h / IMG_HEIGHT, col);
-    }
-  }
-  // for (int x = 0; x < w; x ++) {
-  //   for (int y = 0; y < h; y++) {
-  //     int loc = (y * IMG_HEIGHT / h) * IMG_WIDTH + (x * IMG_WIDTH / w); 
-  //     unsigned int col = (mrs_rgb[3 * loc] << 16) + 
-  //                        (mrs_rgb[3 * loc + 1] << 8) +
-  //                        (mrs_rgb[3 * loc + 2]);
-  //     draw_tile(x, y, 1, 1, col);
+  // for (int x = 0; x < IMG_WIDTH; x ++) {
+  //   for (int y = 0; y < IMG_HEIGHT; y++) {
+  //     unsigned int col = (mrs_rgb[3 * (y * IMG_WIDTH + x)] << 16) + 
+  //                        (mrs_rgb[3 * (y * IMG_WIDTH + x) + 1] << 8) +
+  //                        (mrs_rgb[3 * (y * IMG_WIDTH + x) + 2]);
+  //     draw_tile(x * w / IMG_WIDTH, y * h / IMG_HEIGHT, w / IMG_WIDTH, h / IMG_HEIGHT, col);
   //   }
   // }
+  for (int x = 0; x < w; x ++) {
+    for (int y = 0; y < h; y++) {
+      int loc = (y * IMG_HEIGHT / h) * IMG_WIDTH + (x * IMG_WIDTH / w); 
+      unsigned int col = (mrs_rgb[3 * loc] << 16) + 
+                         (mrs_rgb[3 * loc + 1] << 8) +
+                         (mrs_rgb[3 * loc + 2]);
+      draw_tile(x, y, 1, 1, col);
+    }
+  }
 }
 
 // Operating system is a C program!

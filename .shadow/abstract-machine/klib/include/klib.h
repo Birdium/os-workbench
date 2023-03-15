@@ -40,6 +40,13 @@ int    snprintf  (char *str, size_t size, const char *format, ...);
 int    vsprintf  (char *str, const char *format, va_list ap);
 int    vsnprintf (char *str, size_t size, const char *format, va_list ap);
 
+// thread.h
+// typedef int spinlock_t;
+// #define SPIN_INIT() 0
+// int atomic_xchg(volatile int *addr, int newval);
+// void spin_lock(spinlock_t *lk)
+// void spin_unlock(spinlock_t *lk)
+
 // assert.h
 #ifdef NDEBUG
   #define assert(ignore) ((void)0)

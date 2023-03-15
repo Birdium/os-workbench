@@ -659,6 +659,13 @@ void print_key() {
 void check_key() {
   AM_INPUT_KEYBRD_T event = { .keycode = AM_KEY_NONE };
   ioe_read(AM_INPUT_KEYBRD, &event);
+
+  AM_GPU_CONFIG_T info = {0};
+  ioe_read(AM_GPU_CONFIG, &info);
+  w = info.width;
+  h = info.height;
+  printf("%d %d\n", w, h);
+
   if (event.keycode == AM_KEY_ESCAPE && event.keydown) {
     halt(0);
   }

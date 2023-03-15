@@ -684,7 +684,7 @@ void splash() {
   for (int x = 0; x < IMG_WIDTH; x ++) {
     for (int y = 0; y < IMG_HEIGHT; y++) {
       unsigned int col = (mrs_rgb[3 * (y * IMG_HEIGHT + x)] << 16) + 
-                         (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 1]) +
+                         (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 1] << 8) +
                          (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 2]);
       draw_tile(x * w / IMG_WIDTH, y * h / IMG_HEIGHT, w / IMG_WIDTH, h / IMG_HEIGHT, col);
     }

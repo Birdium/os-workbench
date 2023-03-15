@@ -22,7 +22,7 @@ int printf(const char *fmt, ...) {
   while(*bp != '\0') {
     putch(*bp); ++bp;
   }
-  spin_lock(&printf_lock);
+  spin_unlock(&printf_lock);
   return ret;
 }
 
@@ -154,7 +154,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     ++fp;
   }
   if (ch_num < n && *fp == '\0') {*op = '\0'; ++ch_num;}
-  spin_lock(&buf_lock);
+  spin_unlock(&buf_lock);
   return ch_num;
 }
 

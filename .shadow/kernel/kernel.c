@@ -711,7 +711,6 @@ int main(const char *args) {
   puts("Press any key to see its key code...\n");
   while (1) {
     check_key();
-    print_key();
     splash();
   }
   return 0;

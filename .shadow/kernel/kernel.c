@@ -681,12 +681,21 @@ void splash() {
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
   h = info.height;
-  for (int x = 0; x < IMG_WIDTH; x ++) {
-    for (int y = 0; y < IMG_HEIGHT; y++) {
-      unsigned int col = (mrs_rgb[3 * (y * IMG_HEIGHT + x)] << 16) + 
-                         (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 1] << 8) +
-                         (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 2]);
-      draw_tile(x * w / IMG_WIDTH, y * h / IMG_HEIGHT, w / IMG_WIDTH, h / IMG_HEIGHT, col);
+  // for (int x = 0; x < IMG_WIDTH; x ++) {
+  //   for (int y = 0; y < IMG_HEIGHT; y++) {
+  //     unsigned int col = (mrs_rgb[3 * (y * IMG_HEIGHT + x)] << 16) + 
+  //                        (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 1] << 8) +
+  //                        (mrs_rgb[3 * (y * IMG_HEIGHT + x) + 2]);
+  //     draw_tile(x * w / IMG_WIDTH, y * h / IMG_HEIGHT, w / IMG_WIDTH, h / IMG_HEIGHT, col);
+  //   }
+  // }
+  for (int x = 0; x < w; x ++) {
+    for (int y = 0; y < h; y++) {
+      int loc = (y * IMG_HEIGHT / h) + (x * IMG_WIDTH / w); 
+      unsigned int col = (mrs_rgb[3 * loc] << 16) + 
+                         (mrs_rgb[3 * loc + 1] << 8) +
+                         (mrs_rgb[3 * loc + 2]);
+      draw_tile(x, y, 1, 1, col);
     }
   }
 }

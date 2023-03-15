@@ -42,6 +42,7 @@ int    vsnprintf (char *str, size_t size, const char *format, va_list ap);
 
 // thread.h
 typedef int spinlock_t;
+#define SPIN_INIT() 0
 void spin_lock(spinlock_t *lk);
 void spin_unlock(spinlock_t *lk);
 

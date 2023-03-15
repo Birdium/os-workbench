@@ -8,8 +8,8 @@
 
 static char buf[4096];
 
-// static spinlock_t buf_lock = SPIN_INIT();
-// static spinlock_t printf_lock = SPIN_INIT();
+static spinlock_t buf_lock = SPIN_INIT();
+static spinlock_t printf_lock = SPIN_INIT();
 
 int printf(const char *fmt, ...) {
   char p_buf[4096];
@@ -17,12 +17,12 @@ int printf(const char *fmt, ...) {
   va_start(ap, fmt);
   int ret = vsprintf(p_buf, fmt, ap);
   va_end(ap);
-  // spin_lock(&printf_lock);
+  spin_lock(&printf_lock);
   char *bp = p_buf;
   while(*bp != '\0') {
     putch(*bp); ++bp;
   }
-  // spin_lock(&printf_lock);
+  spin_lock(&printf_lock);
   return ret;
 }
 
@@ -50,7 +50,7 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   size_t ch_num = 0;
   char *op = out; const char *fp = fmt;
-  // spin_lock(&buf_lock);
+  spin_lock(&buf_lock);
   while(*fp != '\0' && ch_num < n) {
     if (*fp == '%'){
       ++fp;
@@ -154,7 +154,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     ++fp;
   }
   if (ch_num < n && *fp == '\0') {*op = '\0'; ++ch_num;}
-  // spin_lock(&buf_lock);
+  spin_lock(&buf_lock);
   return ch_num;
 }
 

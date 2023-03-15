@@ -29,6 +29,48 @@ int atoi(const char* nptr) {
   return x;
 }
 
+void itoa(int val, char* dest, int base){
+  char index[]="0123456789ABCDEF";
+  char *dp = dest;
+  unsigned uval;
+  bool flag = 0;
+  if (val == -2147483648) {
+    uval = (unsigned) 2147483648; flag = 1;
+  }
+  else if (val < 0){
+    uval = (unsigned) -val; flag = 1;
+  }
+  else uval = val;
+  if (uval){
+    while(uval){
+      *dp = index[uval % base];
+      uval /= base; ++dp; 
+    }
+  } else {*dp = index[0]; ++dp;}
+  if (flag) {*dp = '-'; dp++;}
+  *dp = '\0'; dp--;
+  while(dest < dp){
+    char tmp = *dest; *dest = *dp; *dp = tmp;
+    dp--; dest++;
+  }
+}
+
+void uitoa(unsigned uval, char* dest, int base){
+  char index[]="0123456789ABCDEF";
+  char *dp = dest;
+  if (uval){
+    while(uval){
+      *dp = index[uval % base];
+      uval /= base; ++dp; 
+    }
+  } else {*dp = index[0]; ++dp;}
+  *dp = '\0'; dp--;
+  while(dest < dp){
+    char tmp = *dest; *dest = *dp; *dp = tmp;
+    dp--; dest++;
+  }
+}
+
 void *malloc(size_t size) {
   // On native, malloc() will be called during initializaion of C runtime.
   // Therefore do not call panic() here, else it will yield a dead recursion:

@@ -664,7 +664,7 @@ void check_key() {
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
   h = info.height;
-  printf("%d %d\n", w, h);
+  // printf("%d %d\n", w, h);
 
   if (event.keycode == AM_KEY_ESCAPE && event.keydown) {
     halt(0);

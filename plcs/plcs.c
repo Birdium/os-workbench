@@ -89,14 +89,14 @@ void Tworker(int id) {
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     // printf("%d %d %d %d\n", L, R, l, r);
     for (int j = l; j < r; j++) { 
-      calc(k - j, j);
+      calc_t(k, j);
     }
     mutex_lock(&lock);
     commit_cnt++;
     mutex_unlock(&lock);
   }
   // }
-  result = dp[N - 1][M - 1];
+  result = dp[N + M - 2][M - 1];
 #endif
 
 }

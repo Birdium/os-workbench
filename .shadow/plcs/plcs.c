@@ -120,8 +120,8 @@ int main(int argc, char *argv[]) {
   N = strlen(A);
   M = strlen(B);
   T = !argv[1] ? 1 : atoi(argv[1]);
-  clock_t start, end;
-  start = clock();
+  // clock_t start, end;
+  // start = clock();
 #endif
 
   for (int i = 0; i < T; i++) {
@@ -130,8 +130,8 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
 #ifdef DEBUG
-  end = clock();
-  printf("time=%lf\n", (double)(end-start));
+  // end = clock();
+  // printf("time=%lf\n", (double)(end-start));
 #endif
 
   printf("%d\n", result);

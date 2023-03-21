@@ -8,7 +8,7 @@
 #define MAXN 10000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
-int dp[MAXN][MAXN];
+int dp[MAXN * 2][MAXN];
 int result;
 
 mutex_t lock = MUTEX_INIT();
@@ -55,7 +55,7 @@ void Tworker(int id) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     for (int j = l; j < r; j++) { 
-      calc(k - j, j);
+      calc_t(k, j);
     }
     // for (int j = L + id - 1; j < R; j += T) {
     //   calc(k - j, j);
@@ -73,7 +73,7 @@ void Tworker(int id) {
     mutex_unlock(&lock);
   }
   // }
-  result = dp[N - 1][M - 1];
+  result = dp[N + M - 2][M - 1];
 #endif
 
 }

@@ -8,7 +8,7 @@
 #define MAXN 10000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
-int dp[MAXN][MAXN];
+int dp[MAXN * 2][MAXN];
 int result;
 
 mutex_t lock = MUTEX_INIT();

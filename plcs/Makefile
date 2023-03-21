@@ -10,9 +10,15 @@ run: all
 	./plcs-64
 
 debug: $(NAME)-64-debug
-	time ./plcs-64-debug 1
-	time ./plcs-64-debug 2
-	time ./plcs-64-debug 3
-	time ./plcs-64-debug 4
+	./plcs-64-debug 1
+	./plcs-64-debug 2
+	./plcs-64-debug 3
+	./plcs-64-debug 4
+
+time: $(NAME)-64-debug
+	/usr/bin/time ./plcs-64-debug 1
+	/usr/bin/time ./plcs-64-debug 2
+	/usr/bin/time ./plcs-64-debug 3
+	/usr/bin/time ./plcs-64-debug 4
 
 include ../Makefile

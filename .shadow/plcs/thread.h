@@ -31,6 +31,7 @@ void create(void *fn) {
   };
   pthread_create(&(tptr->thread), NULL, wrapper, tptr);
   ++tptr;
+  if (tptr - tpool == NTHREAD) tptr = tpool;
 }
 
 void join() {

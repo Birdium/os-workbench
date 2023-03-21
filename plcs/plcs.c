@@ -12,9 +12,9 @@ int dp[MAXN * 2][MAXN];
 int result;
 
 mutex_t lock = MUTEX_INIT();
-cond_t cv = COND_INIT();
 
 int commit_cnt = 0;
+int flag[4] = {1, 1, 1, 1};
 
 #define DP(x, y) (((x) >= 0 && (y) >= 0) ? dp[x][y] : 0)
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -22,14 +22,14 @@ int commit_cnt = 0;
 #define MAX3(x, y, z) MAX(MAX(x, y), z)
 
 // Always try to make DP code more readable
-void calc(int i, int j) {
+inline void calc(int i, int j) {
   int skip_a = DP(i - 1, j);
   int skip_b = DP(i, j - 1);
   int take_both = DP(i - 1, j - 1) + (A[i] == B[j]);
   dp[i][j] = MAX3(skip_a, skip_b, take_both);
 }
 
-void calc_t(int i, int j) {
+inline void calc_t(int i, int j) {
   int skip_a = DP(i - 1, j);
   int skip_b = DP(i - 1, j - 1);
   int take_both = DP(i - 2, j - 1) + (A[i - j] == B[j]);
@@ -50,30 +50,53 @@ void Tworker(int id) {
     }
   }
   result = dp[N - 1][M - 1];
+  // for (int k = 0; k < M + N - 1; k++) {
+  //   int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+  //   for (int j = L; j < R; j++) { 
+  //     calc_t(k, j);
+  //   }
+  // }
+  // result = dp[N + M - 2][M - 1];
 #else
+  // if (T == 1) {
+  //   for (int k = 0; k < M + N - 1; k++) {
+  //     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+  //     for (int j = L; j < R; j++) { 
+  //       calc_t(k, j);
+  //     }
+  //   }
+  // }
+  // else {
   for (int k = 0; k < M + N - 1; k++) {
-    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
-    for (int j = l; j < r; j++) { 
-      calc_t(k, j);
-    }
-    // for (int j = L + id - 1; j < R; j += T) {
-    //   calc(k - j, j);
-    // }
     mutex_lock(&lock);
-    ++commit_cnt;
     if (commit_cnt == T) {
       commit_cnt = 0;
-      cond_broadcast(&cv);
+      for (int i = 0; i < T; i++) {
+        flag[i] = 1;
+      }
     }
-    else {
-      if (commit_cnt > 0)
-        cond_wait(&cv, &lock);
+    mutex_unlock(&lock);
+    while (1) {
+      mutex_lock(&lock);
+      if (flag[id - 1]) {
+        flag[id - 1] = 0;
+        break;
+      }
+      mutex_unlock(&lock);
     }
+    mutex_unlock(&lock);
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
+    // printf("%d %d %d %d\n", L, R, l, r);
+    for (int j = l; j < r; j++) { 
+      calc(k - j, j);
+    }
+    mutex_lock(&lock);
+    commit_cnt++;
     mutex_unlock(&lock);
   }
   // }
-  result = dp[N + M - 2][M - 1];
+  result = dp[N - 1][M - 1];
 #endif
 
 }

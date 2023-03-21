@@ -43,14 +43,15 @@ void Tworker(int id) {
     return;
   }
 
-#ifdef SINGLE
+if (T == 1) {
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < M; j++) {
        calc(i, j);
     }
   }
   result = dp[N - 1][M - 1];
-#else
+}
+else {
   for (int k = 0; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
@@ -58,7 +59,7 @@ void Tworker(int id) {
       calc_t(k, j);
     }
     // for (int j = L + id - 1; j < R; j += T) {
-    //   calc(k - j, j);
+    //   calc_t(k, j);
     // }
     mutex_lock(&lock);
     ++commit_cnt;
@@ -74,8 +75,7 @@ void Tworker(int id) {
   }
   // }
   result = dp[N + M - 2][M - 1];
-#endif
-
+}
 }
 
 int main(int argc, char *argv[]) {

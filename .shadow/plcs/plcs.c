@@ -43,38 +43,39 @@ void Tworker(int id) {
     return;
   }
 
-if (T == 1) {
-  for (int i = 0; i < N; i++) {
-    for (int j = 0; j < M; j++) {
-       calc(i, j);
-    }
-  }
-  result = dp[N - 1][M - 1];
-}
-else {
-  for (int k = 0; k < M + N - 1; k++) {
-    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
-    for (int j = l; j < r; j++) { 
-      calc_t(k, j);
-    }
-    // for (int j = L + id - 1; j < R; j += T) {
-    //   calc_t(k, j);
-    // }
-    mutex_lock(&lock);
-    ++commit_cnt;
-    if (commit_cnt == T) {
-      commit_cnt = 0;
-      cond_broadcast(&cv);
-    }
-    else {
-      cond_wait(&cv, &lock);
-    }
-    mutex_unlock(&lock);
-  }
+  // if (T == 0) {
+  //   for (int i = 0; i < N; i++) {
+  //     for (int j = 0; j < M; j++) {
+  //       calc(i, j);
+  //     }
+  //   }
+  //   result = dp[N - 1][M - 1];
   // }
-  result = dp[N + M - 2][M - 1];
-}
+  // else {
+    for (int k = 0; k < M + N - 1; k++) {
+      int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+      int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
+      for (int j = l; j < r; j++) { 
+        calc_t(k, j);
+      }
+      // for (int j = L + id - 1; j < R; j += T) {
+      //   calc_t(k, j);
+      // }
+      mutex_lock(&lock);
+      ++commit_cnt;
+      if (commit_cnt == T) {
+        commit_cnt = 0;
+        cond_broadcast(&cv);
+      }
+      else {
+        if (commit_cnt > 0)
+          cond_wait(&cv, &lock);
+      }
+      mutex_unlock(&lock);
+    }
+    // }
+    result = dp[N + M - 2][M - 1];
+  // }
 }
 
 int main(int argc, char *argv[]) {
@@ -96,8 +97,8 @@ int main(int argc, char *argv[]) {
   N = strlen(A);
   M = strlen(B);
   T = !argv[1] ? 1 : atoi(argv[1]);
-  // clock_t start, end;
-  // start = clock();
+  clock_t start, end;
+  start = clock();
 #endif
 
   for (int i = 0; i < T; i++) {
@@ -106,8 +107,8 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
 #ifdef DEBUG
-  // end = clock();
-  // printf("time=%lf\n", (double)(end-start));
+  end = clock();
+  printf("time=%lf\n", (double)(end-start));
 #endif
 
   printf("%d\n", result);

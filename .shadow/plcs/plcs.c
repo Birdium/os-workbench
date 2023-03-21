@@ -37,45 +37,28 @@ inline void calc_t(int i, int j) {
 }
 
 void Tworker(int id) {
-  if (id > T) {
-    // This is a serial implementation
-    // Only one worker needs to be activated
-    return;
-  }
-
-  // if (T == 0) {
-  //   for (int i = 0; i < N; i++) {
-  //     for (int j = 0; j < M; j++) {
-  //       calc(i, j);
-  //     }
-  //   }
-  //   result = dp[N - 1][M - 1];
-  // }
-  // else {
-    for (int k = 0; k < M + N - 1; k++) {
-      int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-      int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
-      for (int j = l; j < r; j++) { 
-        calc_t(k, j);
-      }
-      // for (int j = L + id - 1; j < R; j += T) {
-      //   calc_t(k, j);
-      // }
-      mutex_lock(&lock);
-      ++commit_cnt;
-      if (commit_cnt == T) {
-        commit_cnt = 0;
-        cond_broadcast(&cv);
-      }
-      else {
-        if (commit_cnt > 0)
-          cond_wait(&cv, &lock);
-      }
-      mutex_unlock(&lock);
+  for (int k = 0; k < M + N - 1; k++) {
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
+    for (int j = l; j < r; j++) { 
+      calc_t(k, j);
     }
+    // for (int j = L + id - 1; j < R; j += T) {
+    //   calc_t(k, j);
     // }
-    result = dp[N + M - 2][M - 1];
-  // }
+    mutex_lock(&lock);
+    ++commit_cnt;
+    if (commit_cnt == T) {
+      commit_cnt = 0;
+      cond_broadcast(&cv);
+    }
+    else {
+      if (commit_cnt > 0)
+        cond_wait(&cv, &lock);
+    }
+    mutex_unlock(&lock);
+  }
+  result = dp[N + M - 2][M - 1];
 }
 
 int main(int argc, char *argv[]) {

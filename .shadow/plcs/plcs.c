@@ -68,8 +68,7 @@ else {
       cond_broadcast(&cv);
     }
     else {
-      if (commit_cnt > 0)
-        cond_wait(&cv, &lock);
+      cond_wait(&cv, &lock);
     }
     mutex_unlock(&lock);
   }

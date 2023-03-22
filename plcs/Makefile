@@ -21,4 +21,8 @@ time: $(NAME)-64-debug
 	/usr/bin/time ./plcs-64-debug 3
 	/usr/bin/time ./plcs-64-debug 4
 
+flame: $(NAME)-64-debug
+	sudo perf record -g ./plcs-64-debug 1
+	sudo perf script -f | stackcollapse-perf.pl | flamegraph.pl > perf.svg
+
 include ../Makefile

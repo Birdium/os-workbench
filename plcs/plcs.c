@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <time.h>
 #include "thread.h"
 #include "thread-sync.h"
 
 #define MAXN 10000
+#define MINN 1000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
@@ -37,7 +37,7 @@ inline void calc_t(int i, int j) {
 }
 
 void Tworker(int id) {
-  for (int k = 0; k < M + N - 1; k++) {
+  for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     for (int j = l; j < r; j++) { 
@@ -58,7 +58,6 @@ void Tworker(int id) {
     }
     mutex_unlock(&lock);
   }
-  result = dp[N + M - 2][M - 1];
 }
 
 int main(int argc, char *argv[]) {
@@ -75,24 +74,35 @@ int main(int argc, char *argv[]) {
     A[i] = 'A';
     B[i] = 'A';
   }
-  A[MAXN] = '\0';
-  B[MAXN] = '\0';
-  N = strlen(A);
-  M = strlen(B);
+  M = N = MAXN;
   T = !argv[1] ? 1 : atoi(argv[1]);
-  clock_t start, end;
-  start = clock();
+  // clock_t start, end;
+  // start = clock();
 #endif
+  for (int k = 0; k < MIN(MINN, M+N-1); k++) {
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    for (int j = L; j < R; j++) { 
+      calc_t(k, j);
+    }
+  }
 
   for (int i = 0; i < T; i++) {
     create(Tworker);
   }
   join();  // Wait for all workers
 
+
+  for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    for (int j = L; j < R; j++) { 
+      calc_t(k, j);
+    }
+  }
+
 #ifdef DEBUG
-  end = clock();
-  printf("time=%lf\n", (double)(end-start));
+  // end = clock();
+  // printf("time=%lf\n", (double)(end-start));
 #endif
 
-  printf("%d\n", result);
+  printf("%d\n", dp[N + M - 2][M - 1]);
 }

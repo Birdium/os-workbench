@@ -12,8 +12,3 @@ endif
 include $(AM_HOME)/Makefile
 include ../Makefile.lab
 image: git
-
-mrs: mrs.jpeg
-	convert mrs.jpeg mrs.rgb
-	xxd -i mrs.rgb > mrs.c
-	rm mrs.rgb

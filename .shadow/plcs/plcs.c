@@ -4,11 +4,11 @@
 #include "thread.h"
 #include "thread-sync.h"
 
-#define MAXN 15000
+#define MAXN 10000
 #define MINN 1000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
-int dp[MAXN * 2][MAXN];
+int dp[MAXN * 2][MAXN * 2];
 int result;
 
 mutex_t lock = MUTEX_INIT();

@@ -16,10 +16,10 @@ debug: $(NAME)-64-debug
 	./plcs-64-debug 4
 
 time: $(NAME)-64-debug
-	/usr/bin/time ./plcs-64-debug 1
-	/usr/bin/time ./plcs-64-debug 2
-	/usr/bin/time ./plcs-64-debug 3
-	/usr/bin/time ./plcs-64-debug 4
+	/usr/bin/time -v ./plcs-64-debug 1
+	/usr/bin/time -v ./plcs-64-debug 2
+	/usr/bin/time -v ./plcs-64-debug 3
+	/usr/bin/time -v ./plcs-64-debug 4
 
 flame: $(NAME)-64-debug
 	sudo perf record -g ./plcs-64-debug 1

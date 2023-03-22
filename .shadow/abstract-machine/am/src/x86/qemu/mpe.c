@@ -1,4 +1,5 @@
 #include "x86-qemu.h"
+#include "stdio.h"
 
 struct cpu_local __am_cpuinfo[MAX_CPU] = {};
 static void (* volatile user_entry)();

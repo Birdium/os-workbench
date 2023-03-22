@@ -1,4 +1,5 @@
 #include "x86-qemu.h"
+#include "stdio.h"
 
 Area heap = {};
 int __am_ncpu = 0;

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <time.h>
 #include "thread.h"
 #include "thread-sync.h"
 
@@ -75,13 +74,10 @@ int main(int argc, char *argv[]) {
     A[i] = 'A';
     B[i] = 'A';
   }
-  A[MAXN] = '\0';
-  B[MAXN] = '\0';
-  N = strlen(A);
-  M = strlen(B);
+  M = N = MAXN;
   T = !argv[1] ? 1 : atoi(argv[1]);
-  clock_t start, end;
-  start = clock();
+  // clock_t start, end;
+  // start = clock();
 #endif
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
@@ -104,8 +100,8 @@ int main(int argc, char *argv[]) {
   }
 
 #ifdef DEBUG
-  end = clock();
-  printf("time=%lf\n", (double)(end-start));
+  // end = clock();
+  // printf("time=%lf\n", (double)(end-start));
 #endif
 
   printf("%d\n", dp[N + M - 2][M - 1]);

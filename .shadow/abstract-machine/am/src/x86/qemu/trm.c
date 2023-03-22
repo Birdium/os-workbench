@@ -69,7 +69,6 @@ Area __am_heap_init() {
 }
 
 void __am_lapic_init() {
-  printf("%d\n", 121);
   for (char *st = (char *)0xf0000; st != (char *)0xffffff; st ++) {
     if (*(volatile uint32_t *)st == 0x5f504d5f) {
       uint32_t mpconf_ptr = ((volatile MPDesc *)st)->conf;
@@ -77,6 +76,7 @@ void __am_lapic_init() {
       __am_lapic = (void *)((uintptr_t)(conf->lapicaddr));
       for (volatile char *ptr = (char *)(conf + 1);
            ptr < (char *)conf + conf->length; ptr += 8) {
+            printf("%d", (int) *ptr);
         if (*ptr == '\0') {
           ptr += 12;
           panic_on(++__am_ncpu > MAX_CPU, "cannot support > MAX_CPU processors");

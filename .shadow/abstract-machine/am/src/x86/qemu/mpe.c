@@ -13,8 +13,9 @@ static void call_user_entry() {
 bool mpe_init(void (*entry)()) {
   user_entry = entry;
   boot_record()->jmp_code = 0x000bfde9; // (16-bit) jmp (0x7c00)
+
+  printf("%d\n", __am_ncpu);
   for (int cpu = 1; cpu < __am_ncpu; cpu++) {
-    printf("%d\n", 114);
     boot_record()->is_ap = 1;
     __am_lapic_bootap(cpu, (void *)boot_record());
     while (xchg(&ap_ready, 0) != 1) {

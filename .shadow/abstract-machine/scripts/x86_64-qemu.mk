@@ -10,4 +10,4 @@ AM_SRCS := x86/qemu/start64.S \
            x86/qemu/mpe.c
 
 run: build-arg
-	@qemu-system-x86_64 $(QEMU_FLAGS) -S -gdb tcp::26000 -drive format=raw,file=./build/kernel-$(ARCH) -no-reboot -no-shutdown
+	@qemu-system-x86_64 $(QEMU_FLAGS) -S -gdb tcp::26000 -no-reboot -no-shutdown

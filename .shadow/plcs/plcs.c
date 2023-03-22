@@ -6,10 +6,10 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 5000
+#define MINN 1000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
-int dp[MAXN * 2][MAXN];
+int dp[MAXN][MAXN];
 int result;
 
 mutex_t lock = MUTEX_INIT();
@@ -42,7 +42,7 @@ void Tworker(int id) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     for (int j = l; j < r; j++) { 
-      calc_t(k, j);
+      calc(k - j, j);
     }
     // for (int j = L + id - 1; j < R; j += T) {
     //   calc_t(k, j);
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
-      calc_t(k, j);
+      calc(k - j, j);
     }
   }
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
-      calc_t(k, j);
+      calc(k - j, j);
     }
   }
 
@@ -108,5 +108,5 @@ int main(int argc, char *argv[]) {
   printf("time=%lf\n", (double)(end-start));
 #endif
 
-  printf("%d\n", dp[N + M - 2][M - 1]);
+  printf("%d\n", dp[N - 1][M - 1]);
 }

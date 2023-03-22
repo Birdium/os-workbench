@@ -1,4 +1,5 @@
 #include "x86-qemu.h"
+#include "stdio.h"
 
 struct cpu_local __am_cpuinfo[MAX_CPU] = {};
 static void (* volatile user_entry)();
@@ -11,6 +12,7 @@ static void call_user_entry() {
 
 bool mpe_init(void (*entry)()) {
   user_entry = entry;
+  printf("%d\n", 114);
   boot_record()->jmp_code = 0x000bfde9; // (16-bit) jmp (0x7c00)
   for (int cpu = 1; cpu < __am_ncpu; cpu++) {
     boot_record()->is_ap = 1;

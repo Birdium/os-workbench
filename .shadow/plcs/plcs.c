@@ -6,7 +6,7 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 0
+#define MINN 5000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];

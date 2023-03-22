@@ -1,4 +1,5 @@
 #include "x86-qemu.h"
+#include "stdio.h"
 
 Area heap = {};
 int __am_ncpu = 0;
@@ -68,6 +69,7 @@ Area __am_heap_init() {
 }
 
 void __am_lapic_init() {
+  printf("%d\n", 121);
   for (char *st = (char *)0xf0000; st != (char *)0xffffff; st ++) {
     if (*(volatile uint32_t *)st == 0x5f504d5f) {
       uint32_t mpconf_ptr = ((volatile MPDesc *)st)->conf;

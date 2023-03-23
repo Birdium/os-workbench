@@ -11,6 +11,8 @@ char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
 int result;
 
+sem_t sem[16];
+
 mutex_t lock = MUTEX_INIT();
 cond_t cv = COND_INIT();
 
@@ -29,7 +31,16 @@ void Tworker(int id) {
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
     // for (int j = L + id - 1; j < R; j += T) {
-    //   calc_t(k, j);
+    //   dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
+    // }
+
+    // for (int i = 1; i <= T; i++) {
+    //   if (i != id) {
+    //     V(&sem[i - 1]);
+    //   }
+    // }
+    // for (int i = 1; i < T; i++) {
+    //   P(&sem[id - 1]);
     // }
     mutex_lock(&lock);
     ++commit_cnt;
@@ -64,6 +75,10 @@ int main(int argc, char *argv[]) {
   // clock_t start, end;
   // start = clock();
 #endif
+  for (int i = 0; i < T; i++) {
+    SEM_INIT(&sem[i], 0);
+  }
+
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
@@ -76,8 +91,8 @@ int main(int argc, char *argv[]) {
   }
   join();  // Wait for all workers
 
-  #define T1 240000000
-  #define T2 90000000
+  #define T1 230000000
+  #define T2 80000000
   #define T3 25000000
 
   if (T == 1) 

@@ -11,8 +11,6 @@ char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
 int result;
 
-sem_t sem[16];
-
 mutex_t lock = MUTEX_INIT();
 cond_t cv = COND_INIT();
 
@@ -75,9 +73,6 @@ int main(int argc, char *argv[]) {
   // clock_t start, end;
   // start = clock();
 #endif
-  for (int i = 0; i < T; i++) {
-    SEM_INIT(&sem[i], 0);
-  }
 
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
@@ -91,7 +86,7 @@ int main(int argc, char *argv[]) {
   }
   join();  // Wait for all workers
 
-  #define T1 225000000
+  #define T1 220000000
   #define T2 80000000
   #define T3 25000000
 

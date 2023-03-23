@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
   #define T1 220000000
-  #define T2 140000000
+  #define T2 120000000
   #define T3 80000000
 
   if (T == 1) 

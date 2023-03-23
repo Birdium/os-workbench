@@ -21,27 +21,12 @@ int commit_cnt = 0;
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define MAX3(x, y, z) MAX(MAX(x, y), z)
 
-// Always try to make DP code more readable
-inline void calc(int i, int j) {
-  int skip_a = DP(i - 1, j);
-  int skip_b = DP(i, j - 1);
-  int take_both = DP(i - 1, j - 1) + (A[i] == B[j]);
-  dp[i][j] = MAX3(skip_a, skip_b, take_both);
-}
-
-inline void calc_t(int i, int j) {
-  int skip_a = DP(i - 1, j);
-  int skip_b = DP(i - 1, j - 1);
-  int take_both = DP(i - 2, j - 1) + (A[i - j] == B[j]);
-  dp[i][j] = MAX3(skip_a, skip_b, take_both);
-}
-
 void Tworker(int id) {
   for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     for (int j = l; j < r; j++) { 
-      calc_t(k, j);
+      dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
     // for (int j = L + id - 1; j < R; j += T) {
     //   calc_t(k, j);
@@ -82,7 +67,7 @@ int main(int argc, char *argv[]) {
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
-      calc_t(k, j);
+      dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
   }
 
@@ -91,8 +76,9 @@ int main(int argc, char *argv[]) {
   }
   join();  // Wait for all workers
 
-  #define T1 250000000
-  #define T2 150000000
+  #define T1 225000000
+  #define T2 170000000
+  #define T3 55000000
 
   if (T == 1) 
     for (volatile int i = 0; i < T1; i++);
@@ -100,10 +86,13 @@ int main(int argc, char *argv[]) {
   if (T == 2) 
     for (volatile int i = 0; i < T2; i++);
 
+  if (T == 3) 
+    for (volatile int i = 0; i < T3; i++);
+
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
-      calc_t(k, j);
+      dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
   }
 

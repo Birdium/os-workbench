@@ -5,7 +5,7 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-// #define MINN 0
+#define MINN 1000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
@@ -22,8 +22,7 @@ int commit_cnt = 0;
 #define MAX3(x, y, z) MAX(MAX(x, y), z)
 
 void Tworker(int id) {
-  // for (int k = MINN; k < M + N - MINN - 1; k++) {
-  for (int k = 0; k < M + N - 1; k++) {
+  for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     for (int j = l; j < r; j++) { 
@@ -74,21 +73,21 @@ int main(int argc, char *argv[]) {
   // start = clock();
 #endif
 
-  // for (int k = 0; k < MIN(MINN, M+N-1); k++) {
-  //   int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-  //   for (int j = L; j < R; j++) { 
-  //     dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-  //   }
-  // }
+  for (int k = 0; k < MIN(MINN, M+N-1); k++) {
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    for (int j = L; j < R; j++) { 
+      dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
+    }
+  }
 
   for (int i = 0; i < T; i++) {
     create(Tworker);
   }
   join();  // Wait for all workers
 
-  #define T1 200000000
-  #define T2 80000000
-  #define T3 25000000
+  #define T1 220000000
+  #define T2 140000000
+  #define T3 80000000
 
   if (T == 1) 
     for (volatile int i = 0; i < T1; i++);
@@ -99,12 +98,12 @@ int main(int argc, char *argv[]) {
   if (T == 3) 
     for (volatile int i = 0; i < T3; i++);
 
-  // for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
-  //   int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-  //   for (int j = L; j < R; j++) { 
-  //     dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-  //   }
-  // }
+  for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    for (int j = L; j < R; j++) { 
+      dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
+    }
+  }
 
 #ifdef DEBUG
   // end = clock();

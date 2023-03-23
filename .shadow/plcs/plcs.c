@@ -77,8 +77,8 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
   #define T1 225000000
-  #define T2 170000000
-  #define T3 55000000
+  #define T2 75000000
+  #define T3 25000000
 
   if (T == 1) 
     for (volatile int i = 0; i < T1; i++);

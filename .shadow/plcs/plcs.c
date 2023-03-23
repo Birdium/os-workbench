@@ -5,10 +5,10 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 0
+#define MINN 3000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
-int dp[MAXN * 2][MAXN];
+int dp[MAXN][MAXN];
 int result;
 
 sem_t sem[16];
@@ -43,30 +43,30 @@ void Tworker(int id) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
     for (int j = l; j < r; j++) { 
-      calc_t(k, j);
+      calc(k - j, j);
     }
     // for (int j = L + id - 1; j < R; j += T) {
     //   calc_t(k, j);
     // }
-    for (int i = 1; i <= T; i++) {
-      if (i != id) {
-        V(&sem[i - 1]);
-      }
-    }
-    for (int i = 1; i < T; i++) {
-      P(&sem[id - 1]);
-    }
-    // mutex_lock(&lock);
-    // ++commit_cnt;
-    // if (commit_cnt == T) {
-    //   commit_cnt = 0;
-    //   cond_broadcast(&cv);
+    // for (int i = 1; i <= T; i++) {
+    //   if (i != id) {
+    //     V(&sem[i - 1]);
+    //   }
     // }
-    // else {
-    //   if (commit_cnt > 0)
-    //     cond_wait(&cv, &lock);
+    // for (int i = 1; i < T; i++) {
+    //   P(&sem[id - 1]);
     // }
-    // mutex_unlock(&lock);
+    mutex_lock(&lock);
+    ++commit_cnt;
+    if (commit_cnt == T) {
+      commit_cnt = 0;
+      cond_broadcast(&cv);
+    }
+    else {
+      if (commit_cnt > 0)
+        cond_wait(&cv, &lock);
+    }
+    mutex_unlock(&lock);
   }
 }
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
-      calc_t(k, j);
+      calc(k - j, j);
     }
   }
 
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 
-      calc_t(k, j);
+      calc(k - j, j);
     }
   }
 
@@ -119,5 +119,5 @@ int main(int argc, char *argv[]) {
   // printf("time=%lf\n", (double)(end-start));
 #endif
 
-  printf("%d\n", dp[N + M - 2][M - 1]);
+  printf("%d\n", dp[N - 1][M - 1]);
 }

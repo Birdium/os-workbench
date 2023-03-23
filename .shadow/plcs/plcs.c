@@ -8,8 +8,10 @@
 #define MINN 1000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
-int dp[MAXN * 2][MAXN * 2];
+int dp[MAXN * 2][MAXN];
 int result;
+
+sem_t sem[16];
 
 mutex_t lock = MUTEX_INIT();
 cond_t cv = COND_INIT();
@@ -46,17 +48,25 @@ void Tworker(int id) {
     // for (int j = L + id - 1; j < R; j += T) {
     //   calc_t(k, j);
     // }
-    mutex_lock(&lock);
-    ++commit_cnt;
-    if (commit_cnt == T) {
-      commit_cnt = 0;
-      cond_broadcast(&cv);
+    for (int i = 1; i <= T; i++) {
+      if (i != id) {
+        V(&sem[i - 1]);
+      }
     }
-    else {
-      if (commit_cnt > 0)
-        cond_wait(&cv, &lock);
+    for (int i = 1; i < T; i++) {
+      P(&sem[id - 1]);
     }
-    mutex_unlock(&lock);
+    // mutex_lock(&lock);
+    // ++commit_cnt;
+    // if (commit_cnt == T) {
+    //   commit_cnt = 0;
+    //   cond_broadcast(&cv);
+    // }
+    // else {
+    //   if (commit_cnt > 0)
+    //     cond_wait(&cv, &lock);
+    // }
+    // mutex_unlock(&lock);
   }
 }
 
@@ -79,6 +89,11 @@ int main(int argc, char *argv[]) {
   // clock_t start, end;
   // start = clock();
 #endif
+
+  for (int i = 0; i < T; i++) {
+    SEM_INIT(&sem[i], 0);
+  }
+
   for (int k = 0; k < MIN(MINN, M+N-1); k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     for (int j = L; j < R; j++) { 

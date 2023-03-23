@@ -5,7 +5,7 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 2000
+#define MINN 0
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
@@ -47,8 +47,7 @@ void Tworker(int id) {
       cond_broadcast(&cv);
     }
     else {
-      if (commit_cnt > 0)
-        cond_wait(&cv, &lock);
+      cond_wait(&cv, &lock);
     }
     mutex_unlock(&lock);
   }

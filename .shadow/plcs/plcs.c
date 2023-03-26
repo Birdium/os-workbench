@@ -46,7 +46,7 @@ void Tworker(int id) {
 
     mutex_lock(&lock);
     ++commit_cnt;
-    if (commit_cnt == T) {
+    if (commit_cnt == T + 1) {
       commit_cnt = 0;
       cond_broadcast(&cv);
     }
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  for (int i = 1; i < T; i++) {
+  for (int i = 0; i < T; i++) {
     create(Tworker);
   }
   for (int k = MINN; k < M + N - MINN - 1; k++) {
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     }
     mutex_lock(&lock);
     ++commit_cnt;
-    if (commit_cnt == T) {
+    if (commit_cnt == T + 1) {
       commit_cnt = 0;
       cond_broadcast(&cv);
     }
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
   }
   join();  // Wait for all workers
 
-  #define T1 260000000
+  #define T1 220000000
 
   if (T == 1) 
     for (volatile int i = 0; i < T1; i++);

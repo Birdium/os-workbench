@@ -8,8 +8,24 @@
 
 static char buf[4096];
 
-static spinlock_t buf_lock = SPIN_INIT();
-static spinlock_t printf_lock = SPIN_INIT();
+typedef int _spinlock_t;
+#define _SPIN_INIT() 0
+
+static void _spin_lock(_spinlock_t *lk) {
+  while (1) {
+    intptr_t value = atomic_xchg(lk, 1);
+    if (value == 0) {
+      break;
+    }
+  }
+}
+
+static void _spin_unlock(_spinlock_t *lk) {
+  atomic_xchg(lk, 0);
+}
+
+static _spinlock_t buf_lock = _SPIN_INIT();
+static _spinlock_t printf_lock = _SPIN_INIT();
 
 int printf(const char *fmt, ...) {
   char p_buf[4096];
@@ -17,12 +33,12 @@ int printf(const char *fmt, ...) {
   va_start(ap, fmt);
   int ret = vsprintf(p_buf, fmt, ap);
   va_end(ap);
-  spin_lock(&printf_lock);
+  _spin_lock(&printf_lock);
   char *bp = p_buf;
   while(*bp != '\0') {
     putch(*bp); ++bp;
   }
-  spin_unlock(&printf_lock);
+  _spin_unlock(&printf_lock);
   return ret;
 }
 
@@ -50,7 +66,7 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   size_t ch_num = 0;
   char *op = out; const char *fp = fmt;
-  spin_lock(&buf_lock);
+  _spin_lock(&buf_lock);
   while(*fp != '\0' && ch_num < n) {
     if (*fp == '%'){
       ++fp;
@@ -154,7 +170,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     ++fp;
   }
   if (ch_num < n && *fp == '\0') {*op = '\0'; ++ch_num;}
-  spin_unlock(&buf_lock);
+  _spin_unlock(&buf_lock);
   return ch_num;
 }
 

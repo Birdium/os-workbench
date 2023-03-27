@@ -1,5 +1,5 @@
 #include <common.h>
-#include <threads.h>
+#include <thread.h>
 #include <thread-sync.h>
 
 enum ops { OP_ALLOC = 1, OP_FREE };
@@ -32,4 +32,7 @@ void stress_test() {
 
 int main() {
   os->init();
+  for (int i = 0; i < 4; i++) {
+    
+  }
 }

@@ -1,5 +1,5 @@
 #include <common.h>
-#include <lock.h>
+// #include <lock.h>
 
 
 static inline size_t align(size_t size) {
@@ -12,15 +12,15 @@ static inline size_t align(size_t size) {
   return size + 1;
 }
 
-lock_t mutex;
+// lock_t mutex;
 uintptr_t pm_cur;
 
 static void *kalloc(size_t size) {
   if (size >= (1<<24)) return NULL;
-  lock(&mutex);
+  // lock(&mutex);
   uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
   pm_cur = pm_ret + size;
-  unlock(&mutex);
+  // unlock(&mutex);
   return (void*) pm_ret;
 }
 

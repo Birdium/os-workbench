@@ -1,6 +1,6 @@
 #include <common.h>
-#include <threads.h>
 #include <thread-sync.h>
+#include <threads.h>
 
 enum ops { OP_ALLOC = 1, OP_FREE };
 

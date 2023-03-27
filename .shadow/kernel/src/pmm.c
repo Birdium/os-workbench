@@ -17,10 +17,10 @@ uintptr_t pm_cur;
 
 static void *kalloc(size_t size) {
   if (size >= (1<<24)) return NULL;
-  // lock(&mutex);
+  spin_lock(&mutex);
   uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
   pm_cur = pm_ret + size;
-  // unlock(&mutex);
+  unlock(&mutex);
   return (void*) pm_ret;
 }
 
@@ -37,7 +37,7 @@ static void pmm_init() {
 // 测试代码的 pmm_init ()
 #define HEAP_SIZE (1 << 24)
 static void pmm_init() {
-  char *ptr  = malloc(HEAP_SIZE);
+  char *ptr  = malloc(HEAP_SIZE); 
   heap.start = ptr;
   heap.end   = ptr + HEAP_SIZE;
   printf("Got %d MiB heap: [%p, %p)\n", HEAP_SIZE >> 20, heap.start, heap.end);

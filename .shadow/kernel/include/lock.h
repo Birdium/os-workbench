@@ -1,10 +1,10 @@
-#ifndef LOCK_H
-#define LOCK_H
+#ifndef SPINLOCK_H
+#define SPINLOCK_H
 
 typedef struct {
   int status; 
-} lock_t;
+} spinlock_t;
 
-void lock(lock_t *);
-void unlock(lock_t *);
+void spin_lock(spinlock_t *);
+void spin_unlock(spinlock_t *);
 #endif

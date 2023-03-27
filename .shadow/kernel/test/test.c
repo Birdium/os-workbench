@@ -26,5 +26,4 @@ void stress_test() {
 
 int main() {
   os->init();
-  mpe_init(stress_test);
 }

@@ -33,6 +33,6 @@ void stress_test() {
 int main() {
   os->init();
   for (int i = 0; i < 4; i++) {
-    
+    create(stress_test);
   }
 }

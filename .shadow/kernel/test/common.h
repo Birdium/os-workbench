@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include <kernel.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 typedef struct {
     void *start, *end;

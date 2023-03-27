@@ -19,6 +19,7 @@ static inline void spin_lock(spinlock_t *lk) {
     }
   }
 }
+
 static inline void spin_unlock(spinlock_t *lk) {
   atomic_xchg(lk, 0);
 }
@@ -26,8 +27,8 @@ static inline void spin_unlock(spinlock_t *lk) {
 // Mutex
 typedef pthread_mutex_t mutex_t;
 #define MUTEX_INIT() PTHREAD_MUTEX_INITIALIZER
-void mutex_lock(mutex_t *lk)   { pthread_mutex_lock(lk); }
-void mutex_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
+static inline void mutex_lock(mutex_t *lk)   { pthread_mutex_lock(lk); }
+static inline void mutex_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
 
 // Conditional Variable
 typedef pthread_cond_t cond_t;

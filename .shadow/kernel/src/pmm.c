@@ -1,5 +1,5 @@
 #include <common.h>
-// #include <lock.h>
+#include <lock.h>
 
 
 static inline size_t align(size_t size) {

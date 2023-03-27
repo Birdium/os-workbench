@@ -14,15 +14,15 @@ struct thread {
   void (*entry)(int);
 };
 
-struct thread tpool[NTHREAD], *tptr = tpool;
+static struct thread tpool[NTHREAD], *tptr = tpool;
 
-void *wrapper(void *arg) {
+static void *wrapper(void *arg) {
   struct thread *thread = (struct thread *)arg;
   thread->entry(thread->id);
   return NULL;
 }
 
-void create(void *fn) {
+static void create(void *fn) {
   assert(tptr - tpool < NTHREAD);
   *tptr = (struct thread) {
     .id = tptr - tpool + 1,
@@ -33,7 +33,7 @@ void create(void *fn) {
   ++tptr;
 }
 
-void join() {
+static void join() {
   for (int i = 0; i < NTHREAD; i++) {
     struct thread *t = &tpool[i];
     if (t->status == T_LIVE) {
@@ -43,6 +43,6 @@ void join() {
   }
 }
 
-__attribute__((destructor)) void cleanup() {
+static __attribute__((destructor)) void cleanup() {
   join();
 }

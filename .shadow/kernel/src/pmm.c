@@ -1,4 +1,7 @@
 #include <common.h>
+#ifndef TEST
+#include <lock.h>
+#endif
 
 static inline size_t align(size_t size) {
   size--;

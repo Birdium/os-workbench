@@ -43,8 +43,8 @@ int    vsnprintf (char *str, size_t size, const char *format, va_list ap);
 // thread.h
 typedef int _spinlock_t;
 #define _SPIN_INIT() 0
-void _spin_lock(spinlock_t *lk);
-void _spin_unlock(spinlock_t *lk);
+void _spin_lock(_spinlock_t *lk);
+void _spin_unlock(_spinlock_t *lk);
 
 // assert.h
 #ifdef NDEBUG

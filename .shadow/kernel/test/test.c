@@ -1,4 +1,7 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include <common.h>
+
 
 enum ops { OP_ALLOC = 1, OP_FREE };
 

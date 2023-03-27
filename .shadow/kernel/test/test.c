@@ -15,12 +15,17 @@ struct malloc_op random_op() {
     result.sz = 1024;
     return result;
 }
+
+void alloc_check(void *start, size_t sz) {
+    printf("allocated from %p, size %u\n", start, sz);
+}
+
 void stress_test() {
   while (1) {
     struct malloc_op op = random_op();
     switch (op.type) {
       case OP_ALLOC: alloc_check(pmm->alloc(op.sz), op.sz); break;
-      case OP_FREE:  free(op.addr); break;
+    //   case OP_FREE:  free(op.addr); break;
     }
   }
 }

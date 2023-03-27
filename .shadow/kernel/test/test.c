@@ -1,8 +1,13 @@
-
 #include <common.h>
-
+#include <threads.h>
+#include <thread-sync.h>
 
 enum ops { OP_ALLOC = 1, OP_FREE };
+
+struct malloc_op {
+  enum ops type;
+  union { size_t sz; void *addr; };
+};
 
 struct malloc_op random_op() {
     struct malloc_op result;
@@ -10,12 +15,6 @@ struct malloc_op random_op() {
     result.sz = 1024;
     return result;
 }
-
-struct malloc_op {
-  enum ops type;
-  union { size_t sz; void *addr; };
-};
-
 void stress_test() {
   while (1) {
     struct malloc_op op = random_op();

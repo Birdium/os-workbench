@@ -1,8 +1,7 @@
 #include <kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <thread.h>
-
+#include "../include/lock.h"
 typedef struct {
     void *start, *end;
 } Area;

@@ -20,7 +20,7 @@ static void *kalloc(size_t size) {
   spin_lock(&lk);
   uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
   pm_cur = pm_ret + size;
-  unlock(&lk);
+  spin_unlock(&lk);
   return (void*) pm_ret;
 }
 

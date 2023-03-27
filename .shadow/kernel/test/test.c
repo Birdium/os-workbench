@@ -15,7 +15,8 @@ struct malloc_op random_op() {
 }
 
 void alloc_check(void *start, size_t sz) {
-    printf("allocated from %p, size %u\n", start, sz);
+    // printf("allocated from %p, size %u\n", start, sz);
+    return;
 }
 
 void stress_test() {

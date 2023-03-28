@@ -5,7 +5,7 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 1000
+#define MINN 0
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
@@ -24,25 +24,14 @@ int commit_cnt = 0;
 void Tworker(int id) {
   for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
-    int l = L + (R - L) / T * (id - 1), r = (id != T) ? (L + (R - L) / T * id) : R;
+    int len = (R - L) / (T + 1);
+    int l = L + len * (id - 1), r = L + len * id;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
-    // for (int j = L + id - 1; j < R; j += T) {
-    //   dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-    // }
-
-    // for (int i = 1; i <= T; i++) {
-    //   if (i != id) {
-    //     V(&sem[i - 1]);
-    //   }
-    // }
-    // for (int i = 1; i < T; i++) {
-    //   P(&sem[id - 1]);
-    // }
     mutex_lock(&lock);
     ++commit_cnt;
-    if (commit_cnt == T) {
+    if (commit_cnt == T + 1) {
       commit_cnt = 0;
       cond_broadcast(&cv);
     }
@@ -83,12 +72,32 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < T; i++) {
     create(Tworker);
   }
+  
+  for (int k = MINN; k < M + N - MINN - 1; k++) {
+    int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
+    int len = (R - L) / (T + 1);
+    int l = L + len * T, r = R;
+    for (int j = l; j < r; j++) { 
+      dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
+    }
+    mutex_lock(&lock);
+    ++commit_cnt;
+    if (commit_cnt == T + 1) {
+      commit_cnt = 0;
+      cond_broadcast(&cv);
+    }
+    else {
+      cond_wait(&cv, &lock);
+    }
+    mutex_unlock(&lock);
+  }
+
   join();  // Wait for all workers
 
-  #define T1 240000000
+  // #define T1 230000000
 
-  if (T == 1) 
-    for (volatile int i = 0; i < T1; i++);
+  // if (T == 1) 
+  //   for (volatile int i = 0; i < T1; i++);
   
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);

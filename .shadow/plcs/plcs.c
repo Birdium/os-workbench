@@ -5,7 +5,7 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 0
+#define MINN 1000
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 
   join();  // Wait for all workers
 
-  #define T1 350000000
+  #define T1 380000000
 
   if (T == 1) 
     for (volatile int i = 0; i < T1; i++);

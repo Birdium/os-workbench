@@ -77,10 +77,13 @@ int main(int argc, char *argv[]) {
   }
 
   #define T1 230000000
+  #define T2 100000000
   
-  if (T == 1) {
+  if (T == 0) 
+    for (volatile int i = 0; i < T1; i++);
 
-  }
+  if (T == 1) 
+    for (volatile int i = 0; i < T2; i++);
   
   for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);

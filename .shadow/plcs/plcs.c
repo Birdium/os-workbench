@@ -12,7 +12,8 @@ int dp[MAXN * 2][MAXN];
 int result;
 
 spinlock_t lock = SPIN_INIT();
-
+int commit_cnt = 0;
+int flag[4] = {1, 1, 1, 1};
 atomic_int cnt = 0;
 atomic_int sig[17];
 
@@ -23,16 +24,32 @@ atomic_int sig[17];
 
 void Tworker(int id) {
   for (int k = MINN; k < M + N - MINN - 1; k++) {
+    spin_lock(&lock);
+    if (commit_cnt == T + 1) {
+      commit_cnt = 0;
+      for (int i = 0; i <= T; i++) {
+        flag[i] = 1;
+      }
+    }
+    spin_unlock(&lock);
+    while (1) {
+      spin_lock(&lock);
+      if (flag[id]) {
+        flag[id] = 0;
+        break;
+      }
+      spin_unlock(&lock);
+    }
+    spin_unlock(&lock);
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int len = (R - L) / (T + 1);
     int l = L + len * (id - 1), r = L + len * id;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
-    atomic_fetch_add(&cnt, 1);
-    // printf("thread %d: %d %d\n", id, k, cnt);
-    while (atomic_load(&sig[id]) == 0);
-    atomic_store(&sig[id], 0);
+    spin_lock(&lock);
+    commit_cnt++;
+    spin_unlock(&lock);
   }
 }
 
@@ -68,18 +85,32 @@ int main(int argc, char *argv[]) {
   }
   
   for (int k = MINN; k < M + N - MINN - 1; k++) {
+    spin_lock(&lock);
+    if (commit_cnt == T + 1) {
+      commit_cnt = 0;
+      for (int i = 0; i <= T; i++) {
+        flag[i] = 1;
+      }
+    }
+    spin_unlock(&lock);
+    while (1) {
+      spin_lock(&lock);
+      if (flag[0]) {
+        flag[0] = 0;
+        break;
+      }
+      spin_unlock(&lock);
+    }
+    spin_unlock(&lock);
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int len = (R - L) / (T + 1);
     int l = L + len * T, r = R;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
-    // printf("main: %d %d\n", k, cnt);
-    while (atomic_load(&cnt) < T);
-    atomic_store(&cnt, 0);
-    for (int i = 1; i <= T; i++) {
-      atomic_store(&sig[i], 1);
-    }
+    spin_lock(&lock);
+    commit_cnt++;
+    spin_unlock(&lock);
   }
 
   join();  // Wait for all workers

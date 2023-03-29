@@ -75,6 +75,12 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < T; i++) {
     create(Tworker);
   }
+
+  #define T1 230000000
+  
+  if (T == 1) {
+
+  }
   
   for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);

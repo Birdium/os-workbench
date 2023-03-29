@@ -6,6 +6,9 @@
 
 #define MAXN 10000
 #define MINN 0
+
+#define BARRIER asm volatile("": : :"memory");
+
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
@@ -28,11 +31,15 @@ void Tworker(int id) {
     int l = L + len * (id - 1), r = L + len * id;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-    }
-    atomic_fetch_add(&cnt, 1);
+    } 
+    BARRIER
+    atomic_fetch_add(&cnt, 1); 
+    BARRIER
     // printf("thread %d: %d %d\n", id, k, cnt);
-    while (atomic_load(&sig[id]) == 0);
-    atomic_store(&sig[id], 0);
+    while (atomic_load(&sig[id]) == 0); 
+    BARRIER
+    atomic_store(&sig[id], 0); 
+    BARRIER
   }
 }
 
@@ -75,13 +82,18 @@ int main(int argc, char *argv[]) {
     int l = L + len * T, r = R;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-    }
+    } 
+    BARRIER
     // printf("main: %d %d\n", k, cnt);
-    while (atomic_load(&cnt) < T);
-    atomic_store(&cnt, 0);
-    for (int i = 1; i <= T; i++) {
-      atomic_store(&sig[i], 1);
-    }
+    while (atomic_load(&cnt) < T); 
+    BARRIER
+    atomic_store(&cnt, 0); 
+    BARRIER
+    for (int i = 1; i <= T; i++) { 
+      atomic_store(&sig[i], 1); 
+      BARRIER
+    } 
+    BARRIER
   }
 
   join();  // Wait for all workers

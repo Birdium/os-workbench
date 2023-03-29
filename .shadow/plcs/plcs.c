@@ -95,9 +95,17 @@ int main(int argc, char *argv[]) {
   join();  // Wait for all workers
 
   #define T1 350000000
+  #define T2 180000000
+  #define T3 45000000
 
   if (T == 1) 
     for (volatile int i = 0; i < T1; i++);
+
+  if (T == 2) 
+    for (volatile int i = 0; i < T2; i++);
+
+  if (T == 3) 
+    for (volatile int i = 0; i < T3; i++);
   
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);

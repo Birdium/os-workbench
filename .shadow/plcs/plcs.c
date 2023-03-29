@@ -15,8 +15,7 @@ spinlock_t lock = SPIN_INIT();
 cond_t cv = COND_INIT();
 
 atomic_int cnt = 0;
-
-// int commit_cnt = 0;
+atomic_int sig[17];
 
 #define DP(x, y) (((x) >= 0 && (y) >= 0) ? dp[x][y] : 0)
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -25,6 +24,7 @@ atomic_int cnt = 0;
 
 void Tworker(int id) {
   for (int k = MINN; k < M + N - MINN - 1; k++) {
+    sig[id] = 0;
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int len = (R - L) / (T + 1);
     int l = L + len * (id - 1), r = L + len * id;
@@ -32,7 +32,8 @@ void Tworker(int id) {
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
     atomic_fetch_add(&cnt, 1);
-    while (cnt > 0 && cnt < T + 1);
+    // printf("thread %d: %d %d\n", id, k, cnt);
+    while (atomic_load(&sig[id]) == 0);
   }
 }
 
@@ -74,24 +75,15 @@ int main(int argc, char *argv[]) {
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
     }
-    atomic_fetch_add(&cnt, 1);
-    while (cnt > 0 && cnt < T + 1);
+    // printf("main: %d %d\n", k, cnt);
+    while (atomic_load(&cnt) < T);
+    atomic_store(&cnt, 0);
+    for (int i = 1; i <= T; i++) {
+      atomic_store(&sig[i], 1);
+    }
   }
 
   join();  // Wait for all workers
-
-  // #define T1 350000000
-  // #define T2 180000000
-  // #define T3 0
-
-  // if (T == 1) 
-  //   for (volatile int i = 0; i < T1; i++);
-
-  // if (T == 2) 
-  //   for (volatile int i = 0; i < T2; i++);
-
-  // if (T == 3) 
-  //   for (volatile int i = 0; i < T3; i++);
   
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);

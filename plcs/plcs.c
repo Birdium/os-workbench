@@ -5,16 +5,19 @@
 #include "thread-sync.h"
 
 #define MAXN 10000
-#define MINN 1000
+#define MINN 0
+
+#define BARRIER asm volatile("": : :"memory");
+
 int T, N, M;
 char A[MAXN + 1], B[MAXN + 1];
 int dp[MAXN * 2][MAXN];
 int result;
 
-mutex_t lock = MUTEX_INIT();
-cond_t cv = COND_INIT();
+spinlock_t lock = SPIN_INIT();
 
-int commit_cnt = 0;
+atomic_int cnt = 0;
+atomic_int sig[17];
 
 #define DP(x, y) (((x) >= 0 && (y) >= 0) ? dp[x][y] : 0)
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -28,17 +31,15 @@ void Tworker(int id) {
     int l = L + len * (id - 1), r = L + len * id;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-    }
-    mutex_lock(&lock);
-    ++commit_cnt;
-    if (commit_cnt == T + 1) {
-      commit_cnt = 0;
-      cond_broadcast(&cv);
-    }
-    else {
-      cond_wait(&cv, &lock);
-    }
-    mutex_unlock(&lock);
+    } 
+    BARRIER
+    atomic_fetch_add(&cnt, 1); 
+    BARRIER
+    // printf("thread %d: %d %d\n", id, k, cnt);
+    while (atomic_load(&sig[id]) == 0); 
+    BARRIER
+    atomic_store(&sig[id], 0); 
+    BARRIER
   }
 }
 
@@ -69,9 +70,20 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  T--;
+
   for (int i = 0; i < T; i++) {
     create(Tworker);
   }
+
+  #define T1 230000000
+  #define T2 100000000
+  
+  if (T == 0) 
+    for (volatile int i = 0; i < T1; i++);
+
+  if (T == 1) 
+    for (volatile int i = 0; i < T2; i++);
   
   for (int k = MINN; k < M + N - MINN - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
@@ -79,25 +91,21 @@ int main(int argc, char *argv[]) {
     int l = L + len * T, r = R;
     for (int j = l; j < r; j++) { 
       dp[k][j] = MAX3(DP(k - 1, j - 1), DP(k - 1, j), DP(k - 2, j - 1) + (A[k - j] == B[j]));
-    }
-    mutex_lock(&lock);
-    ++commit_cnt;
-    if (commit_cnt == T + 1) {
-      commit_cnt = 0;
-      cond_broadcast(&cv);
-    }
-    else {
-      cond_wait(&cv, &lock);
-    }
-    mutex_unlock(&lock);
+    } 
+    BARRIER
+    // printf("main: %d %d\n", k, cnt);
+    while (atomic_load(&cnt) < T); 
+    BARRIER
+    atomic_store(&cnt, 0); 
+    BARRIER
+    for (int i = 1; i <= T; i++) { 
+      atomic_store(&sig[i], 1); 
+      BARRIER
+    } 
+    BARRIER
   }
 
   join();  // Wait for all workers
-
-  #define T1 370000000
-
-  if (T == 1) 
-    for (volatile int i = 0; i < T1; i++);
   
   for (int k = M + N - MINN - 1; k < M + N - 1; k++) {
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);

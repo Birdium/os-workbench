@@ -12,7 +12,6 @@ int dp[MAXN * 2][MAXN];
 int result;
 
 spinlock_t lock = SPIN_INIT();
-cond_t cv = COND_INIT();
 
 atomic_int cnt = 0;
 atomic_int sig[17];
@@ -24,7 +23,6 @@ atomic_int sig[17];
 
 void Tworker(int id) {
   for (int k = MINN; k < M + N - MINN - 1; k++) {
-    sig[id] = 0;
     int L = MAX(0, k - N + 1), R = MIN(k + 1, M);
     int len = (R - L) / (T + 1);
     int l = L + len * (id - 1), r = L + len * id;
@@ -34,6 +32,7 @@ void Tworker(int id) {
     atomic_fetch_add(&cnt, 1);
     // printf("thread %d: %d %d\n", id, k, cnt);
     while (atomic_load(&sig[id]) == 0);
+    atomic_store(&sig[id], 0);
   }
 }
 

@@ -24,6 +24,7 @@ static void os_run() {
   test_alloc(1024 * 1024);
   test_alloc(1024 * 1024);
   test_alloc(1024 * 1024);
+  test_alloc(1024 * 1024 + 1);
   // for (int i = 0; i <= 1000; i++) {
   //   size_t size = rand() % 100000;
   //   void *p = pmm->alloc(size);

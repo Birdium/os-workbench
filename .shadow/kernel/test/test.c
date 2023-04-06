@@ -10,8 +10,7 @@ struct malloc_op {
 struct malloc_op random_op() {
     struct malloc_op result;
     result.type = OP_ALLOC;
-    static int sz = 1;
-    if (sz > 16 * 1024 * 1024) sz = 1;
+    static int sz = 16 * 1024 * 1024;
     result.sz = sz;
     return result;
 }

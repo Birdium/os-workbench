@@ -10,7 +10,7 @@ struct malloc_op {
 struct malloc_op random_op() {
     struct malloc_op result;
     result.type = OP_ALLOC;
-    static int sz = 0;
+    static int sz = 1;
     sz *= 2;
     if (sz > 1048576) sz = 1;
     result.sz = sz;

@@ -15,6 +15,9 @@ static void os_run() {
     void *p = pmm->alloc(size);
     printf("CPU #%d Allocating in %x, %d byte(s)\n", cpu_current(), (uintptr_t)p, size);
   }
+  size_t size = 4 * 1024 * 1024;
+  void *p = pmm->alloc(size);
+  printf("CPU #%d Allocating in %x, %d byte(s)\n", cpu_current(), (uintptr_t)p, size);
   while (1);
 }
 #else 

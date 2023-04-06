@@ -10,7 +10,8 @@ struct malloc_op {
 struct malloc_op random_op() {
     struct malloc_op result;
     result.type = OP_ALLOC;
-    result.sz = 1024;
+    static int sz = 1024 * 1024 * 1024;
+    result.sz = sz;
     return result;
 }
 

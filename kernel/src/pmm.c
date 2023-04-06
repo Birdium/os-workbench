@@ -17,7 +17,7 @@ spinlock_t lk;
 uintptr_t pm_cur;
 
 static void *kalloc(size_t size) {
-  if (size >= (1<<24)) return NULL;
+  // if (size > (1<<24)) return NULL;
   spin_lock(&lk);
   uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
   pm_cur = pm_ret + size;
@@ -36,6 +36,8 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)heap.end - (uintptr_t)heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, heap.start, heap.end);
+  lk = SPIN_INIT();
+  pm_cur = (uintptr_t) heap.start;
 }
 #else
 // 测试代码的 pmm_init ()

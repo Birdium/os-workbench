@@ -13,11 +13,11 @@ static void os_run() {
   for (int i = 0; i <= 1000; i++) {
     size_t size = rand() % 100000;
     void *p = pmm->alloc(size);
-    printf("CPU #%d Allocating in %x, %d byte(s)\n", cpu_current(), (uintptr_t)p, size);
+    printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   }
   size_t size = 16 * 1024 * 1024;
   void *p = pmm->alloc(size);
-  printf("CPU #%d Allocating in %x, %d byte(s)\n", cpu_current(), (uintptr_t)p, size);
+  printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   while (1);
 }
 #else 

@@ -10,7 +10,12 @@ static void os_run() {
   //   putch(*s == '*' ? '0' + cpu_current() : *s);
   // }
   printf("Hello World from CPU #%d\n", cpu_current());
-  while (1) ;
+  for (int i = 0; i <= 1000; i++) {
+    size_t size = rand() % 100000;
+    void *p = pmm->alloc(size);
+    printf("CPU #%d Allocating in %x, %d byte(s)\n", cpu_current(), (uintptr_t)p, size);
+  }
+  while (1);
 }
 #else 
 static void os_run() {

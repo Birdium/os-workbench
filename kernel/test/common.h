@@ -4,6 +4,7 @@
 #include <thread.h>
 #include <thread-sync.h>
 
+#define PAGE_SIZE 4096
 
 typedef struct {
     void *start, *end;

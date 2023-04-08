@@ -6,7 +6,11 @@ static void os_init() {
 
 static void test_alloc(int size) {
   void *p = pmm->alloc(size);
+#ifndef TEST
   printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
+#else
+  printf("CPU Allocating in %x, %d byte(s) %x\n", (uintptr_t)p, size, size);
+#endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
 }
 

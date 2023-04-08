@@ -8,11 +8,15 @@ extern Area heap;
 
 typedef struct TableEntry {
     struct TableEntry *prev, *next;
-    spinlock_t lock;
     uint8_t 
         size : 5,
         allocated: 1;
 } TableEntry;
+
+typedef struct {
+    spinlock_t lock;
+    TableEntry *head, *tail;
+} TableList;
 
 
 #define MAX_ALLOC_SIZE_EXP 24
@@ -27,5 +31,6 @@ typedef struct TableEntry {
 #define TBN_2_ADDR(tbn) (heap.start + PAGE_SIZE * tbn) 
 
 void init_buddy();
+void buddy_insert(TableEntry *tbe);
 
 #endif

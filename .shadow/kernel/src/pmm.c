@@ -4,8 +4,12 @@
 #include <lock.h>
 #endif
 
+static inline size_t lowbit(size_t size) {
+  return size & (-size);
+}
+
 static inline size_t align(size_t size) {
-  return (-(size & (-size))) & size;
+  return size & (-lowbit(size));
 }
 
 spinlock_t lk;

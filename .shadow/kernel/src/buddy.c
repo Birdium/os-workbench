@@ -21,8 +21,8 @@ void init_buddy() {
     // init all table and insert them into buddy sys
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
         table[i].size = MAX_ALLOC_SIZE_EXP;
-    assert(0);
         table[i].allocated = 0;
+    assert(0);
         buddy_insert(&table[i]);
         // table[i].prev = (i != buddy_page) ? NULL : &table[i - MAX_ALLOC_PAGE_NUM];
         // table[i].next = (i != PAGE_NUM) ? NULL : &table[i + MAX_ALLOC_PAGE_NUM];

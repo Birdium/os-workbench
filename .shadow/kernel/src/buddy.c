@@ -25,5 +25,5 @@ void init_buddy() {
     }
     memset(buddy, 0, sizeof(buddy));
     buddy[MAX_ALLOC_SIZE_EXP] = buddy_start;
-    LOG_INFO("buddy system allocated from %p to %p\n", buddy_start, heap.end);
+    LOG_INFO("buddy system allocated from %p to %p", buddy_start, heap.end);
 }

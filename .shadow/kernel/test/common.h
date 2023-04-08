@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <thread.h>
 #include <thread-sync.h>
-#include "buddy.h"
 
 #define PAGE_SIZE 4096
 

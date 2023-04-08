@@ -9,7 +9,7 @@ static TableEntry *table, *buddy_start;
 // buddy is a static array with buddy[i] indicating to size (2^i)'s 
 // page's array
 
-static TableList *buddy[32];
+static TableList buddy[32];
 
 
 void init_buddy() {
@@ -32,7 +32,7 @@ void init_buddy() {
 
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
-    TableList *list = buddy[sz];
+    TableList *list = &buddy[sz];
     LOG_INFO("%p", list);
     spin_lock(&(list->lock));
     if (list->head == NULL) {
@@ -43,7 +43,7 @@ void buddy_insert(TableEntry *tbe) {
         tbe->prev = list->tail;
         list->tail = tbe;
     }
-    spin_unlock(&(buddy[sz]->lock));    
+    spin_unlock(&(list->lock));    
 }
 
 void *buddy_alloc(size_t size) {

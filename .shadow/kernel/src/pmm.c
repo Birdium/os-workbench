@@ -38,6 +38,7 @@ static void pmm_init() {
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, heap.start, heap.end);
   lk = SPIN_INIT();
   pm_cur = (uintptr_t) heap.start;
+  init_buddy();
 }
 #else
 // 测试代码的 pmm_init ()

@@ -18,10 +18,10 @@ void init_buddy() {
     int buddy_page = ADDR_2_TBN(buddy_start);
     // init buddy list
     memset(buddy, 0, sizeof(buddy));
-    assert(0);
     // init all table and insert them into buddy sys
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
         table[i].size = MAX_ALLOC_SIZE_EXP;
+    assert(0);
         table[i].allocated = 0;
         buddy_insert(&table[i]);
         // table[i].prev = (i != buddy_page) ? NULL : &table[i - MAX_ALLOC_PAGE_NUM];

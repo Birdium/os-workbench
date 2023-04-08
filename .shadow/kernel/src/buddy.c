@@ -1,8 +1,5 @@
-extern Area heap;
+#include "buddy.h"
 
-#define HEAP_SIZE (heap.end - heap.start)
-#define PAGE_NUM (HEAP_SIZE / PAGE_SIZE);
-
-static void init_buddy() {
+void init_buddy() {
     printf("%d\n", HEAP_SIZE);
 }

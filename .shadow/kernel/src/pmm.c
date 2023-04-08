@@ -1,4 +1,5 @@
 #include <common.h>
+#include <buddy.h>
 #ifndef TEST
 #include <lock.h>
 #endif

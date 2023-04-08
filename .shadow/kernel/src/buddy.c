@@ -32,8 +32,8 @@ void init_buddy() {
 
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
-    assert(0);
     TableList *list = buddy[sz];
+    assert(0);
     spin_lock(&(list->lock));
     if (list->head == NULL) {
         list->head = list->tail = tbe;

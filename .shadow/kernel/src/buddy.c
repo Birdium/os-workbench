@@ -25,5 +25,5 @@ void init_buddy() {
     }
     memset(buddy, 0, sizeof(buddy));
     buddy[MAX_ALLOC_SIZE_EXP] = buddy_start;
-    log_info("buddy system allocated from %p to %p\n", buddy_start, buddy_start + PAGE_NUM * PAGE_SIZE);
+    LOG_INFO("buddy system allocated from %p to %p\n", buddy_start, buddy_start + PAGE_NUM * PAGE_SIZE);
 }

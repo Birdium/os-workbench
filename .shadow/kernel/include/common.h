@@ -9,7 +9,7 @@
 #define ROUNDDOWN(a, sz)    ((((uintptr_t)a)) & ~((sz) - 1))
 
 #ifdef DEBUG
-#define LOG_INFO(fmt, ...)  printf("LOG_INFO: [%s][%d]"fmt"\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_INFO(fmt, ...)  printf("LOG_INFO at [%s][%d]: "fmt"\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else 
 #define LOG_INFO(fmt, ...)  
 #endif

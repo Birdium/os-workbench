@@ -2,11 +2,13 @@
 #define BUDDY_H
 #include <common.h>
 #include <stdio.h>
+#include "lock.h"
 
 extern Area heap;
 
 typedef struct TableEntry {
     struct TableEntry *prev, *next;
+    spinlock_t lock;
     uint8_t 
         size : 5,
         allocated: 1;

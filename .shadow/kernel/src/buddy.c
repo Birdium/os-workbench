@@ -18,6 +18,7 @@ void init_buddy() {
     int buddy_page = ADDR_2_TBN(buddy_start);
     // init buddy list
     memset(buddy, 0, sizeof(buddy));
+    assert(0);
     // init all table and insert them into buddy sys
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
         table[i].size = MAX_ALLOC_SIZE_EXP;
@@ -34,7 +35,6 @@ void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = buddy[sz];
     spin_lock(&(list->lock));
-    assert(0);
     if (list->head == NULL) {
         list->head = list->tail = tbe;
     }

@@ -77,7 +77,7 @@ void *buddy_fetch_best_chunk(int exp) {
         spin_lock(&(list->lock));
         if (list->head != NULL) {
             chunk = TBE_2_ADDR(list->head);
-            assert(0);
+            LOG_INFO("test");
             assert(list->head->allocated == 0);
             list->head->allocated = 1;
             buddy_delete(list->head);

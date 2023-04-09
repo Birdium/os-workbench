@@ -34,12 +34,13 @@ void init_buddy() {
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
-    LOG_INFO("inserting %p", TBE_2_ADDR(tbe));
     if (list->head == NULL) {
+        LOG_INFO("inserting into an empty list, %p", TBE_2_ADDR(tbe));
         list->head = list->tail = tbe;
         tbe->prev = tbe->next = NULL;
     }
-    else {
+    else {        
+        LOG_INFO("inserting into a list, %p", TBE_2_ADDR(tbe));
         list->tail->next = tbe;
         tbe->prev = list->tail;
         tbe->next = NULL;

@@ -108,5 +108,28 @@ void *buddy_alloc(size_t size) {
         buddy_insert(split_tbe);
         spin_unlock(&(buddy[tbe->size].lock));
     }
+    buddy_debug_print();
     return result;
+}
+
+void buddy_debug_print() {
+    printf("Printing Buddy System Lists\n");
+    for (int i = PAGE_SIZE_EXP; i <= MAX_ALLOC_SIZE_EXP; i++) {
+        printf("List %d:\n", i);
+        TableList *list = &buddy[i];
+        spin_lock(&(list->lock));
+        if (list->head == NULL) {
+            printf("(empty)\n");
+        }
+        else {
+            TableEntry *tbe = list->head;
+            while (tbe) {
+                printf("%p", TBE_2_ADDR(tbe));
+                if (tbe == list->tail) break;
+                printf(" <-> ");
+            }
+            printf("\n");
+        }
+        spin_unlock(&(list->lock));
+    }
 }

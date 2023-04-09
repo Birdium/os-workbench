@@ -34,6 +34,7 @@ typedef struct {
 void init_buddy();
 void buddy_insert(TableEntry *tbe);
 void buddy_delete(TableEntry *tbe);
+void *buddy_alloc(size_t size);
 void *buddy_get(size_t size);
 
 #endif

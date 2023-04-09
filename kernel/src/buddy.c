@@ -47,6 +47,27 @@ void buddy_insert(TableEntry *tbe) {
 }
 
 void *buddy_alloc(size_t size) {
-    // TODO: alloc
-    return NULL;
+    // assume alloc is aligned
+    int size_exp = PAGE_SIZE_EXP;
+    while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
+        ++size_exp;
+    void *result = NULL;
+    result = buddy_get(size_exp);
+    return result;
+}
+
+void *buddy_get(size_t size) {
+    void *result = NULL;
+    TableList *list = &buddy[size];
+    spin_lock(&(list->lock));
+    if (list->head != NULL) {
+        result = TBE_2_ADDR(list->head);
+        list->head->allocated = 1;
+        list->head = list->head->next;
+        if (list->head == NULL) {
+            list->tail = NULL;
+        }
+    }
+    spin_unlock(&(list->lock));
+    return result;
 }

@@ -68,25 +68,41 @@ void buddy_delete(TableEntry *tbe) {
     tbe->prev = tbe->next = NULL;
 }
 
+// get a smallest chunk whose size >= 2^(exp)
+// remove it's tbe from buddy system and return the physical addr  
+void *buddy_fetch_best_chunk(int exp) {
+    void *chunk = NULL;
+    while (exp < MAX_ALLOC_SIZE_EXP) {
+        TableList *list = &buddy[exp];
+        spin_lock(&(list->lock));
+        if (list->head != NULL) {
+            chunk = TBE_2_ADDR(list->head);
+            assert(list->head->allocated == 0);
+            list->head->allocated = 1;
+            buddy_delete(list->head);
+        }
+        spin_unlock(&(list->lock));
+        ++exp;
+    } 
+    return chunk;
+}
+
+// just an allocator
 void *buddy_alloc(size_t size) {
     // assume alloc is aligned
     int size_exp = PAGE_SIZE_EXP;
     while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
-    void *result = NULL;
-    result = buddy_get(size_exp);
-    return result;
-}
-
-void *buddy_get(size_t size) {
-    void *result = NULL;
-    TableList *list = &buddy[size];
-    spin_lock(&(list->lock));
-    if (list->head != NULL) {
-        result = TBE_2_ADDR(list->head);
-        list->head->allocated = 1;
-        buddy_delete(list->head);
+    void *result = buddy_fetch_best_chunk(size_exp);
+    TableEntry *tbe = ADDR_2_TBE(result);
+    // split tbe into 2
+    while (tbe->size > size_exp) {
+        tbe->size--;
+        TableEntry *split_tbe = tbe + (1 << (tbe->size));
+        split_tbe->size = tbe->size;
+        spin_lock(&(buddy[tbe->size].lock));
+        buddy_insert(split_tbe);
+        spin_unlock(&(buddy[tbe->size].lock));
     }
-    spin_unlock(&(list->lock));
     return result;
 }

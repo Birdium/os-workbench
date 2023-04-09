@@ -94,6 +94,7 @@ void *buddy_alloc(size_t size) {
     int size_exp = PAGE_SIZE_EXP;
     while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
+    LOG_INFO("buddy allocating 2^(%d) memory", size_exp);
     void *result = buddy_fetch_best_chunk(size_exp);
     TableEntry *tbe = ADDR_2_TBE(result);
     // split tbe into 2

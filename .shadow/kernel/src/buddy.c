@@ -127,6 +127,7 @@ void buddy_debug_print() {
                 printf("%p", TBE_2_ADDR(tbe));
                 if (tbe == list->tail) break;
                 printf(" <-> ");
+                tbe = tbe->next;
             }
             printf("\n");
         }

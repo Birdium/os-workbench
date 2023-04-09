@@ -102,7 +102,6 @@ void *buddy_alloc(size_t size) {
     while (tbe->size > size_exp) {
         tbe->size--;
         TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
-        LOG_INFO("%d", tbe->size);
         split_tbe->size = tbe->size;
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
         spin_lock(&(buddy[tbe->size].lock));

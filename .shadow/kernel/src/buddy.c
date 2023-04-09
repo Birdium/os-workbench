@@ -99,7 +99,8 @@ void *buddy_alloc(size_t size) {
     TableEntry *tbe = ADDR_2_TBE(result);
     LOG_INFO("fetched page start from %p with size %d", result, (1<<tbe->size));
     // split tbe into 2
-    while (tbe->size > size_exp) {    
+    while (tbe->size > size_exp) {
+        LOG_INFO("1");
         tbe->size--;
         TableEntry *split_tbe = tbe + (1 << (tbe->size));
         split_tbe->size = tbe->size;

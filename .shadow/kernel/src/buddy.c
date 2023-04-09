@@ -72,7 +72,7 @@ void buddy_delete(TableEntry *tbe) {
 // remove it's tbe from buddy system and return the physical addr  
 void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
-    while (exp < MAX_ALLOC_SIZE_EXP) {
+    while (exp <= MAX_ALLOC_SIZE_EXP) {
         LOG_INFO("trying %d", exp);
         TableList *list = &buddy[exp];
         spin_lock(&(list->lock));

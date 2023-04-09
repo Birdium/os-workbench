@@ -90,13 +90,14 @@ void *buddy_fetch_best_chunk(int exp) {
 // just an allocator
 void *buddy_alloc(size_t size) {
     // assume alloc is aligned
-    LOG_INFO("buddy allocating %d memory", size);
+    LOG_INFO("allocating %d memory", size);
     int size_exp = PAGE_SIZE_EXP;
     while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
-    LOG_INFO("buddy allocating 2^(%d) memory", size_exp);
+    LOG_INFO("allocating 2^(%d) memory", size_exp);
     void *result = buddy_fetch_best_chunk(size_exp);
     TableEntry *tbe = ADDR_2_TBE(result);
+    LOG_INFO("fetched page start from %p with size %d", result, (1<<tbe->size));
     // split tbe into 2
     while (tbe->size > size_exp) {
         tbe->size--;

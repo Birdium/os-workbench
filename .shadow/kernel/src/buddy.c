@@ -73,11 +73,11 @@ void buddy_delete(TableEntry *tbe) {
 void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
     while (exp < MAX_ALLOC_SIZE_EXP) {
+        LOG_INFO("trying %d", exp);
         TableList *list = &buddy[exp];
         spin_lock(&(list->lock));
         if (list->head != NULL) {
             chunk = TBE_2_ADDR(list->head);
-            LOG_INFO("test");
             assert(list->head->allocated == 0);
             list->head->allocated = 1;
             buddy_delete(list->head);

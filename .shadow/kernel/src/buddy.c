@@ -30,11 +30,11 @@ void init_buddy() {
     LOG_INFO("buddy system allocated from %p to %p", buddy_start, heap.end);
 }
 
+// should require lock outside this func
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
     // LOG_INFO("%p", list);
-    spin_lock(&(list->lock));
     if (list->head == NULL) {
         list->head = list->tail = tbe;
         tbe->prev = tbe->next = NULL;
@@ -45,13 +45,12 @@ void buddy_insert(TableEntry *tbe) {
         tbe->next = NULL;
         list->tail = tbe;
     }
-    spin_unlock(&(list->lock));    
 }
 
+// should require lock outside this func
 void buddy_delete(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
-    spin_lock(&(list->lock));
     assert(list->head && list->tail);
     if (list->head == list->tail) {
         assert(list->head == tbe);
@@ -67,7 +66,6 @@ void buddy_delete(TableEntry *tbe) {
         list->tail->next = NULL;
     }
     tbe->prev = tbe->next = NULL;
-    spin_unlock(&(list->lock));
 }
 
 void *buddy_alloc(size_t size) {
@@ -87,10 +85,7 @@ void *buddy_get(size_t size) {
     if (list->head != NULL) {
         result = TBE_2_ADDR(list->head);
         list->head->allocated = 1;
-        list->head = list->head->next;
-        if (list->head == NULL) {
-            list->tail = NULL;
-        }
+        buddy_delete(list->head);
     }
     spin_unlock(&(list->lock));
     return result;

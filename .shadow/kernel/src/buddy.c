@@ -34,7 +34,7 @@ void init_buddy() {
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
-    // LOG_INFO("%p", list);
+    LOG_INFO("inserting %p", tbe);
     if (list->head == NULL) {
         list->head = list->tail = tbe;
         tbe->prev = tbe->next = NULL;

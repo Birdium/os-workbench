@@ -29,8 +29,11 @@ typedef struct {
 
 #define ADDR_2_TBN(addr) (((void *)addr - heap.start) / PAGE_SIZE)
 #define TBN_2_ADDR(tbn) (heap.start + PAGE_SIZE * tbn) 
+#define TBE_2_ADDR(tbe) (heap.start + PAGE_SIZE * (tbe - table))
 
 void init_buddy();
 void buddy_insert(TableEntry *tbe);
+void buddy_delete(TableEntry *tbe);
+void *buddy_get(size_t size);
 
 #endif

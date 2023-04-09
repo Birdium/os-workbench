@@ -37,15 +37,61 @@ void buddy_insert(TableEntry *tbe) {
     spin_lock(&(list->lock));
     if (list->head == NULL) {
         list->head = list->tail = tbe;
+        tbe->prev = tbe->next = NULL;
     }
     else {
         list->tail->next = tbe;
         tbe->prev = list->tail;
+        tbe->next = NULL;
         list->tail = tbe;
     }
     spin_unlock(&(list->lock));    
 }
 
+void buddy_delete(TableEntry *tbe) {
+    int sz = tbe->size;
+    TableList *list = &buddy[sz];
+    spin_lock(&(list->lock));
+    assert(list->head && list->tail);
+    if (list->head == list->tail) {
+        assert(list->head == tbe);
+        list->head = list->tail = NULL;
+    }
+    else if (list->head == tbe) {
+        list->head = tbe->next;
+        list->head->prev = NULL;
+        
+    }
+    else if (list->tail == tbe) {
+        list->tail = tbe->prev;
+        list->tail->next = NULL;
+    }
+    tbe->prev = tbe->next = NULL;
+    spin_unlock(&(list->lock));
+}
+
 void *buddy_alloc(size_t size) {
-    return NULL;
+    // assume alloc is aligned
+    int size_exp = PAGE_SIZE_EXP;
+    while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
+        ++size_exp;
+    void *result = NULL;
+    result = buddy_get(size_exp);
+    return result;
+}
+
+void *buddy_get(size_t size) {
+    void *result = NULL;
+    TableList *list = &buddy[size];
+    spin_lock(&(list->lock));
+    if (list->head != NULL) {
+        result = TBE_2_ADDR(list->head);
+        list->head->allocated = 1;
+        list->head = list->head->next;
+        if (list->head == NULL) {
+            list->tail = NULL;
+        }
+    }
+    spin_unlock(&(list->lock));
+    return result;
 }

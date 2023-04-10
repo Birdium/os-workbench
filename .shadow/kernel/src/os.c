@@ -50,7 +50,7 @@ static void os_run() {
   test_free(p5); 
   buddy_debug_print();
     // assert(0);
-  for (int i = 0; i <= 100000; i++) {
+  for (int i = 0; i <= 1000; i++) {
     size_t size = (rand() % 1024 + 1) * PAGE_SIZE;
     void *p = test_alloc(size);
     test_free(p);

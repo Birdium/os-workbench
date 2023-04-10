@@ -51,7 +51,7 @@ static void os_run() {
   buddy_debug_print();
     // assert(0);
   for (int i = 0; i <= 100000; i++) {
-    size_t size = (1 << (rand() % 25));
+    size_t size = (1 << (rand() % 12 + 12));
     void *p = test_alloc(size);
     test_free(p);
     printf("%d\n", i);

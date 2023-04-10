@@ -96,7 +96,6 @@ void *buddy_fetch_best_chunk(int exp) {
 // just an allocator
 void *buddy_alloc(size_t size) {
     // assume alloc is aligned
-    LOG_INFO("allocating %d memory", size);
     int size_exp = PAGE_SIZE_EXP;
     while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;

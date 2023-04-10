@@ -131,7 +131,7 @@ void buddy_free(void *addr) {
         ++list;
         spin_lock(&(list->lock));
         tbe = PARENT_TBE(tbe);
-        ++size_exp;
+        tbe->size = ++size_exp;
     }
     tbe->allocated = 0;
     buddy_insert(tbe);

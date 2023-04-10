@@ -10,8 +10,8 @@ static inline void spin_lock(spinlock_t *lk) {
       break;
     }
     cnt++;
-    if (cnt == INT32_MAX) {
-      return;
+    if (cnt == 10000000) {
+      assert(0);
     }
   }
 }

@@ -10,7 +10,7 @@ static inline void spin_lock(spinlock_t *lk) {
       break;
     }
     cnt++;
-    if (cnt == 10000000) {
+    if (cnt == 1) {
       assert(0);
     }
   }

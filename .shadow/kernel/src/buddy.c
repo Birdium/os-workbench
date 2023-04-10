@@ -152,7 +152,7 @@ void buddy_debug_print() {
     for (int i = MAX_ALLOC_SIZE_EXP; i >= PAGE_SIZE_EXP; i--) {
         printf("List %d:\n", i);
         TableList *list = &buddy[i];
-        // spin_lock(&(list->lock));
+        spin_lock(&(list->lock));
         if (list->head == NULL) {
             printf("(empty)\n");
         }

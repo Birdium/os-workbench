@@ -148,7 +148,7 @@ void buddy_free(void *addr) {
 void buddy_debug_print() {
 #ifdef DEBUG
     spin_lock(&debug_lock);
-    printf("Printing Buddy System Lists\n");
+    LOG_INFO("Printing Buddy System Lists from %d", cpu_current());
     for (int i = MAX_ALLOC_SIZE_EXP; i >= PAGE_SIZE_EXP; i--) {
         printf("List %d:\n", i);
         TableList *list = &buddy[i];

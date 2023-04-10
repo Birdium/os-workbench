@@ -32,8 +32,8 @@ static void os_run() {
   //   putch(*s == '*' ? '0' + cpu_current() : *s);
   // }
   printf("Hello World from CPU #%d\n", cpu_current());
-    buddy_debug_print();
-    assert(0);
+  buddy_debug_print();
+    // assert(0);
   // test_alloc(1);
   // test_alloc(2);
   // test_alloc(4);

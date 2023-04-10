@@ -147,7 +147,7 @@ void buddy_free(void *addr) {
 
 void buddy_debug_print() {
 #ifdef DEBUG
-    spin_lock(&debug_lock);
+    // spin_lock(&debug_lock);
     LOG_INFO("Printing Buddy System Lists from %d", cpu_current());
     for (int i = MAX_ALLOC_SIZE_EXP; i >= PAGE_SIZE_EXP; i--) {
         printf("List %d:\n", i);
@@ -168,6 +168,6 @@ void buddy_debug_print() {
         }
         spin_unlock(&(list->lock));
     }
-    spin_unlock(&debug_lock);
+    // spin_unlock(&debug_lock);
 #endif
 }

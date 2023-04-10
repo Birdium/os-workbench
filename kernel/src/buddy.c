@@ -51,6 +51,7 @@ void buddy_insert(TableEntry *tbe) {
 void buddy_delete(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
+    LOG_INFO("Deleting %p, size %d", TBE_2_ADDR(tbe), (1 << tbe->size));
     assert(list->head && list->tail);
     if (list->head == list->tail) {
         assert(list->head == tbe);
@@ -65,6 +66,8 @@ void buddy_delete(TableEntry *tbe) {
         list->tail = tbe->prev;
         list->tail->next = NULL;
     }
+    if (tbe->prev) tbe->prev->next = tbe->next;
+    if (tbe->next) tbe->next->prev = tbe->prev;
     tbe->prev = tbe->next = NULL;
 }
 
@@ -112,7 +115,9 @@ void *buddy_alloc(size_t size) {
     return result;
 }
 
+    static spinlock_t debug_lock = SPIN_INIT();
 void buddy_free(void *addr) {
+    spin_lock(&debug_lock);
     TableEntry *tbe = ADDR_2_TBE(addr);
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
@@ -122,7 +127,6 @@ void buddy_free(void *addr) {
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
         LOG_INFO("test1: %p, sib:%p", TBE_2_ADDR(tbe), SIBLING_ADDR(tbe));
-        LOG_INFO("test2: %p, sib:%p", TBE_2_ADDR(tbe), TBE_2_ADDR(sibling_tbe));
         if (sibling_tbe->allocated || sibling_tbe->size != size_exp) 
             break;
         sibling_tbe->allocated = 1;
@@ -136,11 +140,11 @@ void buddy_free(void *addr) {
     tbe->allocated = 0;
     buddy_insert(tbe);
     spin_unlock(&(list->lock));
+    spin_unlock(&debug_lock);
 }
 
 void buddy_debug_print() {
 #ifdef DEBUG
-    static spinlock_t debug_lock = SPIN_INIT();
     spin_lock(&debug_lock);
     printf("Printing Buddy System Lists\n");
     for (int i = PAGE_SIZE_EXP; i <= MAX_ALLOC_SIZE_EXP; i++) {

@@ -1,4 +1,5 @@
 #include <common.h>
+#include <buddy.h>
 
 static void os_init() {
   pmm->init();
@@ -38,6 +39,7 @@ static void os_run() {
   // size_t size = 16 * 1024 * 1024;
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
+  buddy_debug_print();
   while (1);
 }
 #else 

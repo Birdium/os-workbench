@@ -34,21 +34,17 @@ void init_buddy() {
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
-    LOG_INFO("head ptr %p", list->head);
-    LOG_INFO("tbe ptr %p", tbe);
     if (list->head == NULL) {
-        LOG_INFO("inserting into an empty list, %p", TBE_2_ADDR(tbe));
         list->head = list->tail = tbe;
-        LOG_INFO("head ptr %p, tail ptr %p", TBE_2_ADDR(list->head), TBE_2_ADDR(list->tail));
         tbe->prev = tbe->next = NULL;
     }
     else {        
-        LOG_INFO("inserting into a list, %p", TBE_2_ADDR(tbe));
         list->tail->next = tbe;
         tbe->prev = list->tail;
         tbe->next = NULL;
         list->tail = tbe;
     }
+    LOG_INFO("inserting %p into buddy #%d", TBE_2_ADDR(tbe), sz);
 }
 
 // should require lock outside this func
@@ -113,7 +109,6 @@ void *buddy_alloc(size_t size) {
         buddy_insert(split_tbe);
         spin_unlock(&(buddy[tbe->size].lock));
     }
-    buddy_debug_print();
     return result;
 }
 
@@ -121,7 +116,6 @@ void buddy_debug_print() {
 #ifdef DEBUG
     static spinlock_t debug_lock = SPIN_INIT();
     spin_lock(&debug_lock);
-#endif
     printf("Printing Buddy System Lists\n");
     for (int i = PAGE_SIZE_EXP; i <= MAX_ALLOC_SIZE_EXP; i++) {
         printf("List %d:\n", i);
@@ -142,7 +136,6 @@ void buddy_debug_print() {
         }
         spin_unlock(&(list->lock));
     }
-#ifdef DEBUG
     spin_unlock(&debug_lock);
 #endif
 }

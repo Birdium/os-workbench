@@ -53,7 +53,6 @@ static void os_run() {
   for (int i = 0; i <= 1000; i++) {
     size_t size = (rand() % 1024 + 1) * PAGE_SIZE;
     void *p = test_alloc(size);
-    printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
     test_free(p);
     printf("%d\n", i);
     buddy_debug_print();

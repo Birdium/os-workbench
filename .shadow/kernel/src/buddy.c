@@ -116,7 +116,7 @@ void *buddy_alloc(size_t size) {
     return result;
 }
 
-    static spinlock_t debug_lock = SPIN_INIT();
+static spinlock_t debug_lock = SPIN_INIT();
 void buddy_free(void *addr) {
     spin_lock(&debug_lock);
     TableEntry *tbe = ADDR_2_TBE(addr);

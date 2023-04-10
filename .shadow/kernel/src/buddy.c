@@ -34,21 +34,17 @@ void init_buddy() {
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
-    LOG_INFO("head ptr %p", list->head);
-    LOG_INFO("tbe ptr %p", tbe);
     if (list->head == NULL) {
-        LOG_INFO("inserting into an empty list, %p", TBE_2_ADDR(tbe));
         list->head = list->tail = tbe;
-        LOG_INFO("head ptr %p, tail ptr %p", TBE_2_ADDR(list->head), TBE_2_ADDR(list->tail));
         tbe->prev = tbe->next = NULL;
     }
     else {        
-        LOG_INFO("inserting into a list, %p", TBE_2_ADDR(tbe));
         list->tail->next = tbe;
         tbe->prev = list->tail;
         tbe->next = NULL;
         list->tail = tbe;
     }
+    LOG_INFO("inserting %p into buddy #%d", TBE_2_ADDR(tbe), sz);
 }
 
 // should require lock outside this func

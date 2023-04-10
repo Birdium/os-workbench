@@ -127,7 +127,7 @@ void buddy_debug_print() {
         else {
             TableEntry *tbe = list->head;
             while (tbe) {
-                printf("%p", TBE_2_ADDR(tbe));
+                printf("[%p, %p)", TBE_2_ADDR(tbe), TBE_2_ADDR(tbe) + (1 << tbe->size));
                 if (tbe == list->tail) break;
                 printf(" <-> ");
                 tbe = tbe->next;

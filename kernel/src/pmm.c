@@ -17,8 +17,8 @@ static inline size_t align(size_t size) {
 
 extern TableEntry *table;
 
-spinlock_t lk;
-uintptr_t pm_cur;
+// spinlock_t lk;
+// uintptr_t pm_cur;
 
 static void *kalloc(size_t size) {
   if (size > (1 << 24)) return NULL;
@@ -26,23 +26,23 @@ static void *kalloc(size_t size) {
   if (size >= (1 << 12)) {
     return buddy_alloc(align(size));
   }
-  // TODO: fast-path: slab
   else {
-    return NULL;
+    return slab_alloc(align(size));
   }
-  spin_lock(&lk);
-  uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
-  pm_cur = pm_ret + size;
+  // // OJ hacker
+  // spin_lock(&lk);
+  // uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
+  // pm_cur = pm_ret + size;
 #ifdef TEST
   printf("kalloc: allocated from %p, size %u\n", pm_ret, size);
 #endif
-  spin_unlock(&lk);
-  return (void*) pm_ret;
+  // spin_unlock(&lk);
+  // return (void*) pm_ret;
 }
 
 static void kfree(void *ptr) {
   TableEntry *tbe = ADDR_2_TBE(ptr);
-  if (tbe->is_slab) slab_free();
+  if (tbe->is_slab) slab_free(ptr);
   else buddy_free(ptr);
 }
 
@@ -51,8 +51,8 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)heap.end - (uintptr_t)heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, heap.start, heap.end);
-  lk = SPIN_INIT();
-  pm_cur = (uintptr_t) heap.start;
+  // lk = SPIN_INIT();
+  // pm_cur = (uintptr_t) heap.start;
   init_buddy();
 }
 #else

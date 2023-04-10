@@ -10,7 +10,8 @@ typedef struct TableEntry {
     struct TableEntry *prev, *next;
     uint8_t 
         size : 5,
-        allocated: 1;
+        allocated: 1,
+        is_slab : 1;
 } TableEntry;
 
 typedef struct {
@@ -18,26 +19,6 @@ typedef struct {
     TableEntry *head, *tail;
 } TableList;
 
-
-#define MAX_ALLOC_SIZE_EXP 24
-#define MAX_ALLOC_SIZE (1 << MAX_ALLOC_SIZE_EXP)
-#define PAGE_SIZE_EXP 12
-#define PAGE_SIZE (1 << PAGE_SIZE_EXP)
-#define MAX_ALLOC_PAGE_NUM MAX_ALLOC_SIZE / PAGE_SIZE
-#define HEAP_SIZE (heap.end - heap.start)
-#define PAGE_NUM (HEAP_SIZE / PAGE_SIZE)
-
-// convert table entry's addr from the chunk's physical addr
-#define ADDR_2_TBN(addr) (((void *)addr - heap.start) / PAGE_SIZE)
-#define ADDR_2_TBE(addr) (table + ((void *)addr - heap.start) / PAGE_SIZE)
-#define TBN_2_ADDR(tbn) (heap.start + PAGE_SIZE * tbn) 
-#define TBE_2_ADDR(tbe) (heap.start + PAGE_SIZE * (tbe - table))
-
-#define SIBLING_ADDR(tbe) ((void*)(((uintptr_t) TBE_2_ADDR(tbe)) ^ (1 << tbe->size)))
-#define SIBLING_TBE(tbe) (ADDR_2_TBE(SIBLING_ADDR(tbe)))
-
-#define PARENT_ADDR(tbe) ((void*)(((uintptr_t) TBE_2_ADDR(tbe)) & (~(1 << tbe->size))))
-#define PARENT_TBE(tbe) (ADDR_2_TBE(PARENT_ADDR(tbe)))
 
 void init_buddy();
 void buddy_insert(TableEntry *tbe);

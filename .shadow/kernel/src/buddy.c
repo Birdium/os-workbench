@@ -86,6 +86,7 @@ void *buddy_fetch_best_chunk(int exp) {
             buddy_delete(list->head);
         }
         spin_unlock(&(list->lock));
+        if (chunk) break;
         ++exp;
     } 
     return chunk;

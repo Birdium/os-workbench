@@ -123,6 +123,7 @@ void buddy_free(void *addr) {
     TableEntry *tbe = ADDR_2_TBE(addr);
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
+    LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);
     TableList *list = &buddy[size_exp];
     spin_lock(&(list->lock));
     // can merge

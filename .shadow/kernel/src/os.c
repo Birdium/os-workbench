@@ -54,7 +54,7 @@ static void os_run() {
     void *p = test_alloc(size);
     printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
     test_free(p);
-    buddy_debug_print();
+    printf("%d\n", i);
     assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
   // size_t size = 16 * 1024 * 1024;

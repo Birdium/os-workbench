@@ -118,6 +118,10 @@ void *buddy_alloc(size_t size) {
 }
 
 void buddy_debug_print() {
+#ifdef DEBUG
+    static spinlock_t debug_lock = SPIN_INIT();
+    spin_lock(&debug_lock);
+#endif
     printf("Printing Buddy System Lists\n");
     for (int i = PAGE_SIZE_EXP; i <= MAX_ALLOC_SIZE_EXP; i++) {
         printf("List %d:\n", i);
@@ -138,4 +142,7 @@ void buddy_debug_print() {
         }
         spin_unlock(&(list->lock));
     }
+#ifdef DEBUG
+    spin_unlock(&debug_lock);
+#endif
 }

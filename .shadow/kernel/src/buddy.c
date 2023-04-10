@@ -112,6 +112,32 @@ void *buddy_alloc(size_t size) {
     return result;
 }
 
+void buddy_free(void *addr) {
+    TableEntry *tbe = ADDR_2_TBE(addr);
+    assert(tbe->allocated == 1);
+    int size_exp = tbe->size;
+    TableList *list = &buddy[size_exp];
+    spin_lock(&(list->lock));
+    // can merge
+    while (size_exp < MAX_ALLOC_SIZE_EXP) {
+        TableEntry *sibling_tbe = SIBLING_TBE(tbe);
+        LOG_INFO("test1: %p, sib:%p", TBE_2_ADDR(tbe), SIBLING_ADDR(tbe));
+        LOG_INFO("test2: %p, sib:%p", TBE_2_ADDR(tbe), TBE_2_ADDR(sibling_tbe));
+        if (sibling_tbe->allocated || sibling_tbe->size != size_exp) 
+            break;
+        sibling_tbe->allocated = 1;
+        buddy_delete(sibling_tbe);
+        spin_unlock(&(list->lock));
+        ++list;
+        spin_lock(&(list->lock));
+        tbe = PARENT_TBE(tbe);
+        ++size_exp;
+    }
+    tbe->allocated = 0;
+    buddy_insert(tbe);
+    spin_unlock(&(list->lock));
+}
+
 void buddy_debug_print() {
 #ifdef DEBUG
     static spinlock_t debug_lock = SPIN_INIT();

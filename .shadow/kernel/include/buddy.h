@@ -33,6 +33,12 @@ typedef struct {
 #define TBN_2_ADDR(tbn) (heap.start + PAGE_SIZE * tbn) 
 #define TBE_2_ADDR(tbe) (heap.start + PAGE_SIZE * (tbe - table))
 
+#define SIBLING_ADDR(tbe) ((void*)(((uintptr_t) TBE_2_ADDR(tbe)) ^ (1 << tbe->size)))
+#define SIBLING_TBE(tbe) (ADDR_2_TBE(SIBLING_ADDR(tbe)))
+
+#define PARENT_ADDR(tbe) ((void*)(((uintptr_t) TBE_2_ADDR(tbe)) & (~(1 << tbe->size))))
+#define PARENT_TBE(tbe) (ADDR_2_TBE(PARENT_ADDR(tbe)))
+
 void init_buddy();
 void buddy_insert(TableEntry *tbe);
 void buddy_delete(TableEntry *tbe);

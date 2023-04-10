@@ -5,7 +5,7 @@ static void os_init() {
   pmm->init();
 }
 
-static void test_alloc(int size) {
+static void *test_alloc(int size) {
   void *p = pmm->alloc(size);
 #ifndef TEST
   printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
@@ -13,6 +13,16 @@ static void test_alloc(int size) {
   printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  return p;
+}
+
+static void test_free(void *addr) {
+  pmm->free(addr);
+#ifndef TEST
+  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
+#else
+  printf("CPU Freeing in %p\n", addr);
+#endif
 }
 
 #ifndef TEST
@@ -25,11 +35,14 @@ static void os_run() {
   test_alloc(2);
   test_alloc(4);
   test_alloc(8);
-  test_alloc(1024);
-  test_alloc(1024 * 1024);
-  test_alloc(1024 * 1024);
-  test_alloc(1024 * 1024);
-  test_alloc(1024 * 1024 + 1);
+  void *p1 = test_alloc(1024);
+  void *p2 = test_alloc(1024 * 1024);
+  void *p3 = test_alloc(1024 * 1024);
+  void *p4 = test_alloc(1024 * 1024);
+  void *p5 = test_alloc(1024 * 1024 + 1);
+  test_free(p1); test_free(p2);
+  test_free(p3); test_free(p4);
+  test_free(p5); 
   // for (int i = 0; i <= 1000; i++) {
   //   size_t size = rand() % 100000;
   //   void *p = pmm->alloc(size);

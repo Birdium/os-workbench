@@ -66,6 +66,8 @@ void buddy_delete(TableEntry *tbe) {
         list->tail = tbe->prev;
         list->tail->next = NULL;
     }
+    if (tbe->prev) tbe->prev->next = tbe->next;
+    if (tbe->next) tbe->next->prev = tbe->prev;
     tbe->prev = tbe->next = NULL;
 }
 

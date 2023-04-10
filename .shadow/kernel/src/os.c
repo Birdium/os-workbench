@@ -23,7 +23,7 @@ static void test_free(void *addr) {
 #else
   printf("CPU Freeing in %p\n", addr);
 #endif
-  buddy_debug_print();
+  // buddy_debug_print();
 }
 
 #ifndef TEST
@@ -41,7 +41,7 @@ static void os_run() {
   void *p3 = test_alloc(1024 * 1024);
   void *p4 = test_alloc(1024 * 1024);
   void *p5 = test_alloc(1024 * 1024 + 1);
-  buddy_debug_print();
+  // buddy_debug_print();
   printf("--------free-------\n");
   test_free(p1);
   test_free(p2);

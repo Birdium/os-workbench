@@ -114,12 +114,12 @@ void *buddy_alloc(size_t size) {
         split_tbe->allocated = 0;
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
         TableList *list = &buddy[tbe->size];
-        LOG_LOCK("trying to fetch %p", &(list->lock));
+        LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
-        LOG_LOCK("fetched %p", &(list->lock));
+        LOG_LOCK("fetched %d", list - buddy);
         buddy_insert(split_tbe);
         spin_unlock(&(list->lock));
-        LOG_LOCK("released %p", &(list->lock));
+        LOG_LOCK("released %d", list - buddy);
     }
     return result;
 }

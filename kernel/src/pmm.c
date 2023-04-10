@@ -38,6 +38,7 @@ static void *kalloc(size_t size) {
 }
 
 static void kfree(void *ptr) {
+  buddy_free(ptr);
 }
 
 #ifndef TEST

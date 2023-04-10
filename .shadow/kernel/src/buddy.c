@@ -112,9 +112,8 @@ void *buddy_alloc(size_t size) {
         spin_lock(&(buddy[tbe->size].lock));
         buddy_insert(split_tbe);
         spin_unlock(&(buddy[tbe->size].lock));
-        buddy_debug_print();
     }
-    // buddy_debug_print();
+    buddy_debug_print();
     return result;
 }
 

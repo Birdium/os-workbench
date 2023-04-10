@@ -61,6 +61,7 @@ static void os_run() {
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   buddy_debug_print();
+  printf("Success!\n");
   while (1);
 }
 #else 

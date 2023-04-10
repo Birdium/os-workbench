@@ -33,7 +33,7 @@ static void os_run() {
   // }
   printf("Hello World from CPU #%d\n", cpu_current());
   buddy_debug_print();
-    // assert(0);
+    assert(0);
   // test_alloc(1);
   // test_alloc(2);
   // test_alloc(4);

@@ -40,7 +40,7 @@ static void os_run() {
   void *p2 = test_alloc(1024 * 1024);
   void *p3 = test_alloc(1024 * 1024);
   void *p4 = test_alloc(1024 * 1024);
-  void *p5 = test_alloc(1024 * 1024 + 1);
+  void *p5 = test_alloc(1024 * 1024);
   buddy_debug_print();
   printf("--------free-------\n");
   test_free(p2);

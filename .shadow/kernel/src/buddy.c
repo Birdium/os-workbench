@@ -130,9 +130,9 @@ void buddy_free(void *addr) {
     int size_exp = tbe->size;
     LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);
     TableList *list = &buddy[size_exp];
-    LOG_LOCK("trying to fetch %p", &(list->lock));
+    LOG_LOCK("trying to fetch %d", list - buddy);
     spin_lock(&(list->lock));
-    LOG_LOCK("fetched %p", &(list->lock));
+    LOG_LOCK("fetched %d", list - buddy);
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
@@ -141,18 +141,18 @@ void buddy_free(void *addr) {
         sibling_tbe->allocated = 1;
         buddy_delete(sibling_tbe);
         spin_unlock(&(list->lock));
-        LOG_LOCK("released %p", &(list->lock));
+        LOG_LOCK("released %d", list - buddy);
         ++list;
-        LOG_LOCK("trying to fetch %p", &(list->lock));
+        LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
-        LOG_LOCK("fetched %p", &(list->lock));
+        LOG_LOCK("fetched %d", list - buddy);
         tbe = PARENT_TBE(tbe);
         tbe->size = ++size_exp;
     }
     tbe->allocated = 0;
     buddy_insert(tbe);
     spin_unlock(&(list->lock));
-    LOG_LOCK("released %p", &(list->lock));
+    LOG_LOCK("released %d", list - buddy);
 }
 
 // static spinlock_t debug_lock = SPIN_INIT();

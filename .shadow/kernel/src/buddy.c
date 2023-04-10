@@ -37,6 +37,7 @@ void buddy_insert(TableEntry *tbe) {
     if (list->head == NULL) {
         LOG_INFO("inserting into an empty list, %p", TBE_2_ADDR(tbe));
         list->head = list->tail = tbe;
+        LOG_INFO("head ptr, %p", TBE_2_ADDR(list->head));
         tbe->prev = tbe->next = NULL;
     }
     else {        

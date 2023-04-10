@@ -166,7 +166,7 @@ void buddy_debug_print() {
             }
             printf("\n");
         }
-        // spin_unlock(&(list->lock));
+        spin_unlock(&(list->lock));
     }
     spin_unlock(&debug_lock);
 #endif

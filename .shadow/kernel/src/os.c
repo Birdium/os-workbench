@@ -49,14 +49,14 @@ static void os_run() {
   test_free(p3); test_free(p4);
   test_free(p5); 
   buddy_debug_print();
-    assert(0);
+    // assert(0);
   for (int i = 0; i <= 1000; i++) {
     size_t size = (rand() % 1024) * PAGE_SIZE;
     void *p = test_alloc(size);
     printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
     test_free(p);
     printf("%d\n", i);
-      buddy_debug_print();
+    buddy_debug_print();
     assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
   // size_t size = 16 * 1024 * 1024;

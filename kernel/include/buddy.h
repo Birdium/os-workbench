@@ -27,12 +27,17 @@ typedef struct {
 #define HEAP_SIZE (heap.end - heap.start)
 #define PAGE_NUM (HEAP_SIZE / PAGE_SIZE)
 
+// convert table entry's addr from the chunk's physical addr
 #define ADDR_2_TBN(addr) (((void *)addr - heap.start) / PAGE_SIZE)
+#define ADDR_2_TBE(addr) (table + ((void *)addr - heap.start) / PAGE_SIZE)
 #define TBN_2_ADDR(tbn) (heap.start + PAGE_SIZE * tbn) 
 #define TBE_2_ADDR(tbe) (heap.start + PAGE_SIZE * (tbe - table))
 
 void init_buddy();
 void buddy_insert(TableEntry *tbe);
-void *buddy_get(size_t size);
+void buddy_delete(TableEntry *tbe);
+void *buddy_alloc(size_t size);
+void *buddy_fetch_best_chunk(int exp);
+void buddy_debug_print();
 
 #endif

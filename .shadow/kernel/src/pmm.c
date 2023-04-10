@@ -22,7 +22,6 @@ static void *kalloc(size_t size) {
   // slow-path: buddy system
   if (size >= (1 << 12)) {
     return buddy_alloc(align(size));
-    buddy_debug_print();
   }
   // TODO: fast-path: slab
   else {

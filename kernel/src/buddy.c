@@ -4,7 +4,7 @@
 // mem layout now:
 // [heap] = [table, buddy]
 // TODO: implement slab
-static TableEntry *table, *buddy_start;
+TableEntry *table, *buddy_start;
 
 // buddy is a static array with buddy[i] indicating to size (2^i)'s 
 // page's array
@@ -22,6 +22,7 @@ void init_buddy() {
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
         table[i].size = MAX_ALLOC_SIZE_EXP;
         table[i].allocated = 0;
+        table[i].is_slab = 0;
         buddy_insert(&table[i]);
         // table[i].prev = (i != buddy_page) ? NULL : &table[i - MAX_ALLOC_PAGE_NUM];
         // table[i].next = (i != PAGE_NUM) ? NULL : &table[i + MAX_ALLOC_PAGE_NUM];

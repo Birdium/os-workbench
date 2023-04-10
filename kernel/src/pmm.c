@@ -1,5 +1,6 @@
 #include <common.h>
 #include <buddy.h>
+#include <slab.h>
 #ifndef TEST
 #include <lock.h>
 #endif
@@ -13,6 +14,8 @@ static inline size_t align(size_t size) {
   size |= size >> 16;
   return size + 1;
 }
+
+extern TableEntry *table;
 
 spinlock_t lk;
 uintptr_t pm_cur;
@@ -38,7 +41,9 @@ static void *kalloc(size_t size) {
 }
 
 static void kfree(void *ptr) {
-  buddy_free(ptr);
+  TableEntry *tbe = ADDR_2_TBE(ptr);
+  if (tbe->is_slab) slab_free();
+  else buddy_free(ptr);
 }
 
 #ifndef TEST

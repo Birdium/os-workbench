@@ -78,9 +78,9 @@ void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
     while (exp <= MAX_ALLOC_SIZE_EXP) {
         TableList *list = &buddy[exp];
-        LOG_LOCK("trying to fetch %p", &(list->lock));
+        LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
-        LOG_LOCK("fetched %p", &(list->lock));
+        LOG_LOCK("fetched %d", list - buddy);
         if (list->head != NULL) {
             chunk = TBE_2_ADDR(list->head);
             LOG_INFO("%p", chunk);
@@ -89,7 +89,7 @@ void *buddy_fetch_best_chunk(int exp) {
             buddy_delete(list->head);
         }
         spin_unlock(&(list->lock));
-        LOG_LOCK("released %p", &(list->lock));
+        LOG_LOCK("released %d", list - buddy);
         if (chunk) break;
         ++exp;
     } 

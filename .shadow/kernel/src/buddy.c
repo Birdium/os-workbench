@@ -78,10 +78,10 @@ void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
     while (exp <= MAX_ALLOC_SIZE_EXP) {
         TableList *list = &buddy[exp];
-        buddy_debug_print();
         spin_lock(&(list->lock));
         if (list->head != NULL) {
             chunk = TBE_2_ADDR(list->head);
+            LOG_INFO("%p", chunk);
             assert(list->head->allocated == 0);
             list->head->allocated = 1;
             buddy_delete(list->head);

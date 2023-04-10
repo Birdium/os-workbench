@@ -36,12 +36,12 @@ static void os_run() {
   test_alloc(2);
   test_alloc(4);
   test_alloc(8);
-  buddy_debug_print();
   // void *p1 = test_alloc(1024);
   void *p2 = test_alloc(1024 * 1024);
   void *p3 = test_alloc(1024 * 1024);
   void *p4 = test_alloc(1024 * 1024);
   void *p5 = test_alloc(1024 * 1024 + 1);
+  buddy_debug_print();
   printf("--------free-------\n");
   test_free(p2);
   test_free(p3); test_free(p4);

@@ -7,7 +7,7 @@ static void os_init() {
 static void test_alloc(int size) {
   void *p = pmm->alloc(size);
 #ifndef TEST
-  printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
+  printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
 #else
   printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif

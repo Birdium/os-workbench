@@ -51,7 +51,7 @@ void buddy_insert(TableEntry *tbe) {
 void buddy_delete(TableEntry *tbe) {
     int sz = tbe->size;
     TableList *list = &buddy[sz];
-    LOG_INFO("Deleting %p, size %d", tbe, (1 << tbe->size));
+    LOG_INFO("Deleting %p, size %d", TBE_2_ADDR(tbe), (1 << tbe->size));
     assert(list->head && list->tail);
     if (list->head == list->tail) {
         assert(list->head == tbe);

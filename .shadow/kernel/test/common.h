@@ -32,8 +32,8 @@
 
 
 #ifdef DEBUG 
-#define LOG_INFO(fmt, ...)  printf("\033[1;34mLOG_INFO CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define LOG_LOCK(fmt, ...)  printf("\033[1;31mLOG_LOCK CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_INFO(fmt, ...)  printf("\033[1;34mLOG_INFO CPU #%d @ [%s][%d]: "fmt"\n\033[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_LOCK(fmt, ...)  printf("\033[1;31mLOG_LOCK CPU #%d @ [%s][%d]: "fmt"\n\033[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
 #define LOG_INFO(fmt, ...)  
 #define LOG_LOCK(fmt, ...) 

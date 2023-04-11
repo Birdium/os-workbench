@@ -41,7 +41,7 @@
 #define LOG_LOCK(fmt, ...) 
 #endif
 
-// typedef struct {
-//     void *start, *end;
-// } Area;
-// static Area heap;
+typedef struct {
+    void *start, *end;
+} Area;
+static Area heap;

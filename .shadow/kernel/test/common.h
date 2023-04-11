@@ -47,4 +47,5 @@
 typedef struct {
     void *start, *end;
 } Area;
+
 #endif

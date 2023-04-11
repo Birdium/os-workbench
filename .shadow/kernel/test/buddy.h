@@ -20,7 +20,7 @@ typedef struct {
 
 #ifdef TEST
 
-Area heap;
+extern Area heap;
 
 #endif
 

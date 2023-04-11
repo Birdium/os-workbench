@@ -9,6 +9,7 @@ static inline void spin_lock(spinlock_t *lk) {
       break;
     }
   }
+  putch('a');
 }
 
 static inline void spin_unlock(spinlock_t *lk) {

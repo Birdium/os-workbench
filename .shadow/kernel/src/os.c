@@ -17,9 +17,9 @@ static void *test_alloc(int size) {
 }
 
 static void test_free(void *addr) {
+  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
   pmm->free(addr);
 #ifndef TEST
-  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
 #else
   printf("CPU Freeing in %p\n", addr);
 #endif

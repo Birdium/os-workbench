@@ -59,12 +59,12 @@ static void pmm_init() {
 }
 #else
 // 测试代码的 pmm_init ()
-#define HEAP_SIZE (1 << 24)
+#define H_SIZE (1 << 24)
 static void pmm_init() {
   char *ptr  = malloc(HEAP_SIZE); 
   heap.start = ptr;
-  heap.end   = ptr + HEAP_SIZE;
-  printf("Got %d MiB heap: [%p, %p)\n", HEAP_SIZE >> 20, heap.start, heap.end);
+  heap.end   = ptr + H_SIZE;
+  printf("Got %d MiB heap: [%p, %p)\n", H_SIZE >> 20, heap.start, heap.end);
 }
 #endif
 

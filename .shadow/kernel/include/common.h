@@ -5,6 +5,10 @@
 #include <klib.h>
 #include <klib-macros.h>
 
+int current_cpu() {
+    return pthread_self();
+}
+
 #define ROUNDUP(a, sz)      ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
 #define ROUNDDOWN(a, sz)    ((((uintptr_t)a)) & ~((sz) - 1))
 

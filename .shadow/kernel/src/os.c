@@ -18,6 +18,7 @@ static void *test_alloc(int size) {
 
 static void test_free(void *addr) {
   printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
+  assert(addr != NULL);
   pmm->free(addr);
 #ifndef TEST
 #else
@@ -60,6 +61,7 @@ static void os_run() {
     // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
   for (int i = 0; i < TEST_SIZE; i++) {
+    if (tasks[i].alloc)
     test_free(tasks[i].alloc);
   }
   // size_t size = 16 * 1024 * 1024;

@@ -16,6 +16,7 @@ static TableList buddy[32];
 
 void init_buddy() {
     table = heap.start;
+    LOG_INFO("%p", table);
     buddy_start = (TableEntry *)ROUNDUP(table + PAGE_NUM, MAX_ALLOC_SIZE);
     int buddy_page = ADDR_2_TBN(buddy_start);
     // init buddy list

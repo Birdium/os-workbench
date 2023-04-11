@@ -56,7 +56,7 @@ static void os_run() {
   // size_t size = 16 * 1024 * 1024;
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
-  for (volatile int i = 0; i < 10000; i ++);
+  // for (volatile int i = 0; i < 10000; i ++);
   while (1);
 }
 #else 

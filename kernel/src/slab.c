@@ -13,7 +13,9 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 		tbe_iter->cpu_cnt = cpu;
 	}
 	void *addr_end = addr_start + PAGE_SIZE * BUDDY_FETCH_PAGE_NUM;
-
+	
+	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
+	
 	SlabList *list = &slab[cpu][slab_idx];
 	list->thread_lock = SPIN_INIT();
 	list->thread.head = list->thread.tail = NULL;

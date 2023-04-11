@@ -59,7 +59,8 @@ void buddy_delete(TableEntry *tbe) {
 
     }
     else {
-        *0 = 1;
+        list = NULL;
+        *list = 0;
     }
     assert(list->head && list->tail);
     if (list->head == list->tail) {

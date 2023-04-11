@@ -34,9 +34,9 @@ static void *kalloc(size_t size) {
   // spin_lock(&lk);
   // uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
   // pm_cur = pm_ret + size;
-#ifdef TEST
-  printf("kalloc: allocated from %p, size %u\n", pm_ret, size);
-#endif
+// #ifdef TEST
+  // printf("kalloc: allocated from %p, size %u\n", pm_ret, size);
+// #endif
   // spin_unlock(&lk);
   // return (void*) pm_ret;
 }

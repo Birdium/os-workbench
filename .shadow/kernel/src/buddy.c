@@ -14,8 +14,8 @@ static TableList buddy[32];
 
 void init_buddy() {
     table = heap.start;
-    printf("H %p\n", &heap);
     buddy_start = (TableEntry *)ROUNDUP(table + PAGE_NUM, MAX_ALLOC_SIZE);
+    printf("H %p\n", buddy_start);
     int buddy_page = ADDR_2_TBN(buddy_start);
     // init buddy list
     memset(buddy, 0, sizeof(buddy));

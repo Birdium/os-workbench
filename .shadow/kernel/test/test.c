@@ -73,7 +73,7 @@ void test_test() {
 
 int main() {
   os->init();
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 4; i++) {
     create(test_test);
   }
 }

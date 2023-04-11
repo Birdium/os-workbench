@@ -18,6 +18,12 @@ typedef struct {
     TableEntry *head, *tail;
 } TableList;
 
+#ifdef TEST
+
+static Area heap;
+
+#endif
+
 
 void init_buddy();
 void buddy_insert(TableEntry *tbe);

@@ -32,10 +32,10 @@ static void os_run() {
   //   putch(*s == '*' ? '0' + cpu_current() : *s);
   // }
   printf("Hello World from CPU #%d\n", cpu_current());
-  test_alloc(1);
-  test_alloc(2);
-  test_alloc(4);
-  test_alloc(8);
+  // test_alloc(1);
+  // test_alloc(2);
+  // test_alloc(4);
+  // test_alloc(8);
   void *p1 = test_alloc(1024 * 1024);
   void *p2 = test_alloc(1024 * 1024);
   void *p3 = test_alloc(1024 * 1024);

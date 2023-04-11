@@ -63,7 +63,6 @@ static void os_run() {
   printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
 
   printf("Success!\n");
-  while (1);
 }
 #else 
 static void os_run() {

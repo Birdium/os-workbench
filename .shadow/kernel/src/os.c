@@ -58,9 +58,6 @@ static void os_run() {
     buddy_debug_print();
     assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
-  size_t size = 16 * 1024 * 1024;
-  void *p = pmm->alloc(size);
-  printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
 
   printf("Success!\n");
   while (1);

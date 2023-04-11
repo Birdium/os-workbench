@@ -78,14 +78,18 @@ void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
     while (exp <= MAX_ALLOC_SIZE_EXP) {
         TableList *list = &buddy[exp];
+        LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
+        LOG_LOCK("fetched %d", list - buddy);
         if (list->head != NULL) {
             chunk = TBE_2_ADDR(list->head);
+            LOG_INFO("%p", chunk);
             assert(list->head->allocated == 0);
             list->head->allocated = 1;
             buddy_delete(list->head);
         }
         spin_unlock(&(list->lock));
+        LOG_LOCK("released %d", list - buddy);
         if (chunk) break;
         ++exp;
     } 
@@ -95,7 +99,6 @@ void *buddy_fetch_best_chunk(int exp) {
 // just an allocator
 void *buddy_alloc(size_t size) {
     // assume alloc is aligned
-    LOG_INFO("allocating %d memory", size);
     int size_exp = PAGE_SIZE_EXP;
     while (size_exp < MAX_ALLOC_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
@@ -108,65 +111,74 @@ void *buddy_alloc(size_t size) {
         tbe->size--;
         TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
         split_tbe->size = tbe->size;
+        split_tbe->allocated = 0;
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
-        spin_lock(&(buddy[tbe->size].lock));
+        TableList *list = &buddy[tbe->size];
+        LOG_LOCK("trying to fetch %d", list - buddy);
+        spin_lock(&(list->lock));
+        LOG_LOCK("fetched %d", list - buddy);
         buddy_insert(split_tbe);
-        spin_unlock(&(buddy[tbe->size].lock));
+        spin_unlock(&(list->lock));
+        LOG_LOCK("released %d", list - buddy);
     }
     return result;
 }
 
-    static spinlock_t debug_lock = SPIN_INIT();
 void buddy_free(void *addr) {
-    spin_lock(&debug_lock);
     TableEntry *tbe = ADDR_2_TBE(addr);
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
+    LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);
     TableList *list = &buddy[size_exp];
+    LOG_LOCK("trying to fetch %d", list - buddy);
     spin_lock(&(list->lock));
+    LOG_LOCK("fetched %d", list - buddy);
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
-        LOG_INFO("test1: %p, sib:%p", TBE_2_ADDR(tbe), SIBLING_ADDR(tbe));
         if (sibling_tbe->allocated || sibling_tbe->size != size_exp) 
             break;
         sibling_tbe->allocated = 1;
         buddy_delete(sibling_tbe);
         spin_unlock(&(list->lock));
+        LOG_LOCK("released %d", list - buddy);
         ++list;
+        LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
+        LOG_LOCK("fetched %d", list - buddy);
         tbe = PARENT_TBE(tbe);
         tbe->size = ++size_exp;
     }
     tbe->allocated = 0;
     buddy_insert(tbe);
     spin_unlock(&(list->lock));
-    spin_unlock(&debug_lock);
+    LOG_LOCK("released %d", list - buddy);
 }
 
+// static spinlock_t debug_lock = SPIN_INIT();
 void buddy_debug_print() {
 #ifdef DEBUG
-    spin_lock(&debug_lock);
-    printf("Printing Buddy System Lists\n");
-    for (int i = PAGE_SIZE_EXP; i <= MAX_ALLOC_SIZE_EXP; i++) {
-        printf("List %d:\n", i);
-        TableList *list = &buddy[i];
-        spin_lock(&(list->lock));
-        if (list->head == NULL) {
-            printf("(empty)\n");
-        }
-        else {
-            TableEntry *tbe = list->head;
-            while (tbe) {
-                printf("[%p, %p)", TBE_2_ADDR(tbe), TBE_2_ADDR(tbe) + (1 << tbe->size));
-                if (tbe == list->tail) break;
-                printf(" <-> ");
-                tbe = tbe->next;
-            }
-            printf("\n");
-        }
-        spin_unlock(&(list->lock));
-    }
-    spin_unlock(&debug_lock);
+    // spin_lock(&debug_lock);
+    // LOG_INFO("Printing Buddy System Lists from %d", cpu_current());
+    // for (int i = MAX_ALLOC_SIZE_EXP; i >= PAGE_SIZE_EXP; i--) {
+    //     printf("List %d:\n", i);
+    //     TableList *list = &buddy[i];
+    //     spin_lock(&(list->lock));
+    //     if (list->head == NULL) {
+    //         printf("(empty)\n");
+    //     }
+    //     else {
+    //         TableEntry *tbe = list->head;
+    //         while (tbe) {
+    //             printf("[%p, %p)", TBE_2_ADDR(tbe), TBE_2_ADDR(tbe) + (1 << tbe->size));
+    //             if (tbe == list->tail) break;
+    //             printf(" <-> ");
+    //             tbe = tbe->next;
+    //         }
+    //         printf("\n");
+    //     }
+    //     spin_unlock(&(list->lock));
+    // }
+    // spin_unlock(&debug_lock);
 #endif
 }

@@ -12,6 +12,7 @@ typedef struct TableEntry {
         size : 5,
         allocated: 1,
         is_slab : 1;
+    uint8_t cpu_cnt;
 } TableEntry;
 
 typedef struct {

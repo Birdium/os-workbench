@@ -53,7 +53,7 @@ static void test_free(void *addr) {
 }
 
 void test_test() {
-  #define TEST_SIZE 10000
+  #define TEST_SIZE 1000000
   typedef struct Task {
     void *alloc;
     int size;

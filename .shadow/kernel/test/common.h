@@ -38,7 +38,8 @@
 #endif
 #else
 #define LOG_INFO(fmt, ...)  
-#define LOG_LOCK(fmt, ...)  
+#define LOG_LOCK(fmt, ...) 
+#endif
 
 typedef struct {
     void *start, *end;

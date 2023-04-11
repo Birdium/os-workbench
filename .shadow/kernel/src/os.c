@@ -45,10 +45,11 @@ static void os_run() {
   printf("--------free-------\n");
   test_free(p1);
   test_free(p2);
-  test_free(p3); test_free(p4);
+  test_free(p3); 
+  test_free(p4);
   test_free(p5); 
   for (int i = 0; i <= 100; i++) {
-    size_t size = rand() % 100000;
+    size_t size = (1 << (rand() % 11 + 13));
     void *p = pmm->alloc(size);
     printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
     assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);

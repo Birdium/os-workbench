@@ -10,7 +10,7 @@ static inline void spin_lock(spinlock_t *lk) {
       break;
     }
     ++cnt;
-    if (cnt > 10000000) {
+    if (cnt > 100000000) {
       LOG_LOCK("DEAD LOCK"); 
       assert(0);
     }

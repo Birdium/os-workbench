@@ -136,7 +136,7 @@ void buddy_free(void *addr) {
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
-        if (sibling_tbe->allocated || sibling_tbe->size != size_exp) 
+        if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) 
             break;
         sibling_tbe->allocated = 1;
         buddy_delete(sibling_tbe);

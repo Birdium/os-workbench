@@ -32,22 +32,18 @@ void stress_test() {
 
 static void *test_alloc(int size) {
   void *p = pmm->alloc(size);
-#ifndef TEST
+#ifdef DEBUG
   printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
-#else
-  printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   return p;
 }
 
 static void test_free(void *addr) {
-  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
   assert(addr != NULL);
   pmm->free(addr);
-#ifndef TEST
-#else
-  printf("CPU Freeing in %p\n", addr);
+#ifdef DEBUG
+  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
 #endif
   // buddy_debug_print();
 }

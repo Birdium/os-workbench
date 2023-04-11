@@ -52,6 +52,7 @@ static void os_run() {
     size_t size = (1 << (rand() % 11 + 13));
     void *p = test_alloc(size);
     test_free(p);
+    printf("%d\n", i);
     assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
   // size_t size = 16 * 1024 * 1024;

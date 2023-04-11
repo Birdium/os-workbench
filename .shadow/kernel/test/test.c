@@ -30,9 +30,27 @@ void stress_test() {
   }
 }
 
+void test_test() {
+  #define TEST_SIZE 10000
+  typedef struct Task {
+    void *alloc;
+    int size;
+  } Task;
+  Task tasks[TEST_SIZE];
+  for (int i = 0; i < TEST_SIZE; i++) {
+    tasks[i].size = (1 << (rand() % 3 + 13));
+    tasks[i].alloc = test_alloc(tasks[i].size);
+    // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  }
+  for (int i = 0; i < TEST_SIZE; i++) {
+    if (tasks[i].alloc)
+    test_free(tasks[i].alloc);
+  }
+}
+
 int main() {
   os->init();
-  for (int i = 0; i < 4; i++) {
-    create(stress_test);
+  for (int i = 0; i < 1; i++) {
+    create(test_test);
   }
 }

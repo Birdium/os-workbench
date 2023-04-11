@@ -48,7 +48,7 @@ static void os_run() {
   test_free(p3); 
   test_free(p4);
   test_free(p5); 
-  for (int i = 0; i <= 1; i++) {
+  for (int i = 0; i < 1; i++) {
     size_t size = (1 << (rand() % 11 + 13));
     void *p = pmm->alloc(size);
     printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);

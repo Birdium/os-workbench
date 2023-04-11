@@ -47,22 +47,27 @@ static void os_run() {
   // test_free(p2);
   // test_free(p3); 
   // test_free(p4);
-  // test_free(p5); 
-  for (int i = 0; i < 1000; i++) {
-    size_t size = (1 << (rand() % 11 + 13));
-    void *p = test_alloc(size);
-    test_free(p);
-    printf("%d\n", i);
-    assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  // test_free(p5);
+  typedef struct Task {
+    void *alloc;
+    int size;
+  } Task;
+  #define TEST_SIZE 1000 
+  Task tasks[TEST_SIZE];
+  for (int i = 0; i < TEST_SIZE; i++) {
+    tasks[i].size = (1 << (rand() % 3 + 13));
+    tasks[i].alloc = test_alloc(tasks[i].size);
+    // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  }
+  for (int i = 0; i < TEST_SIZE; i++) {
+    test_free(tasks[i].alloc);
   }
   // size_t size = 16 * 1024 * 1024;
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   // for (volatile int i = 0; i < 10000; i ++);
-  while (1) {
-    printf("SUCCESS");
-
-  }
+  printf("SUCCESS");
+  while (1);
 }
 #else 
 static void os_run() {

@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include "lock.h"
 
-extern Area heap;
-
 typedef struct TableEntry {
     struct TableEntry *prev, *next;
     uint8_t 

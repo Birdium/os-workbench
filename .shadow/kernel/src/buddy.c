@@ -6,8 +6,6 @@
 // TODO: implement slab
 TableEntry *table, *buddy_start;
 
-extern Area heap;
-
 // buddy is a static array with buddy[i] indicating to size (2^i)'s 
 // page's array
 

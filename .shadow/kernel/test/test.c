@@ -68,6 +68,7 @@ void test_test() {
     if (tasks[i].alloc)
     test_free(tasks[i].alloc);
   }
+  printf("SUCCESS!\n");
 }
 
 int main() {

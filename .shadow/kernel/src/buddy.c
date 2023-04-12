@@ -175,7 +175,7 @@ void buddy_free(void *addr) {
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
     LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);
-    
+
     TableList *list = &buddy[size_exp];
     LOG_LOCK("trying to fetch %d", list - buddy);
     spin_lock(&(list->lock));
@@ -185,8 +185,10 @@ void buddy_free(void *addr) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
 
         spin_lock(&(sibling_tbe->lock));
-        if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) 
+        if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) {
+            spin_unlock(&(sibling_tbe->lock));
             break;
+        }
         sibling_tbe->allocated = 1;
         spin_unlock(&(sibling_tbe->lock));
 

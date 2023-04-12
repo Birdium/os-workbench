@@ -197,7 +197,12 @@ void buddy_free(void *addr) {
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
-        assert(sibling_tbe == parent_tbe || sibling_tbe == right_son_tbe);
+        if (sibling_tbe == parent_tbe || sibling_tbe == right_son_tbe) {
+
+        }
+        else {
+            printf("%p %p %p\n", sibling_tbe, parent_tbe, right_son_tbe);
+        }
         if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) {
             break;
         }

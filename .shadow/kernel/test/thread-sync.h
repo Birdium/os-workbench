@@ -36,8 +36,8 @@
 // Mutex
 typedef pthread_mutex_t spinlock_t;
 #define SPIN_INIT() PTHREAD_MUTEX_INITIALIZER
-static inline void spin_lock(mutex_t *lk)   { pthread_mutex_lock(lk); }
-static inline void spin_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
+static inline void spin_lock(spinlock_t *lk)   { pthread_mutex_lock(lk); }
+static inline void spin_unlock(spinlock_t *lk) { pthread_mutex_unlock(lk); }
 
 // Conditional Variable
 typedef pthread_cond_t cond_t;

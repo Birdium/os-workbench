@@ -56,9 +56,12 @@ void buddy_delete(TableEntry *tbe) {
     TableList *list = &buddy[sz];
     LOG_INFO("Deleting %p, size %d", TBE_2_ADDR(tbe), (1 << tbe->size));
     if (list->head && list->tail) {
-
+        
     }
     else {
+        if (list->head && !list->tail) {
+            printf("12311234123\n");
+        }
         list = NULL;
         list->head = NULL; 
     }

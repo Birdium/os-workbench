@@ -232,7 +232,7 @@ void buddy_debug_print() {
 #ifndef TEST
     static spinlock_t debug_lock = SPIN_INIT();
 #else 
-    static spinlock_t debug_lock = PTHREAD_MUTEX_INITIALIZER
+    static spinlock_t debug_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
     spin_lock(&debug_lock);
     LOG_INFO("Printing Buddy System Lists from %d", cpu_current());

@@ -205,12 +205,13 @@ void buddy_free(void *addr) {
         LOG_LOCK("released %d", list - buddy);
 
         ++list;
+        
+        spin_unlock(&(parent_tbe->lock));
 
         LOG_LOCK("trying to fetch %d", list - buddy);
+        spin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
 
-        spin_lock(&(list->lock));
-        spin_unlock(&(parent_tbe->lock));
         tbe = PARENT_TBE(tbe);
         parent_tbe = PARENT_TBE(tbe);
         spin_lock(&(parent_tbe->lock));

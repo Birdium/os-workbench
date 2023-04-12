@@ -149,6 +149,7 @@ void buddy_free(void *addr) {
         if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) 
             break;
         sibling_tbe->allocated = 1;
+        LOG_INFO("sibling info: size: %d allocated: %d is_slab: %d", sibling_tbe->size, sibling_tbe->allocated, sibling_tbe->is_slab);
         buddy_delete(sibling_tbe);
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);

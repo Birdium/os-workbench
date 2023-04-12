@@ -30,10 +30,10 @@
 // void mutex_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
 
 // Mutex
-typedef spinlock_t mutex_t;
-#define SPIN_INIT() PTHREAD_MUTEX_INITIALIZER
-void spin_lock(mutex_t *lk)   { pthread_mutex_lock(lk); }
-void spin_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
+// typedef spinlock_t mutex_t;
+// #define SPIN_INIT() PTHREAD_MUTEX_INITIALIZER
+// void spin_lock(mutex_t *lk)   { pthread_mutex_lock(lk); }
+// void spin_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
 
 // Conditional Variable
 typedef pthread_cond_t cond_t;

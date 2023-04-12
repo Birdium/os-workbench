@@ -19,7 +19,6 @@ void init_buddy() {
     // init buddy list
     memset(buddy, 0, sizeof(buddy));
     // init all table and insert them into buddy sys
-    printf("H %d\n", buddy_page);
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
         LOG_INFO("%p", &table[i]);
         table[i].size = MAX_ALLOC_SIZE_EXP;
@@ -36,6 +35,7 @@ void init_buddy() {
 // should require lock outside this func
 void buddy_insert(TableEntry *tbe) {
     int sz = tbe->size;
+    assert(sz >= PAGE_SIZE_EXP);
     TableList *list = &buddy[sz];
     if (list->head == NULL) {
         list->head = list->tail = tbe;
@@ -53,6 +53,7 @@ void buddy_insert(TableEntry *tbe) {
 // should require lock outside this func
 void buddy_delete(TableEntry *tbe) {
     int sz = tbe->size;
+    assert(sz >= PAGE_SIZE_EXP);
     TableList *list = &buddy[sz];
     LOG_INFO("Deleting %p, size %d", TBE_2_ADDR(tbe), (1 << tbe->size));
     if (list->head && list->tail) {

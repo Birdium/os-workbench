@@ -197,12 +197,7 @@ void buddy_free(void *addr) {
     spin_lock(&(right_son_tbe->lock));
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
-        if (sibling_tbe == parent_tbe || sibling_tbe == right_son_tbe) {
-
-        }
-        else {
-            printf("%d %p %p %p\n", size_exp, TBE_2_ADDR(sibling_tbe), TBE_2_ADDR(parent_tbe), TBE_2_ADDR(right_son_tbe));
-        }
+        assert(sibling_tbe == parent_tbe || sibling_tbe == right_son_tbe);
         if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) {
             break;
         }

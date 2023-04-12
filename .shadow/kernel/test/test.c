@@ -55,6 +55,7 @@ void test_test() {
     int size;
   } Task;
   Task tasks[TEST_SIZE];
+  for (int k = 0; k < 10; k++) {
   for (int i = 0; i < TEST_SIZE; i++) {
     tasks[i].size = (1 << (13));
     tasks[i].alloc = test_alloc(tasks[i].size);
@@ -63,6 +64,7 @@ void test_test() {
   for (int i = 0; i < TEST_SIZE; i++) {
     if (tasks[i].alloc)
     test_free(tasks[i].alloc);
+  }
   }
   printf("SUCCESS!\n");
 }

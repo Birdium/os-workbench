@@ -178,7 +178,6 @@ void *buddy_alloc(size_t size) {
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
     }
-    buddy_debug_print();
     return result;
 }
 

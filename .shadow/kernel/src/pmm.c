@@ -56,6 +56,7 @@ static void pmm_init() {
   // pm_cur = (uintptr_t) heap.start;
   init_buddy();
   slab_init();
+  printf("11111");
   buddy_debug_print();
 }
 #else

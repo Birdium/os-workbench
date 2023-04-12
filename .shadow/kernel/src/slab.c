@@ -7,7 +7,7 @@ static SlabList slab[MAX_CPU_NUM][SLAB_NUM];
 void slab_fetch_buddy(int slab_idx, int cpu) {
 	LOG_INFO("fetching from buddy sys");
 	void *addr_start = buddy_alloc(PAGE_SIZE * BUDDY_FETCH_PAGE_NUM);
-	if (addr_start) return;
+	if (!addr_start) return;
 	TableEntry *tbe = ADDR_2_TBE(addr_start);
 	for (TableEntry *tbe_iter = tbe; tbe_iter < tbe + BUDDY_FETCH_PAGE_NUM; ++tbe_iter) {
 		tbe_iter->size = IDX_2_SIZE_EXP(slab_idx);

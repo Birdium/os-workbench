@@ -119,8 +119,8 @@ void *buddy_fetch_best_chunk(int exp) {
             chunk = TBE_2_ADDR(list->head);
             assert(list->head->allocated == 0);
             list->head->allocated = 1;
-            spin_unlock(&(list->head->lock));
             buddy_delete(list->head);
+            spin_unlock(&(list->head->lock));
         }
 
         spin_unlock(&(list->lock));
@@ -182,6 +182,7 @@ void *buddy_alloc(size_t size) {
 void buddy_free(void *addr) {
     TableEntry *tbe = ADDR_2_TBE(addr);
     TableEntry *parent_tbe = PARENT_TBE(tbe);
+    TableEntry *
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
     LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);
@@ -191,6 +192,7 @@ void buddy_free(void *addr) {
     spin_lock(&(list->lock));
     LOG_LOCK("fetched %d", list - buddy);
     spin_lock(&(parent_tbe->lock));
+    spin_lock(&)
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         TableEntry *sibling_tbe = SIBLING_TBE(tbe);
@@ -205,7 +207,7 @@ void buddy_free(void *addr) {
         LOG_LOCK("released %d", list - buddy);
 
         ++list;
-        
+
         spin_unlock(&(parent_tbe->lock));
 
         LOG_LOCK("trying to fetch %d", list - buddy);

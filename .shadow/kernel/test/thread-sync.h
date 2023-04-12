@@ -34,7 +34,7 @@
 // static inline void mutex_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
 
 // Mutex
-typedef spinlock_t mutex_t;
+typedef pthread_mutex_t spinlock_t;
 #define SPIN_INIT() PTHREAD_MUTEX_INITIALIZER
 static inline void spin_lock(mutex_t *lk)   { pthread_mutex_lock(lk); }
 static inline void spin_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }

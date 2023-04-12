@@ -183,7 +183,8 @@ void *buddy_alloc(size_t size) {
 void buddy_free(void *addr) {
     TableEntry *tbe = ADDR_2_TBE(addr);
     TableEntry *parent_tbe = PARENT_TBE(tbe);
-    TableEntry *right_son_tbe = RIGHT_SON_TBE(parent_tbe);
+    TableEntry *right_son_tbe = RIGHT_SON_TBE(tbe);
+    TableEntry *sibling_tbe = SIBLING_TBE(tbe);
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
     LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);
@@ -196,7 +197,6 @@ void buddy_free(void *addr) {
     spin_lock(&(right_son_tbe->lock));
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
-        TableEntry *sibling_tbe = SIBLING_TBE(tbe);
         if (sibling_tbe == parent_tbe || sibling_tbe == right_son_tbe) {
 
         }
@@ -224,7 +224,9 @@ void buddy_free(void *addr) {
 
         tbe = PARENT_TBE(tbe);
         parent_tbe = PARENT_TBE(tbe);
-        right_son_tbe = RIGHT_SON_TBE(parent_tbe);
+        right_son_tbe = RIGHT_SON_TBE(tbe);
+        sibling_tbe = SIBLING_TBE(tbe);
+
         spin_lock(&(parent_tbe->lock));
         spin_lock(&(right_son_tbe->lock));
 

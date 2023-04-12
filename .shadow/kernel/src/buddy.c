@@ -201,7 +201,7 @@ void buddy_free(void *addr) {
 
         }
         else {
-            printf("%d %p %p %p\n", size_exp, sibling_tbe, parent_tbe, right_son_tbe);
+            printf("%d %p %p %p\n", size_exp, TBE_2_ADDR(sibling_tbe), TBE_2_ADDR(parent_tbe), TBE_2_ADDR(right_son_tbe));
         }
         if (sibling_tbe->allocated || sibling_tbe->size != size_exp || sibling_tbe->is_slab) {
             break;

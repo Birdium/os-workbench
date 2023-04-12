@@ -101,6 +101,7 @@ void buddy_delete(TableEntry *tbe) {
 
 // get a smallest chunk whose size >= 2^(exp)
 // remove it's tbe from buddy system and return the physical addr  
+// shall hold lock for the return chunk's list
 void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
     while (exp <= MAX_ALLOC_SIZE_EXP) {
@@ -141,15 +142,19 @@ void *buddy_alloc(size_t size) {
     while (tbe->size > size_exp) {
         tbe->size--;
         assert(tbe->size >= PAGE_SIZE_EXP);
-        TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
-        split_tbe->size = tbe->size;
-        split_tbe->allocated = 0;
-        LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
+        // get the list wait to be insert
         TableList *list = &buddy[tbe->size];
+
         LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
+
+        TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
+        LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
+        split_tbe->size = tbe->size;
+        split_tbe->allocated = 0;
         buddy_insert(split_tbe);
+        
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
     }

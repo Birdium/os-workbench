@@ -229,7 +229,6 @@ void buddy_free(void *addr) {
 }
 
 void buddy_debug_print() {
-#ifdef DEBUG
 #ifndef TEST
     static spinlock_t debug_lock = SPIN_INIT();
 #else 
@@ -257,5 +256,4 @@ void buddy_debug_print() {
         spin_unlock(&(list->lock));
     }
     spin_unlock(&debug_lock);
-#endif
 }

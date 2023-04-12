@@ -73,7 +73,10 @@ void buddy_delete(TableEntry *tbe) {
         list->head = tbe->next;
         list->head->prev = NULL;
         if (list->head) {
+            if (list->head->size >= PAGE_SIZE_EXP) {
             printf("%d\n", list->head->size);
+
+            }
             assert(list->head->size >= PAGE_SIZE_EXP);
         }
     }

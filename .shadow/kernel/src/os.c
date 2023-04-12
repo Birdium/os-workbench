@@ -72,7 +72,6 @@ static void os_run() {
   // for (volatile int i = 0; i < 10000; i ++);
   printf("SUCCESS\n");
   while (1) {
-    printf("SUCCESS\n");
   }
 }
 #else 

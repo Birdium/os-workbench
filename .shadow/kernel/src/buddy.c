@@ -151,6 +151,8 @@ void *buddy_alloc(size_t size) {
 
         TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
+        split_tbe->cpu_cnt = cpu_current();
+        split_tbe->is_slab = 0;
         split_tbe->size = tbe->size;
         split_tbe->allocated = 0;
         buddy_insert(split_tbe);

@@ -183,7 +183,7 @@ void *buddy_alloc(size_t size) {
 void buddy_free(void *addr) {
     TableEntry *tbe = ADDR_2_TBE(addr);
     TableEntry *parent_tbe = PARENT_TBE(tbe);
-    TableEntry *right_son_tbe = RIGHT_SON_TBE(tbe);
+    TableEntry *right_son_tbe = RIGHT_SON_TBE(parent_tbe);
     assert(tbe->allocated == 1);
     int size_exp = tbe->size;
     LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);

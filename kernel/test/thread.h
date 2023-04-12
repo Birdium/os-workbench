@@ -1,3 +1,6 @@
+#ifndef THREAD_H
+#define THREAD_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,7 +17,18 @@ struct thread {
   void (*entry)(int);
 };
 
+// int cpu_current() {
+
 static struct thread tpool[NTHREAD], *tptr = tpool;
+
+static inline int cpu_current() {
+  return pthread_self();
+}
+
+static inline int cpu_count() {
+  return tptr - tpool + 1;
+}
+
 
 static void *wrapper(void *arg) {
   struct thread *thread = (struct thread *)arg;
@@ -46,3 +60,5 @@ static void join() {
 static __attribute__((destructor)) void cleanup() {
   join();
 }
+
+#endif

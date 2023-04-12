@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include "lock.h"
 
-extern Area heap;
-
 typedef struct TableEntry {
     struct TableEntry *prev, *next;
     uint8_t 
@@ -19,6 +17,12 @@ typedef struct {
     spinlock_t lock;
     TableEntry *head, *tail;
 } TableList;
+
+#ifdef TEST
+
+extern Area heap;
+
+#endif
 
 
 void init_buddy();

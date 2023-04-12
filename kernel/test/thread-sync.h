@@ -1,3 +1,6 @@
+#ifndef THREAD_SYNC_H
+#define THREAD_SYNC_H
+
 #include <semaphore.h>
 
 // Spinlock
@@ -41,3 +44,5 @@ typedef pthread_cond_t cond_t;
 #define P sem_wait
 #define V sem_post
 #define SEM_INIT(sem, val) sem_init(sem, 0, val)
+
+#endif

@@ -30,9 +30,46 @@ void stress_test() {
   }
 }
 
+static void *test_alloc(int size) {
+  void *p = pmm->alloc(size);
+#ifdef DEBUG
+  printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
+#endif
+  assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  return p;
+}
+
+static void test_free(void *addr) {
+  assert(addr != NULL);
+  pmm->free(addr);
+#ifdef DEBUG
+  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
+#endif
+  // buddy_debug_print();
+}
+
+void test_test() {
+  #define TEST_SIZE 1
+  typedef struct Task {
+    void *alloc;
+    int size;
+  } Task;
+  Task tasks[TEST_SIZE];
+  for (int i = 0; i < TEST_SIZE; i++) {
+    tasks[i].size = (1 << (13));
+    tasks[i].alloc = test_alloc(tasks[i].size);
+    // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  }
+  for (int i = 0; i < TEST_SIZE; i++) {
+    if (tasks[i].alloc)
+    test_free(tasks[i].alloc);
+  }
+  printf("SUCCESS!\n");
+}
+
 int main() {
   os->init();
   for (int i = 0; i < 4; i++) {
-    create(stress_test);
+    create(test_test);
   }
 }

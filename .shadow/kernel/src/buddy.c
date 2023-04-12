@@ -228,6 +228,7 @@ void buddy_free(void *addr) {
     }
     tbe->allocated = 0;
     spin_unlock(&(parent_tbe->lock));
+    spin_unlock(&(right_son_tbe->lock));
     buddy_insert(tbe);
     spin_unlock(&(list->lock));
     LOG_LOCK("released %d", list - buddy);

@@ -141,7 +141,7 @@ void *buddy_alloc(size_t size) {
     // split tbe into 2
     while (tbe->size > size_exp) {
         tbe->size--;
-        assert(tbe->size >= PAGE_SIZE_EXP);
+        assert(tbe->size > PAGE_SIZE_EXP);
         // get the list wait to be insert
         TableList *list = &buddy[tbe->size];
 
@@ -154,7 +154,7 @@ void *buddy_alloc(size_t size) {
         split_tbe->size = tbe->size;
         split_tbe->allocated = 0;
         buddy_insert(split_tbe);
-        
+
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
     }

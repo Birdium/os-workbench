@@ -149,6 +149,7 @@ void *buddy_alloc(size_t size) {
     while (1) {
         spin_lock(&(tbe->lock));
         if (tbe->size > size_exp) {
+            spin_unlock(&(tbe->lock));
             break;
         }
         tbe->size--;
@@ -168,7 +169,7 @@ void *buddy_alloc(size_t size) {
         spin_lock(&(split_tbe->lock));
         split_tbe->cpu_cnt = cpu_current();
         split_tbe->is_slab = 0;
-        split_tbe->size = tbe->size;
+        split_tbe->size = sz;
         split_tbe->allocated = 0;
         spin_unlock(&(split_tbe->lock));
 

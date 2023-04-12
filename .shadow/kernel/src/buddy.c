@@ -159,7 +159,6 @@ void *buddy_alloc(size_t size) {
         split_tbe->is_slab = 0;
         split_tbe->size = tbe->size;
         split_tbe->allocated = 0;
-        assert(split_tbe->size == list - buddy);
         buddy_insert(split_tbe);
 
         spin_unlock(&(list->lock));

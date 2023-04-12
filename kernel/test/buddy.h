@@ -11,6 +11,7 @@ typedef struct TableEntry {
         allocated: 1,
         is_slab : 1;
     uint8_t cpu_cnt;
+    spinlock_t lock;
 } TableEntry;
 
 typedef struct {

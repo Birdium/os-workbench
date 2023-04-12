@@ -15,13 +15,4 @@ typedef struct {
     Node *start, *end;
 } List;
 
-static inline void list_insert(List *list, Node *node, Node *dest) {
-    spin_lock(&(list->lock));
-    Node *cur = list->start;
-    if (cur == NULL) {
-        cur = 
-    }
-    spin_unlock(&(list->lock));
-}
-
 #endif

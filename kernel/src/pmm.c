@@ -56,10 +56,11 @@ static void pmm_init() {
   // pm_cur = (uintptr_t) heap.start;
   init_buddy();
   slab_init();
+  buddy_debug_print();
 }
 #else
 // 测试代码的 pmm_init ()
-#define H_SIZE (1 << 29)
+#define H_SIZE (1 << 25)
 Area heap;
 static void pmm_init() {
   char *ptr  = malloc(H_SIZE); 

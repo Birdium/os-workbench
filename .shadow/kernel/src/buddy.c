@@ -202,7 +202,11 @@ void buddy_free(void *addr) {
 
 void buddy_debug_print() {
 #ifdef DEBUG
+#ifndef TEST
     static spinlock_t debug_lock = SPIN_INIT();
+#else 
+    static spinlock_t debug_lock = PTHREAD_MUTEX_INITIALIZER
+#endif
     spin_lock(&debug_lock);
     LOG_INFO("Printing Buddy System Lists from %d", cpu_current());
     for (int i = MAX_ALLOC_SIZE_EXP; i >= PAGE_SIZE_EXP; i--) {

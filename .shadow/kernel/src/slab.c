@@ -18,7 +18,11 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	
 	
 	SlabList *list = &slab[cpu][slab_idx];
+#ifndef TEST
 	list->thread_lock = SPIN_INIT();
+#else 
+	pthread_mutex_init(&(list->thread_lock), NULL);
+#endif
 	list->thread.head = list->thread.tail = NULL;
 	list->local.head = addr_start;
 	SlabObj *iter = addr_start;

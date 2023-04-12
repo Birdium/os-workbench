@@ -106,9 +106,11 @@ void *buddy_fetch_best_chunk(int exp) {
     void *chunk = NULL;
     while (exp <= MAX_ALLOC_SIZE_EXP) {
         TableList *list = &buddy[exp];
+
         LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
+
         if (list->head != NULL) {
             if (exp != list->head->size) {
                 printf("%d %d %p\n", exp, list->head->size, list->head);
@@ -119,8 +121,10 @@ void *buddy_fetch_best_chunk(int exp) {
             list->head->allocated = 1;
             buddy_delete(list->head);
         }
+
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
+        
         if (chunk) break;
         ++exp;
     } 

@@ -115,12 +115,13 @@ void *buddy_fetch_best_chunk(int exp) {
         LOG_LOCK("fetched %d", list - buddy);
 
         if (list->head != NULL) {
-            spin_lock(&(list->head->lock));
-            chunk = TBE_2_ADDR(list->head);
-            assert(list->head->allocated == 0);
-            list->head->allocated = 1;
-            buddy_delete(list->head);
-            spin_unlock(&(list->head->lock));
+            TableEntry *tbe = list->head;
+            spin_lock(&(tbe->lock));
+            chunk = TBE_2_ADDR(tbe);
+            assert(tbe->allocated == 0);
+            tbe->allocated = 1;
+            buddy_delete(tbe);
+            spin_unlock(&(tbe->lock));
         }
 
         spin_unlock(&(list->lock));

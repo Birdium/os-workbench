@@ -124,7 +124,7 @@ void *buddy_fetch_best_chunk(int exp) {
 
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
-        
+
         if (chunk) break;
         ++exp;
     } 
@@ -159,6 +159,7 @@ void *buddy_alloc(size_t size) {
         split_tbe->is_slab = 0;
         split_tbe->size = tbe->size;
         split_tbe->allocated = 0;
+        assert(split_tbe->size == list - buddy);
         buddy_insert(split_tbe);
 
         spin_unlock(&(list->lock));

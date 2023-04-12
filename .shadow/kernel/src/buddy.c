@@ -61,6 +61,8 @@ void buddy_delete(TableEntry *tbe) {
     else {
         if (list->head && !list->tail) {
             printf("12311234123\n");
+            list = NULL;
+            list->head = NULL; 
         }
         list = NULL;
         list->head = NULL; 

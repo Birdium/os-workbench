@@ -68,10 +68,12 @@ void buddy_delete(TableEntry *tbe) {
     if (list->head == list->tail) {
         assert(list->head == tbe);
         list->head = list->tail = NULL;
+    if (list->head) assert(list->head->size >= PAGE_SIZE_EXP);
     }
     else if (list->head == tbe) {
         list->head = tbe->next;
         list->head->prev = NULL;
+    if (list->head) assert(list->head->size >= PAGE_SIZE_EXP);
         
     }
     else if (list->tail == tbe) {
@@ -81,7 +83,6 @@ void buddy_delete(TableEntry *tbe) {
     if (tbe->prev) tbe->prev->next = tbe->next;
     if (tbe->next) tbe->next->prev = tbe->prev;
     tbe->prev = tbe->next = NULL;
-    if (list->head) assert(list->head->size >= PAGE_SIZE_EXP);
 }
 
 // get a smallest chunk whose size >= 2^(exp)

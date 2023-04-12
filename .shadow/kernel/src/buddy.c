@@ -146,22 +146,32 @@ void *buddy_alloc(size_t size) {
     TableEntry *tbe = ADDR_2_TBE(result);
     LOG_INFO("fetched page start from %p with size %d", result, (1<<tbe->size));
     // split tbe into 2
-    while (tbe->size > size_exp) {
+    while (1) {
+        spin_lock(&(tbe->lock));
+        if (tbe->size > size_exp) {
+            break;
+        }
         tbe->size--;
-        assert(tbe->size > PAGE_SIZE_EXP);
+        int sz = tbe->size;
+        spin_unlock(&(tbe->lock));
+        assert(sz > PAGE_SIZE_EXP);
         // get the list wait to be insert
-        TableList *list = &buddy[tbe->size];
+        TableList *list = &buddy[sz];
 
         LOG_LOCK("trying to fetch %d", list - buddy);
         spin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
 
-        TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
-        LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), (1<<tbe->size));
+        TableEntry *split_tbe = tbe + (1 << (sz - PAGE_SIZE_EXP));
+        LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), 1 << sz);
+
+        spin_lock(&(split_tbe->lock));
         split_tbe->cpu_cnt = cpu_current();
         split_tbe->is_slab = 0;
         split_tbe->size = tbe->size;
         split_tbe->allocated = 0;
+        spin_unlock(&(split_tbe->lock));
+
         buddy_insert(split_tbe);
 
         spin_unlock(&(list->lock));

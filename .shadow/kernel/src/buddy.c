@@ -128,6 +128,7 @@ void *buddy_alloc(size_t size) {
     // split tbe into 2
     while (tbe->size > size_exp) {
         tbe->size--;
+        assert(tbe->size >= PAGE_SIZE_EXP);
         TableEntry *split_tbe = tbe + (1 << (tbe->size - PAGE_SIZE_EXP));
         split_tbe->size = tbe->size;
         split_tbe->allocated = 0;
@@ -168,6 +169,7 @@ void buddy_free(void *addr) {
         LOG_LOCK("fetched %d", list - buddy);
         tbe = PARENT_TBE(tbe);
         tbe->size = ++size_exp;
+        assert(tbe->size >= PAGE_SIZE_EXP);
     }
     tbe->allocated = 0;
     buddy_insert(tbe);

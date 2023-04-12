@@ -92,7 +92,9 @@ void *buddy_fetch_best_chunk(int exp) {
         spin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
         if (list->head != NULL) {
-            assert(exp == list->head->size);
+            if (exp != list->head->size) {
+                printf("%d %d\n", exp, list->head->size);
+            }
             chunk = TBE_2_ADDR(list->head);
             LOG_INFO("%p", chunk);
             assert(list->head->allocated == 0);

@@ -224,7 +224,7 @@ void buddy_free(void *addr) {
 
         tbe = PARENT_TBE(tbe);
         parent_tbe = PARENT_TBE(tbe);
-        right_son_tbe = RIGHT_SON_TBE(tbe);
+        right_son_tbe = RIGHT_SON_TBE(parent_tbe);
         spin_lock(&(parent_tbe->lock));
         spin_lock(&(right_son_tbe->lock));
 

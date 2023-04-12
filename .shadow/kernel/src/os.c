@@ -60,10 +60,10 @@ static void os_run() {
     tasks[i].alloc = test_alloc(tasks[i].size);
     // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
-  // for (int i = 0; i < TEST_SIZE; i++) {
-  //   if (tasks[i].alloc)
-  //   test_free(tasks[i].alloc);
-  // }
+  for (int i = 0; i < TEST_SIZE; i++) {
+    if (tasks[i].alloc)
+    test_free(tasks[i].alloc);
+  }
   // size_t size = 16 * 1024 * 1024;
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);

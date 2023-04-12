@@ -154,7 +154,7 @@ void *buddy_alloc(size_t size) {
         tbe->size--;
         int sz = tbe->size;
         spin_unlock(&(tbe->lock));
-        assert(sz > PAGE_SIZE_EXP);
+        assert(sz >= PAGE_SIZE_EXP);
         // get the list wait to be insert
         TableList *list = &buddy[sz];
 

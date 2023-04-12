@@ -165,6 +165,7 @@ void buddy_free(void *addr) {
         tbe->size = ++size_exp;
     }
     tbe->allocated = 0;
+    assert(tbe->size >= 12);
     buddy_insert(tbe);
     spin_unlock(&(list->lock));
     LOG_LOCK("released %d", list - buddy);

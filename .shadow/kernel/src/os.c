@@ -53,7 +53,7 @@ static void os_run() {
     void *alloc;
     int size;
   } Task;
-  #define TEST_SIZE 1000
+  #define TEST_SIZE 10000
   Task tasks[TEST_SIZE];
   for (int i = 0; i < TEST_SIZE; i++) {
     tasks[i].size = (1 << (rand() % 3 + 13));

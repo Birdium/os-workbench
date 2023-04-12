@@ -93,7 +93,7 @@ void *buddy_fetch_best_chunk(int exp) {
         LOG_LOCK("fetched %d", list - buddy);
         if (list->head != NULL) {
             if (exp != list->head->size) {
-                printf("%d %d\n", exp, list->head->size);
+                printf("%d %d %p\n", exp, list->head->size, list->head);
             }
             chunk = TBE_2_ADDR(list->head);
             LOG_INFO("%p", chunk);

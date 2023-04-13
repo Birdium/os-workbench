@@ -18,11 +18,6 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
 	
 	SlabList *list = &slab[cpu][slab_idx];
-#ifndef TEST
-	list->thread_lock = SPIN_INIT();
-#else 
-	pthread_mutex_init(&(list->thread_lock), NULL);
-#endif
 	list->thread.head = list->thread.tail = NULL;
 	list->local.head = addr_start;
 	SlabObj *iter = addr_start;
@@ -36,10 +31,20 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	list->thread.cnt = 0;
 }
 
-void list_init(SlabCacheList *list) {
+void cache_list_init(SlabCacheList *list) {
 	list->cnt = 0;
 	list->head = NULL;
 	list->tail = NULL;
+}
+
+void list_init(SlabList *list) {
+	cache_list_init(&(list->local));
+	cache_list_init(&(list->thread));	
+#ifndef TEST
+	list->thread_lock = SPIN_INIT();
+#else 
+	pthread_mutex_init(&(list->thread_lock), NULL);
+#endif
 }
 
 // get some pages from buddy
@@ -47,9 +52,7 @@ void slab_init() {
 	for (int cpu = 0; cpu < cpu_count(); cpu++) {
 		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
 			SlabList *list = &slab[cpu][slab_idx];
-			list_init(&(list->local));
-			list_init(&(list->thread));
-			list->thread_lock = SPIN_INIT();
+			list_init(list);
 		}
 	}
 	for (int cpu = 0; cpu < cpu_count(); cpu++) {

@@ -190,6 +190,11 @@ void buddy_free(void *addr) {
     TableEntry *parent_tbe = PARENT_TBE(tbe);
     TableEntry *right_son_tbe = RIGHT_SON_TBE(tbe);
     TableEntry *sibling_tbe = SIBLING_TBE(tbe);
+    {
+        void *t = (void*)(0x1028000);
+        TableEntry *d_tbe = ADDR_2_TBE(t); 
+        printf("%d %d\n", d_tbe->size, d_tbe->allocated);
+    }
     if (tbe->allocated == 0) {
         printf("SIZE: %p %d\n", addr, tbe->size);
     }

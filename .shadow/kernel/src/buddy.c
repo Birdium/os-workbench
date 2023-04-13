@@ -179,6 +179,8 @@ void *buddy_alloc(size_t size) {
     }
     if ((uintptr_t)result == 0x1028000) {
         buddy_debug_print();
+        TableEntry *d_tbe = ADDR_2_TBE(result); 
+        printf("%d", d_tbe->size);
     }
     return result;
 }

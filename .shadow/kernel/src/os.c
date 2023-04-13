@@ -64,7 +64,6 @@ static void os_run() {
   for (int i = 0; i < TEST_SIZE; i++) {
     if (tasks[i].alloc)
     test_free(tasks[i].alloc);
-    buddy_debug_print();
   }
   // size_t size = 16 * 1024 * 1024;
   // void *p = pmm->alloc(size);

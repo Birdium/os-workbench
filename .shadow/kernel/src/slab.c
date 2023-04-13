@@ -25,6 +25,7 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 		printf("%p ", iter);
 		iter += (1 << (slab_idx));
 	}
+	printf("\n");
 }
 
 void cache_list_init(SlabCacheList *list) {

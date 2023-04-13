@@ -23,7 +23,7 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	SlabObj *iter = addr_start;
 	while (iter != addr_end) {
 		slab_list_insert(&(list->local), iter);
-		++iter;
+		iter += (1 << (slab_idx));
 	}
 }
 

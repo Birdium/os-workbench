@@ -76,6 +76,7 @@ void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 
 void *slab_list_poll(SlabCacheList *list) {
 	printf("%p\n", list);
+	printf("%p %p\n", slab, ((void*)slab) + sizeof(slab));
 	SlabObj *result = NULL;
 	if (list->head != NULL) {
 		result = list->head;

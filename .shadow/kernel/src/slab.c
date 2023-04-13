@@ -18,17 +18,12 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
 	
 	SlabList *list = &slab[cpu][slab_idx];
-	list->thread.head = list->thread.tail = NULL;
-	list->local.head = addr_start;
+
 	SlabObj *iter = addr_start;
 	while (iter != addr_end) {
-		iter->prev = (iter == addr_start) ? NULL : iter - 1;
-		iter->next = (iter == addr_end - 1) ? NULL : iter + 1;
-		++iter;
+		printf("%p\n", iter);
+		slab_list_insert(&(list->local), iter);
 	}
-	list->local.tail = iter - 1;
-	list->local.cnt = PAGE_SIZE * BUDDY_FETCH_PAGE_NUM / IDX_2_SIZE_EXP(slab_idx);
-	list->thread.cnt = 0;
 }
 
 void cache_list_init(SlabCacheList *list) {

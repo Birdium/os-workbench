@@ -109,12 +109,14 @@ void *slab_alloc(size_t size) {
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	SlabList *list = &(slab[cpu][slab_idx]);
 	printf("%p\n", slab);
+	printf("LOCAL\n");
 	void *result = slab_list_poll(&(list->local));
 	if (result) return result;
 	assert(list->local.head == NULL);
 	assert(list->local.cnt ==0);
 
 	// then try thread list
+	printf("THREAD\n");
 	spin_lock(&(list->thread_lock));
 	result = slab_list_poll(&(list->thread));
 	spin_unlock(&(list->thread_lock));

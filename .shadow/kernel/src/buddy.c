@@ -177,11 +177,6 @@ void *buddy_alloc(size_t size) {
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
     }
-    {
-        void *t = (void*)(0x1028000);
-        TableEntry *d_tbe = ADDR_2_TBE(t); 
-        printf("%d %d\n", d_tbe->size, d_tbe->allocated);
-    }
     return result;
 }
 
@@ -193,7 +188,7 @@ void buddy_free(void *addr) {
     {
         void *t = (void*)(0x1028000);
         TableEntry *d_tbe = ADDR_2_TBE(t); 
-        printf("%d %d\n", d_tbe->size, d_tbe->allocated);
+        printf("%p %d %d\n", addr, d_tbe->size, d_tbe->allocated);
     }
     if (tbe->allocated == 0) {
         printf("SIZE: %p %d\n", addr, tbe->size);

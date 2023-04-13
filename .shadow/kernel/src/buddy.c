@@ -142,7 +142,7 @@ void *buddy_alloc(size_t size) {
     LOG_INFO("allocating 2^(%d) memory", size_exp);
     void *result = buddy_fetch_best_chunk(size_exp);
     if ((uintptr_t)result == 0x1028000) {
-        printf("%d\n", 1028000);
+        printf("%d\n", size);
     }
     if (result == NULL) return NULL;
     TableEntry *tbe = ADDR_2_TBE(result);

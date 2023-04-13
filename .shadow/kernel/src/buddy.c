@@ -185,6 +185,9 @@ void buddy_free(void *addr) {
     TableEntry *parent_tbe = PARENT_TBE(tbe);
     TableEntry *right_son_tbe = RIGHT_SON_TBE(tbe);
     TableEntry *sibling_tbe = SIBLING_TBE(tbe);
+    if (tbe->allocated == 0) {
+        printf("SIZE: %d\n", tbe->size);
+    }
     assert(tbe->allocated == 1 || tbe->is_slab);
     int size_exp = tbe->size;
     LOG_INFO("freeing 2^(%d) memory from %p", size_exp, addr);

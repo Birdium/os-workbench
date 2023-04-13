@@ -22,7 +22,7 @@ extern TableEntry *table;
 
 static void *kalloc(size_t size) {
   if (size > (1 << 24)) return NULL;
-  if (size < 8) size = 8;
+  if (size < 16) size = 16;
   // slow-path: buddy system
   if (size >= (1 << 12)) {
     return buddy_alloc(align(size));

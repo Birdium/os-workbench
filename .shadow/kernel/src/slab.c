@@ -85,6 +85,7 @@ void *slab_alloc(size_t size) {
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	SlabList *list = &slab[cpu][slab_idx];
 	void *result = slab_list_poll(&(list->local));
+	if (result) printf("%p\n", result);
 	if (result) return result;
 
 	// then try thread list
@@ -96,7 +97,6 @@ void *slab_alloc(size_t size) {
 	// finally requires buddy sys
 	slab_fetch_buddy(slab_idx, cpu);
 	result = slab_list_poll(&(list->local));
-	printf("%p\n", result);
 	return result;
 }
 

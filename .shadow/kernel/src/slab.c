@@ -8,7 +8,6 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	LOG_INFO("fetching from buddy sys");
 	void *addr_start = buddy_alloc(PAGE_SIZE * BUDDY_FETCH_PAGE_NUM);
 	if (!addr_start) return;
-	printf("%p\n", addr_start);
 	TableEntry *tbe = ADDR_2_TBE(addr_start);
 	for (TableEntry *tbe_iter = tbe; tbe_iter < tbe + BUDDY_FETCH_PAGE_NUM; ++tbe_iter) {
 		tbe_iter->size = IDX_2_SIZE_EXP(slab_idx);
@@ -86,6 +85,7 @@ void *slab_alloc(size_t size) {
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	SlabList *list = &slab[cpu][slab_idx];
 	void *result = slab_list_poll(&(list->local));
+	if (result) printf("%p\n", result);
 	if (result) return result;
 
 	// then try thread list

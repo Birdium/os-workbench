@@ -107,7 +107,7 @@ void *slab_alloc(size_t size) {
 	SlabList *list = &slab[cpu][slab_idx];
 	void *result = slab_list_poll(&(list->local));
 	if (result) return result;
-
+	assert(list->local.head == NULL);
 	assert(list->local.cnt ==0);
 
 	// then try thread list

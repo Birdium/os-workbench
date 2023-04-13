@@ -51,6 +51,7 @@ static void test_free(void *addr) {
 void test_test(int cpu_id) {
   #define TEST_SIZE 50000
   set_tid(cpu_id, pthread_self());
+  assert(cpu_current() == cpu_id - 1);
   typedef struct Task {
     void *alloc;
     int size;

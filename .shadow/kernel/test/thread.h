@@ -36,7 +36,6 @@ static inline int cpu_current() {
 
 static inline void set_tid(int cpu_id, int tid) {
   cpu_tid[cpu_id] = tid;
-  assert(0);
 }
 
 

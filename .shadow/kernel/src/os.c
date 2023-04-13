@@ -57,7 +57,7 @@ static void os_run() {
   #define TEST_SIZE 10000
   Task tasks[TEST_SIZE];
   for (int i = 0; i < TEST_SIZE; i++) {
-    tasks[i].size = (1 << (rand() % 12));
+    tasks[i].size = (1 << (rand() % 20));
     tasks[i].alloc = test_alloc(tasks[i].size);
     // buddy_debug_print();
     // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);

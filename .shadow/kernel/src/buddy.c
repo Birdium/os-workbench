@@ -177,9 +177,9 @@ void *buddy_alloc(size_t size) {
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
     }
-    if ((uintptr_t)result == 0x1028000) {
-        buddy_debug_print();
-        TableEntry *d_tbe = ADDR_2_TBE(result); 
+    {
+        void *t = (void*)(0x1028000);
+        TableEntry *d_tbe = ADDR_2_TBE(t); 
         printf("%d %d\n", d_tbe->size, d_tbe->allocated);
     }
     return result;

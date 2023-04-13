@@ -105,9 +105,10 @@ void *slab_alloc(size_t size) {
 	int cpu = cpu_current();
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	SlabList *list = &slab[cpu][slab_idx];
-	slab_debug_print(&(list->local));
 	void *result = slab_list_poll(&(list->local));
 	if (result) return result;
+
+	assert(list->local.cnt ==0);
 
 	// then try thread list
 	spin_lock(&(list->thread_lock));

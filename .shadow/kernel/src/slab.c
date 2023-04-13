@@ -108,6 +108,7 @@ void *slab_alloc(size_t size) {
 	int cpu = cpu_current();
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	SlabList *list = &slab[cpu][slab_idx];
+	printf("%p\n", list);
 	void *result = slab_list_poll(&(list->local));
 	if (result) return result;
 	assert(list->local.head == NULL);

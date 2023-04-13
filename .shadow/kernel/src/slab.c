@@ -21,7 +21,6 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 
 	SlabObj *iter = addr_start;
 	while (iter != addr_end) {
-		printf("%p\n", iter);
 		slab_list_insert(&(list->local), iter);
 		++iter;
 	}

@@ -36,8 +36,22 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	list->thread.cnt = 0;
 }
 
+void list_init(SlabCacheList *list) {
+	list->cnt = 0;
+	list->head = NULL;
+	list->tail = NULL;
+}
+
 // get some pages from buddy
 void slab_init() {
+	for (int cpu = 0; cpu < cpu_count(); cpu++) {
+		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
+			SlabList *list = &slab[cpu][slab_idx];
+			list_init(&(list->local));
+			list_init(&(list->thread));
+			list->thread_lock = SPIN_INIT();
+		}
+	}
 	for (int cpu = 0; cpu < cpu_count(); cpu++) {
 		// init each slab with size 8, 16, ... , 4096
 		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {

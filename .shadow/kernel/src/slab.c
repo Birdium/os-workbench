@@ -108,7 +108,7 @@ void *slab_alloc(size_t size) {
 	// finally requires buddy sys
 	slab_fetch_buddy(slab_idx, cpu);
 	result = slab_list_poll(&(list->local));
-	printf("%d\n", result);
+	printf("%d\n", slab[cpu][slab_idx].local.cnt);
 	return result;
 }
 

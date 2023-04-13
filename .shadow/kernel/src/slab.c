@@ -71,7 +71,7 @@ void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 		obj->next = NULL;
 		list->tail = obj;
 	}
-	++list->cnt;
+	++(list->cnt);
 }
 
 void *slab_list_poll(SlabCacheList *list) {
@@ -82,7 +82,7 @@ void *slab_list_poll(SlabCacheList *list) {
 		if (list->head) list->head->prev = NULL;
 		result->next = NULL;
 	}	
-	--list->cnt;
+	--(list->cnt);
 	return result;
 }
 

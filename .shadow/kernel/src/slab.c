@@ -82,6 +82,7 @@ void *slab_list_poll(SlabCacheList *list) {
 		result = list->head;
 		list->head = result->next;
 		if (list->head) list->head->prev = NULL;
+		else list->tail = NULL;
 		result->next = NULL;
 		--(list->cnt);
 	}	

@@ -16,7 +16,7 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	}
 	void *addr_end = addr_start + PAGE_SIZE * BUDDY_FETCH_PAGE_NUM;
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
-	
+	printf("%p %p\n", addr_start, addr_end);
 	
 	SlabList *list = &slab[cpu][slab_idx];
 #ifndef TEST
@@ -85,7 +85,6 @@ void *slab_alloc(size_t size) {
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	SlabList *list = &slab[cpu][slab_idx];
 	void *result = slab_list_poll(&(list->local));
-	if (result) printf("%p\n", result);
 	if (result) return result;
 
 	// then try thread list

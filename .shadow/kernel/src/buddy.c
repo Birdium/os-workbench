@@ -141,6 +141,9 @@ void *buddy_alloc(size_t size) {
         ++size_exp;
     LOG_INFO("allocating 2^(%d) memory", size_exp);
     void *result = buddy_fetch_best_chunk(size_exp);
+    if ((uintptr_t)result == 0x102800) {
+        printf("%d\n", 102800);
+    }
     if (result == NULL) return NULL;
     TableEntry *tbe = ADDR_2_TBE(result);
     LOG_INFO("fetched page start from %p with size %d", result, (1<<tbe->size));

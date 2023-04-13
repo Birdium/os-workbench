@@ -7,7 +7,6 @@ static SlabList slab[MAX_CPU_NUM][SLAB_NUM];
 void slab_fetch_buddy(int slab_idx, int cpu) {
 	LOG_INFO("fetching from buddy sys");
 	void *addr_start = buddy_alloc(PAGE_SIZE * BUDDY_FETCH_PAGE_NUM);
-	printf("%p\n", addr_start);
 	if (!addr_start) return;
 	TableEntry *tbe = ADDR_2_TBE(addr_start);
 	for (TableEntry *tbe_iter = tbe; tbe_iter < tbe + BUDDY_FETCH_PAGE_NUM; ++tbe_iter) {
@@ -16,6 +15,7 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 		tbe_iter->cpu_cnt = cpu;
 	}
 	void *addr_end = addr_start + PAGE_SIZE * BUDDY_FETCH_PAGE_NUM;
+	printf("[%p, %p)\n", addr_start, addr_end);
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
 	
 	SlabList *list = &slab[cpu][slab_idx];

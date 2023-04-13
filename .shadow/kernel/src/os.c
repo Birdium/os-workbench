@@ -70,7 +70,6 @@ static void os_run() {
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   // for (volatile int i = 0; i < 10000; i ++);
   printf("SUCCESS\n");
-  assert(0);
   while (1) {
     yield();
   }

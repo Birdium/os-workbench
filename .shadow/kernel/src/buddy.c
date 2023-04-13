@@ -186,7 +186,7 @@ void buddy_free(void *addr) {
     TableEntry *right_son_tbe = RIGHT_SON_TBE(tbe);
     TableEntry *sibling_tbe = SIBLING_TBE(tbe);
     if (tbe->allocated == 0) {
-        printf("SIZE: %d\n", tbe->size);
+        printf("SIZE: %p %d\n", addr, tbe->size);
     }
     assert(tbe->allocated == 1 || tbe->is_slab);
     int size_exp = tbe->size;

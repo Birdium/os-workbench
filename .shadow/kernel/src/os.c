@@ -8,7 +8,7 @@ static void os_init() {
 static void *test_alloc(int size) {
   void *p = pmm->alloc(size);
 #ifndef TEST
-  // printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
+  printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
 #else
   // printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
@@ -17,7 +17,7 @@ static void *test_alloc(int size) {
 }
 
 static void test_free(void *addr) {
-  // printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
+  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
   assert(addr != NULL);
   pmm->free(addr);
 #ifndef TEST
@@ -69,10 +69,10 @@ static void os_run() {
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   // for (volatile int i = 0; i < 10000; i ++);
-  // printf("SUCCESS\n");
-  // while (1) {
-  //   yield();
-  // }
+  printf("SUCCESS\n");
+  while (1) {
+    yield();
+  }
 }
 #else 
 static void os_run() {

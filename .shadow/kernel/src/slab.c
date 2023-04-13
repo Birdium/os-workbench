@@ -16,7 +16,6 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	}
 	void *addr_end = addr_start + PAGE_SIZE * BUDDY_FETCH_PAGE_NUM;
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
-	printf("%p %p\n", addr_start, addr_end);
 	
 	SlabList *list = &slab[cpu][slab_idx];
 #ifndef TEST

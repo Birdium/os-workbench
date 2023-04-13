@@ -111,7 +111,6 @@ void *slab_alloc(size_t size) {
 	void *result = slab_list_poll(&(list->local));
 	if (result) return result;
 	assert(list->local.head == NULL);
-	printf("%d\n", list->local.cnt);
 	assert(list->local.cnt ==0);
 
 	// then try thread list

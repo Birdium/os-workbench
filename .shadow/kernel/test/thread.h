@@ -22,16 +22,16 @@ static int cpu_tid[NTHREAD];
 
 static struct thread tpool[NTHREAD], *tptr = tpool;
 
+static inline int cpu_count() {
+  return tptr - tpool + 1;
+}
+
 static inline int cpu_current() {
   for (int i = 1; i <= cpu_count(); i++) {
     if (cpu_tid[i] == pthread_self()) {
       return i - 1;
     }
   }
-}
-
-static inline int cpu_count() {
-  return tptr - tpool + 1;
 }
 
 static inline void set_tid(int cpu_id, int tid) {

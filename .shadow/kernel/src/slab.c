@@ -28,7 +28,7 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	SlabObj *iter = addr_start;
 	while (iter != addr_end) {
 		iter->prev = (iter == addr_start) ? NULL : iter - 1;
-		iter->next = (iter == addr_end) ? NULL : iter + 1;
+		iter->next = (iter == addr_end - 1) ? NULL : iter + 1;
 		++iter;
 	}
 	list->local.tail = iter - 1;

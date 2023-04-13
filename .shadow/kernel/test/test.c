@@ -48,7 +48,7 @@ static void test_free(void *addr) {
   // buddy_debug_print();
 }
 
-void test_test() {
+void test_test(int cpu_id) {
   #define TEST_SIZE 50000
   typedef struct Task {
     void *alloc;

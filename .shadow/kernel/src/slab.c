@@ -15,7 +15,6 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 		tbe_iter->cpu_cnt = cpu;
 	}
 	void *addr_end = addr_start + PAGE_SIZE * BUDDY_FETCH_PAGE_NUM;
-	printf("[%p, %p), %d\n", addr_start, addr_end, slab_idx);
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
 	
 	SlabList *list = &slab[cpu][slab_idx];
@@ -26,7 +25,6 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 		printf("%p ", iter);
 		iter += (1 << (slab_idx));
 	}
-	printf("\n");
 }
 
 void cache_list_init(SlabCacheList *list) {
@@ -58,7 +56,6 @@ void slab_init() {
 		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
 			// fecth page from buddy sys
 			slab_fetch_buddy(slab_idx, cpu);
-			printf("%d\n", slab[cpu][slab_idx].local.cnt);
 		}
 	}
 }

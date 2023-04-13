@@ -141,9 +141,6 @@ void *buddy_alloc(size_t size) {
         ++size_exp;
     LOG_INFO("allocating 2^(%d) memory", size_exp);
     void *result = buddy_fetch_best_chunk(size_exp);
-    if ((uintptr_t)result == 0x1028000) {
-        printf("%d\n", size);
-    }
     if (result == NULL) return NULL;
     TableEntry *tbe = ADDR_2_TBE(result);
     LOG_INFO("fetched page start from %p with size %d", result, (1<<tbe->size));
@@ -179,6 +176,9 @@ void *buddy_alloc(size_t size) {
 
         spin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
+    }
+    if ((uintptr_t)result == 0x1028000) {
+        buddy_debug_print();
     }
     return result;
 }

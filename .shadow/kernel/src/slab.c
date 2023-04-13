@@ -75,7 +75,7 @@ void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 }
 
 void *slab_list_poll(SlabCacheList *list) {
-	assert(list);
+	printf("%p\n", list);
 	SlabObj *result = NULL;
 	if (list->head != NULL) {
 		result = list->head;

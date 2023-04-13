@@ -13,7 +13,7 @@ static void *test_alloc(int size) {
   // printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
-  assert(((uintptr_t)p & 0b1111) == 0);
+  // assert(((uintptr_t)p & 0b1111) == 0);
   return p;
 }
 

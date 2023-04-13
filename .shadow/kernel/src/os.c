@@ -10,14 +10,14 @@ static void *test_alloc(int size) {
 #ifndef TEST
   // printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
 #else
-  printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
+  // printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   return p;
 }
 
 static void test_free(void *addr) {
-  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
+  // printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
   assert(addr != NULL);
   pmm->free(addr);
 #ifndef TEST

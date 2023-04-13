@@ -86,6 +86,15 @@ void *slab_list_poll(SlabCacheList *list) {
 	return result;
 }
 
+void slab_debug_print(SlabCacheList *list) {
+	SlabObj *obj = list->head;
+	while (obj) {
+		printf("%p ", obj);
+		obj = obj->next;
+	}
+	printf("\n");
+}
+
 void *slab_alloc(size_t size) {
     int size_exp = PAGE_SIZE_EXP;
     while (size_exp < PAGE_SIZE_EXP && (1 << size_exp) != size) 
@@ -108,7 +117,7 @@ void *slab_alloc(size_t size) {
 	// finally requires buddy sys
 	slab_fetch_buddy(slab_idx, cpu);
 	result = slab_list_poll(&(list->local));
-	printf("%d\n", slab[cpu][slab_idx].local.cnt);
+	slab_debug_print(&(list->local));
 	return result;
 }
 

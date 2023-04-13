@@ -56,6 +56,7 @@ void slab_init() {
 		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
 			// fecth page from buddy sys
 			slab_fetch_buddy(slab_idx, cpu);
+			printf("%d\n", slab[cpu][slab_idx].local.cnt);
 		}
 	}
 }

@@ -22,7 +22,7 @@ extern TableEntry *table;
 
 static void *kalloc(size_t size) {
   if (size > (1 << 24)) return NULL;
-  if (size < 8) size = 8;
+  if (size < 16) size = 16;
   // slow-path: buddy system
   if (size >= (1 << 12)) {
     return buddy_alloc(align(size));
@@ -56,7 +56,6 @@ static void pmm_init() {
   // pm_cur = (uintptr_t) heap.start;
   init_buddy();
   slab_init();
-  buddy_debug_print();
 }
 #else
 // 测试代码的 pmm_init ()

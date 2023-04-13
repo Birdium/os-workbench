@@ -17,28 +17,39 @@ void slab_fetch_buddy(int slab_idx, int cpu) {
 	void *addr_end = addr_start + PAGE_SIZE * BUDDY_FETCH_PAGE_NUM;
 	LOG_INFO("SLAB fetch buddy from %p to %p", addr_start, addr_end);
 	
-	
 	SlabList *list = &slab[cpu][slab_idx];
+
+	SlabObj *iter = addr_start;
+	while (iter != addr_end) {
+		slab_list_insert(&(list->local), iter);
+		iter += (1 << (slab_idx));
+	}
+}
+
+void cache_list_init(SlabCacheList *list) {
+	list->cnt = 0;
+	list->head = NULL;
+	list->tail = NULL;
+}
+
+void list_init(SlabList *list) {
+	cache_list_init(&(list->local));
+	cache_list_init(&(list->thread));	
 #ifndef TEST
 	list->thread_lock = SPIN_INIT();
 #else 
 	pthread_mutex_init(&(list->thread_lock), NULL);
 #endif
-	list->thread.head = list->thread.tail = NULL;
-	list->local.head = addr_start;
-	SlabObj *iter = addr_start;
-	while (iter != addr_end) {
-		iter->prev = (iter == addr_start) ? NULL : iter - 1;
-		iter->next = (iter == addr_end) ? NULL : iter + 1;
-		++iter;
-	}
-	list->local.tail = iter - 1;
-	list->local.cnt = PAGE_SIZE * BUDDY_FETCH_PAGE_NUM / IDX_2_SIZE_EXP(slab_idx);
-	list->thread.cnt = 0;
 }
 
 // get some pages from buddy
 void slab_init() {
+	for (int cpu = 0; cpu < cpu_count(); cpu++) {
+		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
+			SlabList *list = &slab[cpu][slab_idx];
+			list_init(list);
+		}
+	}
 	for (int cpu = 0; cpu < cpu_count(); cpu++) {
 		// init each slab with size 8, 16, ... , 4096
 		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
@@ -50,6 +61,7 @@ void slab_init() {
 
 void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 	if (list->tail == NULL) {
+		assert(list->cnt == 0);
 		list->head = list->tail = obj;
 		obj->next = obj->prev = NULL;
 	}
@@ -59,7 +71,7 @@ void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 		obj->next = NULL;
 		list->tail = obj;
 	}
-	++list->cnt;
+	++(list->cnt);
 }
 
 void *slab_list_poll(SlabCacheList *list) {
@@ -68,17 +80,27 @@ void *slab_list_poll(SlabCacheList *list) {
 		result = list->head;
 		list->head = result->next;
 		if (list->head) list->head->prev = NULL;
+		else list->tail = NULL;
 		result->next = NULL;
+		--(list->cnt);
 	}	
-	--list->cnt;
 	return result;
 }
 
+void slab_debug_print(SlabCacheList *list) {
+	SlabObj *obj = list->head;
+	while (obj) {
+		printf("%p ", obj);
+		obj = obj->next;
+	}
+	printf("\n");
+}
+
 void *slab_alloc(size_t size) {
-    int size_exp = PAGE_SIZE_EXP;
+    int size_exp = 0;
     while (size_exp < PAGE_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
-    LOG_INFO("allocating 2^(%d) memory", size_exp);
+    LOG_INFO("allocating 2^(%d) memory (%x)", size_exp, size);
 
 	// first try local list
 	int cpu = cpu_current();
@@ -86,6 +108,8 @@ void *slab_alloc(size_t size) {
 	SlabList *list = &slab[cpu][slab_idx];
 	void *result = slab_list_poll(&(list->local));
 	if (result) return result;
+	assert(list->local.head == NULL);
+	assert(list->local.cnt ==0);
 
 	// then try thread list
 	spin_lock(&(list->thread_lock));

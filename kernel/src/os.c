@@ -8,16 +8,16 @@ static void os_init() {
 static void *test_alloc(int size) {
   void *p = pmm->alloc(size);
 #ifndef TEST
-  printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
+  // printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
 #else
-  printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
+  // printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   return p;
 }
 
 static void test_free(void *addr) {
-  printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
+  // printf("CPU #%d Freeing in %p\n", cpu_current(), addr);
   assert(addr != NULL);
   pmm->free(addr);
 #ifndef TEST
@@ -53,11 +53,12 @@ static void os_run() {
     void *alloc;
     int size;
   } Task;
-  #define TEST_SIZE 10000
+  #define TEST_SIZE 1200
   Task tasks[TEST_SIZE];
   for (int i = 0; i < TEST_SIZE; i++) {
-    tasks[i].size = (1 << (rand() % 3 + 13));
+    tasks[i].size = (1 << (rand() % 12));
     tasks[i].alloc = test_alloc(tasks[i].size);
+    // buddy_debug_print();
     // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }
   for (int i = 0; i < TEST_SIZE; i++) {
@@ -69,7 +70,9 @@ static void os_run() {
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);
   // for (volatile int i = 0; i < 10000; i ++);
   printf("SUCCESS\n");
-  while (1);
+  while (1) {
+    // yield();
+  }
 }
 #else 
 static void os_run() {

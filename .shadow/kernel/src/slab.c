@@ -60,10 +60,10 @@ void slab_init() {
 }
 
 void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
-	assert(obj);
 	if (list->tail == NULL) {
 		assert(list->cnt == 0);
 		list->head = list->tail = obj;
+		printf("%p\n", obj);
 		obj->next = obj->prev = NULL;
 	}
 	else {

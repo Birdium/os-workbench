@@ -55,7 +55,6 @@ static void pmm_init() {
   // lk = SPIN_INIT();
   // pm_cur = (uintptr_t) heap.start;
   init_buddy();
-  assert(0);
   slab_init();
 }
 #else

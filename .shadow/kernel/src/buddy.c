@@ -29,6 +29,7 @@ void init_buddy() {
         // table[i].next = (i != PAGE_NUM) ? NULL : &table[i + MAX_ALLOC_PAGE_NUM];
     }
     // buddy[MAX_ALLOC_SIZE_EXP] = buddy_start;
+    assert(0);
     LOG_INFO("buddy system allocated from %p to %p", buddy_start, heap.end);
 }
 

@@ -29,10 +29,10 @@ static inline int cpu_count() {
 static inline int cpu_current() {
   printf("%d\n", pthread_self());
   int retval = -1;
+  int self = pthread_self();
   for (int i = 1; i <= cpu_count(); i++) {
-    printf("%d cpu_tid %d %d\n", i, cpu_tid[i], pthread_self());
-    if (cpu_tid[i] == pthread_self()) {
-      assert(0);
+    printf("%d cpu_tid %d %d\n", i, cpu_tid[i], self);
+    if (cpu_tid[i] == self) {
       retval = i;
       break;
     }

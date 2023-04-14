@@ -41,7 +41,7 @@ static inline int cpu_current() {
 
 static inline void set_tid(int cpu_id) {
   cpu_tid[cpu_id] = pthread_self();
-  printf("%d %d\n", cpu_id, pthread_self());
+  printf("%d %d %d\n", cpu_id, pthread_self(), cpu_tid[cpu_id] );
 }
 
 

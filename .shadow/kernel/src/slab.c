@@ -50,7 +50,6 @@ void slab_init() {
 			list_init(list);
 		}
 	}
-	assert(0);
 	for (int cpu = 0; cpu < cpu_count(); cpu++) {
 		// init each slab with size 8, 16, ... , 4096
 		for (int slab_idx = 0; slab_idx < SLAB_NUM; slab_idx++) {
@@ -58,6 +57,7 @@ void slab_init() {
 			slab_fetch_buddy(slab_idx, cpu);
 		}
 	}
+	assert(0);
 }
 
 void slab_list_insert(SlabCacheList *list, SlabObj *obj) {

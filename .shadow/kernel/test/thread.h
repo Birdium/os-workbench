@@ -18,27 +18,27 @@ struct thread {
 };
 
 // int cpu_current() {
-int cpu_tid[NTHREAD];
+// static int cpu_tid[NTHREAD];
 
-struct thread tpool[NTHREAD], *tptr = tpool;
+static struct thread tpool[NTHREAD], *tptr = tpool;
 
-static inline int cpu_count() {
-  return tptr - tpool + 1;
-}
+// static inline int cpu_count() {
+//   return tptr - tpool + 1;
+// }
 
-static inline int cpu_current() {
-  for (int i = 1; i <= cpu_count(); i++) {
-    if (cpu_tid[i] == pthread_self()) {
-      return i - 1;
-    }
-    // printf("%d %d\n", cpu_tid[i], pthread_self());
-  }
-  return -1;
-}
+// static inline int cpu_current() {
+//   for (int i = 1; i <= cpu_count(); i++) {
+//     if (cpu_tid[i] == pthread_self()) {
+//       return i - 1;
+//     }
+//     // printf("%d %d\n", cpu_tid[i], pthread_self());
+//   }
+//   return -1;
+// }
 
-static inline void set_tid(int cpu_id) {
-  cpu_tid[cpu_id] = pthread_self();
-}
+// static inline void set_tid(int cpu_id) {
+//   cpu_tid[cpu_id] = pthread_self();
+// }
 
 
 static void *wrapper(void *arg) {

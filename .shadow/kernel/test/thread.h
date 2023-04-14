@@ -36,8 +36,8 @@ static inline int cpu_current() {
   return -1;
 }
 
-static inline void set_tid(int cpu_id, int tid) {
-  cpu_tid[cpu_id] = tid;
+static inline void set_tid(int cpu_id) {
+  cpu_tid[cpu_id] = pthread_self();
 }
 
 

@@ -2,6 +2,6 @@
 
 struct thread tpool[NTHREAD], *tptr = tpool;
 
-struct thread *tptr = tpool;
+tptr = tpool;
 
 int cpu_tid[NTHREAD];

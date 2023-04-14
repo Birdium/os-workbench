@@ -27,7 +27,7 @@ static inline int cpu_count() {
 }
 
 static inline int cpu_current() {
-  printf("%d %d\n", pthread_self());
+  printf("%d\n", pthread_self());
   for (int i = 1; i <= cpu_count(); i++) {
     if (cpu_tid[i] == pthread_self()) {
       return i - 1;

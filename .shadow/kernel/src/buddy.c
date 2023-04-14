@@ -13,8 +13,8 @@ static TableList buddy[32];
 
 
 void init_buddy() {
-    heap.start = ROUNDUP(heap.start, MAX_ALLOC_SIZE);
-    heap.end = ROUNDDOWN(heap.end, MAX_ALLOC_SIZE);
+    heap.start = (void *)ROUNDUP(heap.start, MAX_ALLOC_SIZE);
+    heap.end = (void *)ROUNDDOWN(heap.end, MAX_ALLOC_SIZE);
     table = heap.start;
     buddy_start = (TableEntry *)ROUNDUP(table + PAGE_NUM, MAX_ALLOC_SIZE);
     int buddy_page = ADDR_2_TBN(buddy_start);

@@ -30,7 +30,7 @@ static inline int cpu_current() {
   printf("%d\n", pthread_self());
   int retval = -1;
   for (int i = 1; i <= cpu_count(); i++) {
-    printf("%d cpu_tid %d\n", i, cpu_tid[i]);
+    printf("%d cpu_tid %d %d\n", i, cpu_tid[i], pthread_self());
     if (cpu_tid[i] == pthread_self()) {
       retval = i;
       break;

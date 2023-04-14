@@ -30,18 +30,18 @@ static inline int cpu_current() {
   int retval = -1;
   int self = pthread_self();
   for (int i = 1; i <= cpu_count(); i++) {
-    printf("%d cpu_tid %d %d\n", i, cpu_tid[i], self);
+    // printf("%d cpu_tid %d %d\n", i, cpu_tid[i], self);
     if (cpu_tid[i] == self) {
       retval = i;
     }
   }
-  printf("%d\n", retval);
+  // printf("%d\n", retval);
   return retval;
 }
 
 static inline void set_tid(int cpu_id) {
   cpu_tid[cpu_id] = pthread_self();
-  printf("%d %d %d\n", cpu_id, pthread_self(), cpu_tid[cpu_id] );
+  // printf("%d %d %d\n", cpu_id, pthread_self(), cpu_tid[cpu_id] );
 }
 
 

@@ -20,7 +20,7 @@ void init_buddy() {
     memset(buddy, 0, sizeof(buddy));
     // init all table and insert them into buddy sys
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
-        if (TBN_2_ADDR(i) + PAGE_SIZE > heap.end) break;
+        if (TBN_2_ADDR(i) + MAX_ALLOC_SIZE > heap.end) break;
         LOG_INFO("%p", &table[i]);
         table[i].size = MAX_ALLOC_SIZE_EXP;
         table[i].allocated = 0;

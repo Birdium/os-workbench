@@ -27,7 +27,6 @@ static inline int cpu_count() {
 }
 
 static inline int cpu_current() {
-  printf("%d\n", cpu_count());
   int retval = -1;
   int self = pthread_self();
   for (int i = 1; i <= cpu_count(); i++) {

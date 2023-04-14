@@ -21,7 +21,7 @@ struct thread {
 extern int cpu_tid[NTHREAD];
 
 extern struct thread tpool[NTHREAD];
-struct thread *tptr = tpool;
+extern struct thread *tptr;
 
 static inline int cpu_count() {
   return tptr - tpool + 1;

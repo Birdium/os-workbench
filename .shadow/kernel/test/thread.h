@@ -35,8 +35,8 @@ static inline int cpu_current() {
       retval = i;
       break;
     }
-    // printf("%d %d\n", cpu_tid[i], pthread_self());
   }
+  printf("%d\n", retval);
   return retval;
 }
 

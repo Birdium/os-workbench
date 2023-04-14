@@ -13,6 +13,8 @@ static TableList buddy[32];
 
 
 void init_buddy() {
+    heap.start = ROUNDUP(heap.start, MAX_ALLOC_SIZE);
+    heap.end = ROUNDDOWN(heap.end, MAX_ALLOC_SIZE);
     table = heap.start;
     buddy_start = (TableEntry *)ROUNDUP(table + PAGE_NUM, MAX_ALLOC_SIZE);
     int buddy_page = ADDR_2_TBN(buddy_start);
@@ -20,7 +22,6 @@ void init_buddy() {
     memset(buddy, 0, sizeof(buddy));
     // init all table and insert them into buddy sys
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
-        if (TBN_2_ADDR(i) + MAX_ALLOC_SIZE > heap.end) break;
         LOG_INFO("%p", &table[i]);
         table[i].size = MAX_ALLOC_SIZE_EXP;
         table[i].allocated = 0;

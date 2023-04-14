@@ -57,7 +57,6 @@ void slab_init() {
 			slab_fetch_buddy(slab_idx, cpu);
 		}
 	}
-	assert(0);
 }
 
 void slab_list_insert(SlabCacheList *list, SlabObj *obj) {

@@ -166,7 +166,9 @@ void *buddy_alloc(size_t size) {
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), 1 << sz);
 
         spin_lock(&(split_tbe->lock));
+#ifndef TEST
         split_tbe->cpu_cnt = cpu_current();
+#endif
         split_tbe->is_slab = 0;
         split_tbe->size = sz;
         split_tbe->allocated = 0;

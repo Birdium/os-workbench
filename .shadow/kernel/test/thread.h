@@ -32,6 +32,7 @@ static inline int cpu_current() {
   for (int i = 1; i <= cpu_count(); i++) {
     printf("%d cpu_tid %d %d\n", i, cpu_tid[i], pthread_self());
     if (cpu_tid[i] == pthread_self()) {
+      assert(0);
       retval = i;
       break;
     }

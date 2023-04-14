@@ -48,8 +48,9 @@ static void test_free(void *addr) {
   // buddy_debug_print();
 }
 
-void test_test() {
+void test_test(int cpu_id) {
   #define TEST_SIZE 50000
+  set_tid(cpu_id);
   typedef struct Task {
     void *alloc;
     int size;
@@ -57,7 +58,7 @@ void test_test() {
   Task tasks[TEST_SIZE];
   for (int k = 0; k < 100; k++) {
   for (int i = 0; i < TEST_SIZE; i++) {
-    tasks[i].size = (1 << (rand() % 3 + 13));
+    tasks[i].size = (1 << (rand() % 20));
     tasks[i].alloc = test_alloc(tasks[i].size);
     // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
   }

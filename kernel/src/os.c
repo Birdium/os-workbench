@@ -8,11 +8,12 @@ static void os_init() {
 static void *test_alloc(int size) {
   void *p = pmm->alloc(size);
 #ifndef TEST
-  // printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
+  printf("CPU #%d Allocating in %p, %d byte(s) (%x)\n", cpu_current(), p, size, size);
 #else
   // printf("CPU Allocating in %p, %d byte(s) (%x)\n", p, size, size);
 #endif
   assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  // assert(((uintptr_t)p & 0b1111) == 0);
   return p;
 }
 
@@ -53,10 +54,10 @@ static void os_run() {
     void *alloc;
     int size;
   } Task;
-  #define TEST_SIZE 1200
+  #define TEST_SIZE 10000
   Task tasks[TEST_SIZE];
   for (int i = 0; i < TEST_SIZE; i++) {
-    tasks[i].size = (1 << (rand() % 12));
+    tasks[i].size = (1 << (rand() % 20));
     tasks[i].alloc = test_alloc(tasks[i].size);
     // buddy_debug_print();
     // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);

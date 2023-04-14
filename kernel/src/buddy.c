@@ -13,6 +13,8 @@ static TableList buddy[32];
 
 
 void init_buddy() {
+    heap.start = (void *)ROUNDUP(heap.start, MAX_ALLOC_SIZE);
+    heap.end = (void *)ROUNDDOWN(heap.end, MAX_ALLOC_SIZE);
     table = heap.start;
     buddy_start = (TableEntry *)ROUNDUP(table + PAGE_NUM, MAX_ALLOC_SIZE);
     int buddy_page = ADDR_2_TBN(buddy_start);
@@ -166,7 +168,9 @@ void *buddy_alloc(size_t size) {
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), 1 << sz);
 
         spin_lock(&(split_tbe->lock));
+#ifndef TEST
         split_tbe->cpu_cnt = cpu_current();
+#endif
         split_tbe->is_slab = 0;
         split_tbe->size = sz;
         split_tbe->allocated = 0;

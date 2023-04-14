@@ -35,7 +35,6 @@ static inline int cpu_current() {
     }
     // printf("%d %d\n", cpu_tid[i], pthread_self());
   }
-  assert(0);
   return -1;
 }
 

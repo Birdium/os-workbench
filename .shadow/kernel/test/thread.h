@@ -18,9 +18,9 @@ struct thread {
 };
 
 // int cpu_current() {
-static int cpu_tid[NTHREAD];
+int cpu_tid[NTHREAD];
 
-static struct thread tpool[NTHREAD], *tptr = tpool;
+struct thread tpool[NTHREAD], *tptr = tpool;
 
 static inline int cpu_count() {
   return tptr - tpool + 1;

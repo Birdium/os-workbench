@@ -55,7 +55,6 @@ static void pmm_init() {
   // lk = SPIN_INIT();
   // pm_cur = (uintptr_t) heap.start;
   init_buddy();
-  buddy_debug_print();
   slab_init();
 }
 #else
@@ -69,6 +68,7 @@ static void pmm_init() {
   heap.end   = ptr + H_SIZE;
   printf("Got %d MiB heap: [%p, %p)\n", H_SIZE >> 20, heap.start, heap.end);
   init_buddy();
+  buddy_debug_print();
   slab_init();
 }
 #endif

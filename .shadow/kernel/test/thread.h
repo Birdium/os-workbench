@@ -27,9 +27,7 @@ static inline int cpu_count() {
 }
 
 static inline int cpu_current() {
-  printf("%d\n", pthread_self());
   for (int i = 1; i <= cpu_count(); i++) {
-    printf("%d cpu_tid %d\n", i, cpu_tid[i]);
     if (cpu_tid[i] == pthread_self()) {
       return i - 1;
     }
@@ -40,7 +38,6 @@ static inline int cpu_current() {
 
 static inline void set_tid(int cpu_id) {
   cpu_tid[cpu_id] = pthread_self();
-  printf("%d %d %d\n", cpu_id, pthread_self(), cpu_tid[cpu_id] );
 }
 
 

@@ -33,7 +33,6 @@ static inline int cpu_current() {
     printf("%d cpu_tid %d %d\n", i, cpu_tid[i], self);
     if (cpu_tid[i] == self) {
       retval = i;
-      break;
     }
   }
   printf("%d\n", retval);

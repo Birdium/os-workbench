@@ -3,7 +3,6 @@
 
 static void os_init() {
   pmm->init();
-  assert(0);
   kmt->init();
 }
 

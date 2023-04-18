@@ -1,5 +1,9 @@
 #include <os.h>
 
+static void kmt_init() {
+
+}
+
 MODULE_DEF(kmt) = {
- // TODO
+    .init = kmt_init,
 };

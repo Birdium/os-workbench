@@ -5,7 +5,6 @@ int main() {
   ioe_init();
   cte_init(os->trap);
   os->init();
-  assert(0);
   mpe_init(os->run);
   return 1;
 }

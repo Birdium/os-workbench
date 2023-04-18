@@ -1,8 +1,8 @@
-#ifndef LOCK_H
-#define LOCK_H
-typedef int spinlock_t;
-#define SPIN_INIT() 0
-static inline void spin_lock(spinlock_t *lk) {
+#ifndef MYLOCK_H
+#define MYLOCK_H
+typedef int myspinlock_t;
+#define MYSPIN_INIT() 0
+static inline void myspin_lock(myspinlock_t *lk) {
   int cnt = 0;
   while (1) {
     int value = atomic_xchg(lk, 1);
@@ -17,7 +17,7 @@ static inline void spin_lock(spinlock_t *lk) {
   }
 }
 
-static inline void spin_unlock(spinlock_t *lk) {
+static inline void myspin_unlock(myspinlock_t *lk) {
   atomic_xchg(lk, 0);
 }
 #endif

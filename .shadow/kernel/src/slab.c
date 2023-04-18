@@ -36,7 +36,7 @@ void list_init(SlabList *list) {
 	cache_list_init(&(list->local));
 	cache_list_init(&(list->thread));	
 #ifndef TEST
-	list->thread_lock = SPIN_INIT();
+	list->thread_lock = MYSPIN_INIT();
 #else 
 	pthread_mutex_init(&(list->thread_lock), NULL);
 #endif
@@ -112,9 +112,9 @@ void *slab_alloc(size_t size) {
 	assert(list->local.cnt ==0);
 
 	// then try thread list
-	spin_lock(&(list->thread_lock));
+	myspin_lock(&(list->thread_lock));
 	result = slab_list_poll(&(list->thread));
-	spin_unlock(&(list->thread_lock));
+	myspin_unlock(&(list->thread_lock));
 	if (result) return result;
 
 	// finally requires buddy sys
@@ -134,8 +134,8 @@ void slab_free(void *addr) {
 		slab_list_insert(&(list->local), addr);
 	}
 	else {
-		spin_lock(&(list->thread_lock));
+		myspin_lock(&(list->thread_lock));
 		slab_list_insert(&(list->thread), addr);
-		spin_unlock(&(list->thread_lock));
+		myspin_unlock(&(list->thread_lock));
 	}
 }

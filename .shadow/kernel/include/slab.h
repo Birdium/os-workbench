@@ -15,7 +15,7 @@ typedef struct SlabCacheList {
 
 typedef struct SlabList {
 	SlabCacheList local, thread;
-	spinlock_t thread_lock;
+	myspinlock_t thread_lock;
 } SlabList;
 
 // WARN: fatal error if size(SlabObj) > 16

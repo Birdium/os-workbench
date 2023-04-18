@@ -3,8 +3,8 @@
 
 int main() {
   ioe_init();
-  assert(0);
   cte_init(os->trap);
+  assert(0);
   os->init();
   mpe_init(os->run);
   return 1;

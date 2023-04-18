@@ -17,7 +17,7 @@ static inline size_t align(size_t size) {
 
 extern TableEntry *table;
 
-// spinlock_t lk;
+// myspinlock_t lk;
 // uintptr_t pm_cur;
 
 static void *kalloc(size_t size) {
@@ -31,13 +31,13 @@ static void *kalloc(size_t size) {
     return slab_alloc(align(size));
   }
   // // OJ hacker
-  // spin_lock(&lk);
+  // myspin_lock(&lk);
   // uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
   // pm_cur = pm_ret + size;
 // #ifdef TEST
   // printf("kalloc: allocated from %p, size %u\n", pm_ret, size);
 // #endif
-  // spin_unlock(&lk);
+  // myspin_unlock(&lk);
   // return (void*) pm_ret;
 }
 

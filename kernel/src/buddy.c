@@ -113,20 +113,20 @@ void *buddy_fetch_best_chunk(int exp) {
         TableList *list = &buddy[exp];
 
         LOG_LOCK("trying to fetch %d", list - buddy);
-        spin_lock(&(list->lock));
+        myspin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
 
         if (list->head != NULL) {
             TableEntry *tbe = list->head;
-            spin_lock(&(tbe->lock));
+            myspin_lock(&(tbe->lock));
             chunk = TBE_2_ADDR(tbe);
             assert(tbe->allocated == 0);
             tbe->allocated = 1;
             buddy_delete(tbe);
-            spin_unlock(&(tbe->lock));
+            myspin_unlock(&(tbe->lock));
         }
 
-        spin_unlock(&(list->lock));
+        myspin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
 
         if (chunk) break;
@@ -148,37 +148,37 @@ void *buddy_alloc(size_t size) {
     LOG_INFO("fetched page start from %p with size %d", result, (1<<tbe->size));
     // split tbe into 2
     while (1) {
-        spin_lock(&(tbe->lock));
+        myspin_lock(&(tbe->lock));
         if (tbe->size <= size_exp) {
-            spin_unlock(&(tbe->lock));
+            myspin_unlock(&(tbe->lock));
             break;
         }
         tbe->size--;
         int sz = tbe->size;
-        spin_unlock(&(tbe->lock));
+        myspin_unlock(&(tbe->lock));
         assert(sz >= PAGE_SIZE_EXP);
         // get the list wait to be insert
         TableList *list = &buddy[sz];
 
         LOG_LOCK("trying to fetch %d", list - buddy);
-        spin_lock(&(list->lock));
+        myspin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
 
         TableEntry *split_tbe = tbe + (1 << (sz - PAGE_SIZE_EXP));
         LOG_INFO("splitting %p with size %d", TBE_2_ADDR(split_tbe), 1 << sz);
 
-        spin_lock(&(split_tbe->lock));
+        myspin_lock(&(split_tbe->lock));
 #ifndef TEST
         split_tbe->cpu_cnt = cpu_current();
 #endif
         split_tbe->is_slab = 0;
         split_tbe->size = sz;
         split_tbe->allocated = 0;
-        spin_unlock(&(split_tbe->lock));
+        myspin_unlock(&(split_tbe->lock));
 
         buddy_insert(split_tbe);
 
-        spin_unlock(&(list->lock));
+        myspin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
     }
     return result;
@@ -198,10 +198,10 @@ void buddy_free(void *addr) {
 
     TableList *list = &buddy[size_exp];
     LOG_LOCK("trying to fetch %d", list - buddy);
-    spin_lock(&(list->lock));
+    myspin_lock(&(list->lock));
     LOG_LOCK("fetched %d", list - buddy);
-    spin_lock(&(parent_tbe->lock));
-    spin_lock(&(right_son_tbe->lock));
+    myspin_lock(&(parent_tbe->lock));
+    myspin_lock(&(right_son_tbe->lock));
     // can merge
     while (size_exp < MAX_ALLOC_SIZE_EXP) {
         assert(sibling_tbe == parent_tbe || sibling_tbe == right_son_tbe);
@@ -212,16 +212,16 @@ void buddy_free(void *addr) {
 
         LOG_INFO("sibling info: size: %d allocated: %d is_slab: %d", sibling_tbe->size, sibling_tbe->allocated, sibling_tbe->is_slab);
         buddy_delete(sibling_tbe);
-        spin_unlock(&(list->lock));
+        myspin_unlock(&(list->lock));
         LOG_LOCK("released %d", list - buddy);
 
         ++list;
 
-        spin_unlock(&(parent_tbe->lock));
-        spin_unlock(&(right_son_tbe->lock));
+        myspin_unlock(&(parent_tbe->lock));
+        myspin_unlock(&(right_son_tbe->lock));
 
         LOG_LOCK("trying to fetch %d", list - buddy);
-        spin_lock(&(list->lock));
+        myspin_lock(&(list->lock));
         LOG_LOCK("fetched %d", list - buddy);
 
         tbe = PARENT_TBE(tbe);
@@ -229,33 +229,33 @@ void buddy_free(void *addr) {
         right_son_tbe = RIGHT_SON_TBE(tbe);
         sibling_tbe = SIBLING_TBE(tbe);
 
-        spin_lock(&(parent_tbe->lock));
-        spin_lock(&(right_son_tbe->lock));
+        myspin_lock(&(parent_tbe->lock));
+        myspin_lock(&(right_son_tbe->lock));
 
         tbe->size = ++size_exp;
 
         assert(tbe->size >= PAGE_SIZE_EXP);
     }
     tbe->allocated = 0;
-    spin_unlock(&(parent_tbe->lock));
-    spin_unlock(&(right_son_tbe->lock));
+    myspin_unlock(&(parent_tbe->lock));
+    myspin_unlock(&(right_son_tbe->lock));
     buddy_insert(tbe);
-    spin_unlock(&(list->lock));
+    myspin_unlock(&(list->lock));
     LOG_LOCK("released %d", list - buddy);
 }
 
 void buddy_debug_print() {
 #ifndef TEST
-    static spinlock_t debug_lock = SPIN_INIT();
+    static myspinlock_t debug_lock = MYSPIN_INIT();
 #else 
     static spinlock_t debug_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
-    spin_lock(&debug_lock);
+    myspin_lock(&debug_lock);
     LOG_INFO("Printing Buddy System Lists from %d", cpu_current());
     for (int i = MAX_ALLOC_SIZE_EXP; i >= PAGE_SIZE_EXP; i--) {
         printf("List %d:\n", i);
         TableList *list = &buddy[i];
-        spin_lock(&(list->lock));
+        myspin_lock(&(list->lock));
         if (list->head == NULL) {
             printf("(empty)\n");
         }
@@ -269,7 +269,7 @@ void buddy_debug_print() {
             }
             printf("\n");
         }
-        spin_unlock(&(list->lock));
+        myspin_unlock(&(list->lock));
     }
-    spin_unlock(&debug_lock);
+    myspin_unlock(&debug_lock);
 }

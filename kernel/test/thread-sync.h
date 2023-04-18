@@ -4,7 +4,7 @@
 #include <semaphore.h>
 
 // // Spinlock
-// typedef int spinlock_t;
+// typedef int myspinlock_t;
 // #define SPIN_INIT() 0
 
 // static inline int atomic_xchg(volatile int *addr, int newval) {
@@ -14,7 +14,7 @@
 //   return result;
 // }
 
-// static inline void spin_lock(spinlock_t *lk) {
+// static inline void myspin_lock(myspinlock_t *lk) {
 //   while (1) {
 //     intptr_t value = atomic_xchg(lk, 1);
 //     if (value == 0) {
@@ -23,7 +23,7 @@
 //   }
 // }
 
-// static inline void spin_unlock(spinlock_t *lk) {
+// static inline void myspin_unlock(myspinlock_t *lk) {
 //   atomic_xchg(lk, 0);
 // }
 
@@ -34,10 +34,10 @@
 // static inline void mutex_unlock(mutex_t *lk) { pthread_mutex_unlock(lk); }
 
 // Mutex
-typedef pthread_mutex_t spinlock_t;
+typedef pthread_mutex_t myspinlock_t;
 #define SPIN_INIT() PTHREAD_MUTEX_INITIALIZER
-static inline void spin_lock(spinlock_t *lk)   { pthread_mutex_lock(lk); }
-static inline void spin_unlock(spinlock_t *lk) { pthread_mutex_unlock(lk); }
+static inline void myspin_lock(myspinlock_t *lk)   { pthread_mutex_lock(lk); }
+static inline void myspin_unlock(myspinlock_t *lk) { pthread_mutex_unlock(lk); }
 
 // Conditional Variable
 typedef pthread_cond_t cond_t;

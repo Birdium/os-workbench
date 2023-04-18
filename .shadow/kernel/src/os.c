@@ -35,38 +35,38 @@ static void os_run() {
   //   putch(*s == '*' ? '0' + cpu_current() : *s);
   // }
   printf("Hello World from CPU #%d\n", cpu_current());
-  // test_alloc(1);
-  // test_alloc(2);
-  // test_alloc(4);
-  // test_alloc(8);
+  test_alloc(1);
+  test_alloc(2);
+  test_alloc(4);
+  test_alloc(8);
   void *p1 = test_alloc(1024 * 1024);
-  // void *p2 = test_alloc(1024 * 1024);
-  // void *p3 = test_alloc(1024 * 1024);
-  // void *p4 = test_alloc(1024 * 1024);
-  // void *p5 = test_alloc(1024 * 1024 + 1);
+  void *p2 = test_alloc(1024 * 1024);
+  void *p3 = test_alloc(1024 * 1024);
+  void *p4 = test_alloc(1024 * 1024);
+  void *p5 = test_alloc(1024 * 1024 + 1);
   // // buddy_debug_print();
   // printf("--------free-------\n");
   test_free(p1);
-  // test_free(p2);
-  // test_free(p3); 
-  // test_free(p4);
-  // test_free(p5);
-  typedef struct Task {
-    void *alloc;
-    int size;
-  } Task;
-  #define TEST_SIZE 10000
-  Task tasks[TEST_SIZE];
-  for (int i = 0; i < TEST_SIZE; i++) {
-    tasks[i].size = (1 << (rand() % 20));
-    tasks[i].alloc = test_alloc(tasks[i].size);
-    // buddy_debug_print();
-    // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
-  }
-  for (int i = 0; i < TEST_SIZE; i++) {
-    if (tasks[i].alloc)
-    test_free(tasks[i].alloc);
-  }
+  test_free(p2);
+  test_free(p3); 
+  test_free(p4);
+  test_free(p5);
+  // typedef struct Task {
+  //   void *alloc;
+  //   int size;
+  // } Task;
+  // #define TEST_SIZE 10000
+  // Task tasks[TEST_SIZE];
+  // for (int i = 0; i < TEST_SIZE; i++) {
+  //   tasks[i].size = (1 << (rand() % 20));
+  //   tasks[i].alloc = test_alloc(tasks[i].size);
+  //   // buddy_debug_print();
+  //   // assert((size | ((uintptr_t)p == size + (uintptr_t)p)) || ((size-1) | (uintptr_t)p) == (size-1) + (uintptr_t)p);
+  // }
+  // for (int i = 0; i < TEST_SIZE; i++) {
+  //   if (tasks[i].alloc)
+  //   test_free(tasks[i].alloc);
+  // }
   // size_t size = 16 * 1024 * 1024;
   // void *p = pmm->alloc(size);
   // printf("CPU #%d Allocating in %x, %d byte(s) %x\n", cpu_current(), (uintptr_t)p, size, size);

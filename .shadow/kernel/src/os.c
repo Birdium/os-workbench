@@ -3,6 +3,7 @@
 
 static void os_init() {
   pmm->init();
+  kmt->init();
 }
 
 static void *test_alloc(int size) {

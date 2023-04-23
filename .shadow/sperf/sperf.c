@@ -42,8 +42,7 @@ int main(int argc, char *argv[], char *envp[]) {
         exit(-1);
       }
       strcpy(buf, token);
-      char *b = buf;
-      strcpy(b + path_length, "/strace");
+      strcpy(buf + path_length, "/strace");
       exec_argv[0] = buf;
       execve(exec_argv[0], exec_argv, envp);
       token = strtok(path, delim);

@@ -24,12 +24,12 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   int pid = fork();
   if (pid == 0) { // subproc
-    print_strings(argv + 1);
-    printf("\n");
-    print_strings(envp);
-    printf("\n%s\n", command);
+    // print_strings(argv + 1);
+    // printf("\n");
+    // print_strings(envp);
+    // printf("\n%s\n", command);
     execve(command, argv + 1, envp);
-    assert(0);
+    // assert(0);
   } 
   else {
     

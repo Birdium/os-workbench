@@ -32,9 +32,11 @@ int main(int argc, char *argv[], char *envp[]) {
   int pid = fork();
   if (pid == 0) { // subproc 
     char *path = getenv("PATH");
+    char *new_path = malloc(sizeof(char) * strlen(path) + 1);
+    strcpy(new_path, path);
     char buf[MAXLEN];
     const char delim[] = ":";
-    char *token = strtok(path, delim);
+    char *token = strtok(new_path, delim);
     while (token != NULL) {
       int path_length = strlen(token);
       if (path_length + strlen("/strace") >= MAXLEN) {

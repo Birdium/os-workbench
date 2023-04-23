@@ -34,7 +34,7 @@ int main(int argc, char *argv[], char *envp[]) {
     char *path = getenv("PATH");
     char buf[MAXLEN];
     const char delim[] = ":";
-    char *token;
+    char *token = strtok(path, delim);
     while (token != NULL) {
       int path_length = strlen(token);
       if (path_length + strlen("/strace") < MAXLEN) {
@@ -45,8 +45,9 @@ int main(int argc, char *argv[], char *envp[]) {
       strcpy(buf + path_length, "/strace");
       exec_argv[0] = buf;
       execve(exec_argv[0], exec_argv, envp);
+      token = strtok(path, delim);
     }
-    // assert(0);
+    assert(0);
   } 
   else {
     

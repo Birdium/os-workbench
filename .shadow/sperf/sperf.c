@@ -52,6 +52,7 @@ int main(int argc, char *argv[], char *envp[]) {
   else {
     
   }
+  printf("%s\n", argv[0]);
   perror(argv[0]);
   exit(EXIT_FAILURE);
 }

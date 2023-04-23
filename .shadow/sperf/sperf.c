@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
+#include <string.h>
 
 #define MAXLEN 1024
 

@@ -44,6 +44,7 @@ int main(int argc, char *argv[], char *envp[]) {
       strcpy(buf, token);
       strcat(buf, "/strace");
       exec_argv[0] = buf;
+      print_strings(exec_argv);
       execve(exec_argv[0], exec_argv, envp);
       token = strtok(path, delim);
     }
@@ -52,7 +53,6 @@ int main(int argc, char *argv[], char *envp[]) {
   else {
     
   }
-  printf("%s\n", argv[0]);
   perror(argv[0]);
   exit(EXIT_FAILURE);
 }

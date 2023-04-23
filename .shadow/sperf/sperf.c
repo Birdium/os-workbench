@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <assert.h>
 
+#define MAXLEN 1024
+
 void print_strings(char *strs[]) {
   for (int i = 0; ; i++) {
     if (strs[i] == NULL) break;
@@ -27,12 +29,22 @@ int main(int argc, char *argv[], char *envp[]) {
     exit(-1);
   }
   int pid = fork();
-  if (pid == 0) { // subproc
-    // print_strings(argv + 1);
-    // printf("\n");
-    // print_strings(envp);
-    // printf("\n%s\n", command);
-    execve(exec_argv[0], exec_argv, envp);
+  if (pid == 0) { // subproc 
+    char *path = getenv("PATH");
+    char buf[MAXLEN];
+    const char delim[] = ":";
+    char *token;
+    while (token != NULL) {
+      int path_length = strlen(token);
+      if (path_length + strlen("/strace") < MAXLEN) {
+        fprintf(stderr, "Error: strace path too long.\n");
+        exit(-1);
+      }
+      strcpy(buf, token);
+      strcpy(buf + path_length, "/strace");
+      exec_argv[0] = buf;
+      execve(exec_argv[0], exec_argv, envp);
+    }
     // assert(0);
   } 
   else {

@@ -16,8 +16,12 @@ int main(int argc, char *argv[], char *envp[]) {
   // execve("strace",          exec_argv, exec_envp);
   // execve("/bin/strace",     exec_argv, exec_envp);
   // execve("/usr/bin/strace", exec_argv, exec_envp);
-  char *command = argv[1];
-  // printf("%s\n", command);
+  char *exec_argv[] = malloc((argc + 2) * sizeof (char *));
+  exec_argv[0] = "strace";
+  exec_argv[1] = "-T";
+  for (int i = 1; i <= argc; i++) {
+    exec_argv[i + 1] = argv[i];
+  }
   int fildes[2];
   if (pipe(fildes) != 0) {
     exit(-1);
@@ -28,7 +32,7 @@ int main(int argc, char *argv[], char *envp[]) {
     // printf("\n");
     // print_strings(envp);
     // printf("\n%s\n", command);
-    execve(command, argv + 1, envp);
+    execve(exec_argv[0], exec_argv, envp);
     // assert(0);
   } 
   else {

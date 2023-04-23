@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[]) {
   // execve("strace",          exec_argv, exec_envp);
   // execve("/bin/strace",     exec_argv, exec_envp);
   // execve("/usr/bin/strace", exec_argv, exec_envp);
-  char *exec_argv[] = malloc((argc + 2) * sizeof (char *));
+  char **exec_argv = malloc((argc + 2) * sizeof (char *));
   exec_argv[0] = "strace";
   exec_argv[1] = "-T";
   for (int i = 1; i <= argc; i++) {

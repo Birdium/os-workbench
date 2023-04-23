@@ -46,7 +46,7 @@ int main(int argc, char *argv[], char *envp[]) {
       exec_argv[0] = buf;
       print_strings(exec_argv);
       execve(exec_argv[0], exec_argv, envp);
-      token = strtok(path, delim);
+      token = strtok(NULL, delim);
     }
     assert(0);
   } 

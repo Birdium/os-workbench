@@ -27,6 +27,7 @@ int main(int argc, char *argv[], char *envp[]) {
     print_strings(argv + 1);
     printf("\n");
     print_strings(envp);
+    printf("\n%s\n", command);
     execve(command, argv + 1, envp);
     assert(0);
   } 

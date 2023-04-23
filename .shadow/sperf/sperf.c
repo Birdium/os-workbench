@@ -52,6 +52,6 @@ int main(int argc, char *argv[], char *envp[]) {
   else {
     
   }
-  perror(argv[0]);
+  // perror(argv[0]);
   exit(EXIT_FAILURE);
 }

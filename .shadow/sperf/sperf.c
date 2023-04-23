@@ -3,6 +3,13 @@
 #include <unistd.h>
 #include <assert.h>
 
+void print_strings(char *strs[]) {
+  for (int i = 0; ; i++) {
+    if (strs[i] == NULL) break;
+    printf("%s\n", strs[i]);
+  }
+}
+
 int main(int argc, char *argv[], char *envp[]) {
   // char *exec_argv[] = { "strace", "ls", NULL, };
   // char *exec_envp[] = { "PATH=/bin", NULL, };
@@ -17,6 +24,9 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   int pid = fork();
   if (pid == 0) { // subproc
+    print_strings(argv + 1);
+    printf("\n");
+    print_strings(envp);
     execve(command, argv + 1, envp);
     assert(0);
   } 

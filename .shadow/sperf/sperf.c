@@ -37,7 +37,7 @@ int main(int argc, char *argv[], char *envp[]) {
     char *token = strtok(path, delim);
     while (token != NULL) {
       int path_length = strlen(token);
-      printf("%d %s\n", path_length, token);
+      printf("%d %s %d\n", path_length, token, strlen("/strace"));
       if (path_length + strlen("/strace") < MAXLEN) {
         fprintf(stderr, "Error: strace path too long.\n");
         exit(-1);

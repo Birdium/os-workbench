@@ -43,7 +43,7 @@ int main(int argc, char *argv[], char *envp[]) {
       perror("open");
       exit(EXIT_FAILURE);
     }
-    if (dup2(nullfd, STDERR_FILENO) == -1) {
+    if (dup2(nullfd, STDOUT_FILENO) == -1) {
       perror("dup2");
       exit(EXIT_FAILURE);
     }

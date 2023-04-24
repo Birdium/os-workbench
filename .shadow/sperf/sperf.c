@@ -90,7 +90,6 @@ void list_print(){
     p = p->next;
     cnt++;
   }
-  puts("");
   for(int i = 0; i < 80; i++) 
     putchar('\0');
   fflush(stdout);

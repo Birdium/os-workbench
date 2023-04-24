@@ -157,6 +157,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     while (fgets(buf, MAXLEN, stdin) != NULL) {
       if (regexec(&reg, buf, nmatch, pmatch, 0) != REG_NOMATCH) {
+        assert(0);
         char name_s[MAXLEN], time_s[MAXLEN];
         strncpy(name_s, buf + pmatch[1].rm_so, pmatch[1].rm_eo - pmatch[1].rm_so);
         strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);

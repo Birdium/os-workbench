@@ -81,6 +81,7 @@ void list_print(){
     p = p->next;
     cnt++;
   }
+  fflush(stdout);
 }
 
 int main(int argc, char *argv[], char *envp[]) {

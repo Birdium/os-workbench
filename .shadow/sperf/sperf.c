@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stddef.h>
 #include <fcntl.h>
+#include <time.h>
+#include <regex.h>
 
 #define MAXLEN 1024
 
@@ -13,6 +15,62 @@ void print_strings(char *strs[]) {
     if (strs[i] == NULL) break;
     printf("%s\n", strs[i]);
   }
+}
+
+typedef struct Node {
+  char name[MAXLEN];
+  double time;
+  struct Node *prev, *next;
+} Node;
+
+Node *head = NULL, *tail = NULL;
+int list_size = 0;
+double tot_time = .0f;
+
+Node *newNode(char *name, double time) {
+  Node *result = malloc(sizeof(Node));
+  strcpy(result->name, name);
+  result->time = time;
+  result->prev = result->next = NULL;
+  return result;
+}
+
+void list_update(char *name, double time) {
+  tot_time += time;
+  Node *p = head;
+  if (p == NULL) {
+    head = tail = newNode(name, time);
+    return;
+  }
+  while (p) {
+    if (strcmp(p->name, name) == 0) {
+      p->time += time;
+      return;
+    }
+    p = p->next;
+  }
+  p = head;
+  Node *n = newNode(name, time);
+  while (p) {
+    if (time > p->time) {
+      if (p->prev) {
+        p->prev->next = n;
+        n->prev = p->prev;
+        p->prev = n;
+        n->next = p;
+      }
+      else {
+        head->prev = n;
+        n->next = head;
+        head = n;
+      }
+      return;
+    }
+    p = p->next;
+  }
+  tail->next = n;
+  n->prev = tail;
+  tail = n;
 }
 
 int main(int argc, char *argv[], char *envp[]) {
@@ -75,9 +133,26 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(EXIT_FAILURE);
     }
     char buf[MAXLEN];
-    // time_t new_time, old_time;
+    time_t new_time, old_time;
+
+    regmatch_t pmatch[3];
+    const size_t nmatch = 3;
+    regex_t reg;
+    const char *pattern = "(\\w+)\\(.+\\).+<(\\d+\\.\\d+)>";
+    if (regcomp(&reg, pattern, REG_EXTENDED)) {
+      perror("regcomp");
+      exit(EXIT_FAILURE);
+    }
+
     while (fgets(buf, MAXLEN, stdin) != NULL) {
-      printf(buf);
+      if (regexec(&reg, buf, nmatch, pmatch, 0) != REG_NOMATCH) {
+        char name_s[MAXLEN], time_s[MAXLEN];
+        strncpy(name_s, buf + pmatch[1].rm_so, pmatch[1].rm_eo - pmatch[1].rm_so);
+        strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);
+        name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
+        double time_d = atof(time_s);
+        list_insert(name_s, time_d);
+      }
     }
   }
   perror(argv[0]);

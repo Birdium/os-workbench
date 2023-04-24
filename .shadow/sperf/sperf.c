@@ -81,6 +81,8 @@ void list_print(){
     p = p->next;
     cnt++;
   }
+  for(int i = 0; i < 80; i++) 
+    printf("\0");
   fflush(stdout);
 }
 

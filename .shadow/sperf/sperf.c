@@ -66,7 +66,6 @@ void list_update(char *name, double time) {
 }
 
 void list_print(){
-  list_sort();
   Node *p = head;
   int cnt = 0;
   while (p && cnt < 5) {

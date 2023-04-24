@@ -43,10 +43,6 @@ void list_bubble(Node *p) {
   }
 }
 
-void list_sort() {
-
-}
-
 void list_update(char *name, double time) {
   tot_time += time;
   Node *p = head;
@@ -66,7 +62,7 @@ void list_update(char *name, double time) {
   tail->next = n;
   n->prev = tail;
   tail = n;
-  // list_bubble(n);
+  list_bubble(n);
 }
 
 void list_print(){

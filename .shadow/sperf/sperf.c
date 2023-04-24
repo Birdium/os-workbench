@@ -36,6 +36,7 @@ Node *newNode(char *name, double time) {
 }
 
 void list_bubble(Node *p) {
+  assert(p);
   while (p->prev && p->time > p->prev->time) {
     Node *q = p->prev;
     q->next = p->next;
@@ -62,26 +63,7 @@ void list_update(char *name, double time) {
     }
     p = p->next;
   }
-  p = head;
   Node *n = newNode(name, time);
-  while (p) {
-    if (time > p->time) {
-      if (p->prev) {
-        p->prev->next = n;
-        n->prev = p->prev;
-        p->prev = n;
-        n->next = p;
-      }
-      else {
-        head->prev = n;
-        n->next = head;
-        head = n;
-      }
-      list_bubble(n);
-      return;
-    }
-    p = p->next;
-  }
   tail->next = n;
   n->prev = tail;
   tail = n;
@@ -92,7 +74,7 @@ void list_print(){
   Node *p = head;
   int cnt = 0;
   while (p && cnt < 5) {
-    printf("%s (%d%%)\n", p->name, (int)(p->time / tot_time * 100));
+    printf("%s (%d%%) %lf\n", p->name, (int)(p->time / tot_time * 100), p->time);
     p = p->next;
     cnt++;
   }

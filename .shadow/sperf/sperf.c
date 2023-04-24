@@ -53,6 +53,7 @@ void list_update(char *name, double time) {
         p->next = q;
         if (head == q) head = p;
         if (tail == p) tail = q;
+        p = p->prev;
       }
       return;
     }
@@ -85,7 +86,7 @@ void list_update(char *name, double time) {
 void list_print(){
   Node *p = head;
   int cnt = 0;
-  while (p) {
+  while (p && cnt < 5) {
     printf("%s (%d%%)\n", p->name, (int)(p->time / tot_time * 100));
     p = p->next;
     cnt++;

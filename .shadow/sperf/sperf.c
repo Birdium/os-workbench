@@ -35,6 +35,18 @@ Node *newNode(char *name, double time) {
   return result;
 }
 
+void list_bubble(Node *p) {
+  while (p->prev && p->time > p->prev->time) {
+    Node *q = p->prev;
+    q->next = p->next;
+    p->prev = q->prev; 
+    q->prev = p;
+    p->next = q;
+    if (head == q) head = p;
+    if (tail == p) tail = q;
+  }
+}
+
 void list_update(char *name, double time) {
   tot_time += time;
   Node *p = head;
@@ -45,15 +57,7 @@ void list_update(char *name, double time) {
   while (p) {
     if (strcmp(p->name, name) == 0) {
       p->time += time;
-      while (p->prev && p->time > p->prev->time) {
-        Node *q = p->prev;
-        q->next = p->next;
-        p->prev = q->prev; 
-        q->prev = p;
-        p->next = q;
-        if (head == q) head = p;
-        if (tail == p) tail = q;
-      }
+      list_bubble(p);
       return;
     }
     p = p->next;
@@ -73,6 +77,7 @@ void list_update(char *name, double time) {
         n->next = head;
         head = n;
       }
+      list_bubble(n);
       return;
     }
     p = p->next;
@@ -80,6 +85,7 @@ void list_update(char *name, double time) {
   tail->next = n;
   n->prev = tail;
   tail = n;
+  list_bubble(n);
 }
 
 void list_print(){

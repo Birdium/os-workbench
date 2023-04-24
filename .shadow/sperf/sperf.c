@@ -32,7 +32,6 @@ void list_bubble(Node *p) {
   assert(p);
   while (p->prev && p->time > p->prev->time) {
     Node *q = p->prev;
-    printf("change %s %s\n", q->name, p->name);
     if (q->prev) q->prev->next = p;
     if (p->next) p->next->prev = q;
     q->next = p->next;
@@ -160,9 +159,7 @@ int main(int argc, char *argv[], char *envp[]) {
         strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);
         name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
         double time_d = atof(time_s);
-        printf("%s %lf\n", name_s, time_d);
         list_update(name_s, time_d);
-        list_print();
       }
       else {
         if (buf[0] == '+' && buf[1] == '+') {

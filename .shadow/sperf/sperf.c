@@ -60,7 +60,7 @@ int main(int argc, char *argv[], char *envp[]) {
   else {
     char buf[MAXLEN];
     while (fgets(buf, MAXLEN, fdopen(fildes[0], "r")) != NULL) {
-      puts(buf);
+      // puts(buf);
     }
   }
   perror(argv[0]);

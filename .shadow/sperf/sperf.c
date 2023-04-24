@@ -37,7 +37,6 @@ Node *newNode(char *name, double time) {
 
 void list_update(char *name, double time) {
   tot_time += time;
-  printf("%s %lf\n", name, time);
   Node *p = head;
   if (p == NULL) {
     head = tail = newNode(name, time);

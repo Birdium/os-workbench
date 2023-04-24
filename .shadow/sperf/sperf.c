@@ -70,9 +70,14 @@ int main(int argc, char *argv[], char *envp[]) {
   } 
   else {
     close(fildes[1]);
+    if (dup2(fildes[0], STDIN_FILENO) == -1) {
+      perror("dup2");
+      exit(EXIT_FAILURE);
+    }
     char buf[MAXLEN];
-    while (fgets(buf, MAXLEN, fdopen(fildes[0], "r")) != NULL) {
-      puts(buf);
+    // time_t new_time, old_time;
+    while (fgets(buf, MAXLEN, stdin) != NULL) {
+      printf(buf);
     }
   }
   perror(argv[0]);

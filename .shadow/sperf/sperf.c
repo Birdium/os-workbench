@@ -53,7 +53,6 @@ void list_update(char *name, double time) {
         p->next = q;
         if (head == q) head = p;
         if (tail == p) tail = q;
-        p = p->prev;
       }
       return;
     }

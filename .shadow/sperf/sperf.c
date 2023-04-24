@@ -32,6 +32,7 @@ void list_bubble(Node *p) {
   assert(p);
   while (p->prev && p->time > p->prev->time) {
     Node *q = p->prev;
+    printf("change %s %s\n", q->name, p->name);
     q->next = p->next;
     p->prev = q->prev; 
     q->prev = p;

@@ -32,7 +32,7 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   int pid = fork();
   if (pid == 0) { // subproc 
-    if (dup2(fildes[1], STDOUT_FILENO) == -1) {
+    if (dup2(fildes[1], STDERR_FILENO) == -1) {
       perror("dup2");
       exit(EXIT_FAILURE);
     }

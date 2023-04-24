@@ -73,14 +73,13 @@ void list_print(){
   list_sort();
   Node *p = head;
   int cnt = 0;
-  while (p && cnt < 50) {
+  while (p && cnt < 5) {
     printf("%s (%d%%) %lf\n", p->name, (int)(p->time / tot_time * 100), p->time);
     p = p->next;
     cnt++;
   }
   for(int i = 0; i < 80; i++) 
     putchar('\0');
-  printf("\n");
   fflush(stdout);
 }
 

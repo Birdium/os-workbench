@@ -159,6 +159,7 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(EXIT_FAILURE);
     }
 
+    old_time = time(NULL);
     while (fgets(buf, MAXLEN, stdin) != NULL) { 
       if (regexec(&reg, buf, nmatch, pmatch, 0) != REG_NOMATCH) {
         char name_s[MAXLEN], time_s[MAXLEN];
@@ -167,7 +168,7 @@ int main(int argc, char *argv[], char *envp[]) {
         name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
         double time_d = atof(time_s);
         list_update(name_s, time_d);
-        list_print();
+        
       }
     }
   }

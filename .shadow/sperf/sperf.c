@@ -68,7 +68,7 @@ void list_update(char *name, double time) {
 void list_print(){
   Node *p = head;
   int cnt = 0;
-  while (p && cnt < 5) {
+  while (p && cnt < 50) {
     printf("%s (%d%%) %lf\n", p->name, (int)(p->time / tot_time * 100), p->time);
     p = p->next;
     cnt++;

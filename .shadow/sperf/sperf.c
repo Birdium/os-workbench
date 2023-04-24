@@ -50,6 +50,7 @@ void list_update(char *name, double time) {
   }
   while (p) {
     if (strcmp(p->name, name) == 0) {
+      printf("%s %s", p->name, name);
       p->time += time;
       list_bubble(p);
       return;
@@ -66,7 +67,7 @@ void list_update(char *name, double time) {
 void list_print(){
   Node *p = head;
   int cnt = 0;
-  while (p && cnt < 50) {
+  while (p && cnt < 5) {
     printf("%s (%d%%) %lf\n", p->name, (int)(p->time / tot_time * 100), p->time);
     p = p->next;
     cnt++;

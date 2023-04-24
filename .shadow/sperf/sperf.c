@@ -82,7 +82,7 @@ void list_print(){
     cnt++;
   }
   for(int i = 0; i < 80; i++) 
-    printf("\0");
+    putchar('\0');
   fflush(stdout);
 }
 

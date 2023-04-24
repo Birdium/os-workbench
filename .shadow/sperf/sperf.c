@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stddef.h>
+#include <fcntl.h>
 
 #define MAXLEN 1024
 
@@ -34,6 +35,15 @@ int main(int argc, char *argv[], char *envp[]) {
   if (pid == 0) { // subproc 
     close(fildes[0]);
     if (dup2(fildes[1], STDERR_FILENO) == -1) {
+      perror("dup2");
+      exit(EXIT_FAILURE);
+    }
+    int nullfd = open("/dev/null", O_WRONLY);
+    if (nullfd == -1) {
+      perror("open");
+      exit(EXIT_FAILURE);
+    }
+    if (dup2(nullfd, STDERR_FILENO) == -1) {
       perror("dup2");
       exit(EXIT_FAILURE);
     }

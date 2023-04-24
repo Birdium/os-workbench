@@ -73,6 +73,16 @@ void list_update(char *name, double time) {
   tail = n;
 }
 
+void list_print(){
+  Node *p = head;
+  int cnt = 0;
+  while (p && cnt < 5) {
+    printf("%s (%d%%)\n", p->name, (int)(p->time / tot_time * 100));
+    p = p->next;
+    cnt++;
+  }
+}
+
 int main(int argc, char *argv[], char *envp[]) {
   // char *exec_argv[] = { "strace", "ls", NULL, };
   // char *exec_envp[] = { "PATH=/bin", NULL, };
@@ -151,7 +161,8 @@ int main(int argc, char *argv[], char *envp[]) {
         strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);
         name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
         double time_d = atof(time_s);
-        list_insert(name_s, time_d);
+        list_update(name_s, time_d);
+        list_print();
       }
     }
   }

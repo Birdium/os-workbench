@@ -45,6 +45,15 @@ void list_update(char *name, double time) {
   while (p) {
     if (strcmp(p->name, name) == 0) {
       p->time += time;
+      while (p->prev && p->time > p->prev->time) {
+        Node *q = p->prev;
+        q->next = p->next;
+        p->prev = q->prev; 
+        q->prev = p;
+        p->next = q;
+        if (head == q) head = p;
+        if (tail == p) tail = q;
+      }
       return;
     }
     p = p->next;
@@ -168,7 +177,18 @@ int main(int argc, char *argv[], char *envp[]) {
         name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
         double time_d = atof(time_s);
         list_update(name_s, time_d);
-        
+      }
+      else {
+        if (buf[0] == '+' && buf[1] == '+') {
+          list_print();
+          regfree(&reg);
+          exit(EXIT_SUCCESS);
+        }
+      }
+      new_time = time(NULL);
+      if (new_time - old_time > 1) {
+        list_print();
+        old_time = time(NULL);
       }
     }
   }

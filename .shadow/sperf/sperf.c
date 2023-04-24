@@ -149,14 +149,13 @@ int main(int argc, char *argv[], char *envp[]) {
     regmatch_t pmatch[3];
     const size_t nmatch = 3;
     regex_t reg;
-    const char *pattern = "(\\w+)\\(.+\\).+<(\\d+\\.\\d+)>";
+    const char *pattern = "(\\w+)\\(.+\\).+<(\\d+\\.\\d+)>\\s*";
     if (regcomp(&reg, pattern, REG_EXTENDED)) {
       perror("regcomp");
       exit(EXIT_FAILURE);
     }
 
     while (fgets(buf, MAXLEN, stdin) != NULL) {
-      printf("%s", buf);
       if (regexec(&reg, buf, nmatch, pmatch, 0) != REG_NOMATCH) {
         char name_s[MAXLEN], time_s[MAXLEN];
         strncpy(name_s, buf + pmatch[1].rm_so, pmatch[1].rm_eo - pmatch[1].rm_so);

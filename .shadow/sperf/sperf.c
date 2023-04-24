@@ -157,6 +157,7 @@ int main(int argc, char *argv[], char *envp[]) {
         name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
         double time_d = atof(time_s);
         list_update(name_s, time_d);
+        list_print();
       }
       else {
         if (buf[0] == '+' && buf[1] == '+') {

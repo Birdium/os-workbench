@@ -50,7 +50,7 @@ void list_update(char *name, double time) {
   }
   while (p) {
     if (strcmp(p->name, name) == 0) {
-      printf("%s %s", p->name, name);
+      printf("%s %s\n", p->name, name);
       p->time += time;
       list_bubble(p);
       return;

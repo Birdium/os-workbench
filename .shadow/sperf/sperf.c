@@ -73,6 +73,7 @@ void list_print(){
   }
   for(int i = 0; i < 80; i++) 
     putchar('\0');
+  printf("\n");
   fflush(stdout);
 }
 

@@ -62,7 +62,7 @@ void list_update(char *name, double time) {
   tail->next = n;
   n->prev = tail;
   tail = n;
-  list_bubble(n);
+  // list_bubble(n);
 }
 
 void list_print(){

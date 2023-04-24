@@ -32,6 +32,7 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   int pid = fork();
   if (pid == 0) { // subproc 
+    close(fildes[0]);
     if (dup2(fildes[1], STDERR_FILENO) == -1) {
       perror("dup2");
       exit(EXIT_FAILURE);
@@ -58,6 +59,7 @@ int main(int argc, char *argv[], char *envp[]) {
     assert(0);
   } 
   else {
+    close(fildes[1]);
     char buf[MAXLEN];
     while (fgets(buf, MAXLEN, fdopen(fildes[0], "r")) != NULL) {
       puts(buf);

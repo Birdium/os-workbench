@@ -150,7 +150,7 @@ int main(int argc, char *argv[], char *envp[]) {
     const size_t nmatch = 3;
     regex_t reg;
     // const char *pattern = "(\\w+)\\(.+\\).+<(\\d+\\.\\d+)>\\s*";
-    const char *pattern = "(\\w+)\\(.+\\).+*";
+    const char *pattern = "(\\w+)\\(.+\\).+<(.+)>\\s*";
     if (regcomp(&reg, pattern, REG_EXTENDED)) {
       perror("regcomp");
       exit(EXIT_FAILURE);

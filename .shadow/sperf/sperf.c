@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <string.h>
+#include <stddef.h>
 
 #define MAXLEN 1024
 
@@ -31,6 +32,11 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   int pid = fork();
   if (pid == 0) { // subproc 
+    if (dup2(fildes[1], STDOUT_FILENO) == -1) {
+      perror("dup2");
+      exit(EXIT_FAILURE);
+    }
+    close(fildes[0]);
     char *path = getenv("PATH");
     char *new_path = malloc(sizeof(char) * strlen(path) + 1);
     strcpy(new_path, path);
@@ -52,7 +58,10 @@ int main(int argc, char *argv[], char *envp[]) {
     assert(0);
   } 
   else {
-    
+    char buf[MAXLEN];
+    while (fgets(buf, MAXLEN, fdopen(fildes[0], "r")) != NULL) {
+      puts(buf);
+    }
   }
   perror(argv[0]);
   exit(EXIT_FAILURE);

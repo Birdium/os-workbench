@@ -79,7 +79,8 @@ void list_print(){
   Node *p = head;
   int cnt = 0;
   while (p && cnt < 5) {
-    printf("%s (%d%%) %lf\n", p->name, (int)(p->time / tot_time * 100), p->time);
+    // printf("%s (%d%%) %lf\n", p->name, (int)(p->time / tot_time * 100), p->time);
+    printf("%s (%d%%)\n", p->name, (int)(p->time / tot_time * 100));
     p = p->next;
     cnt++;
   }

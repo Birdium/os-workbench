@@ -158,7 +158,8 @@ int main(int argc, char *argv[], char *envp[]) {
         strncpy(name_s, buf + pmatch[1].rm_so, pmatch[1].rm_eo - pmatch[1].rm_so);
         strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);
         name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[1].rm_eo - pmatch[1].rm_so] = 0;
-        double time_d = atof(time_s);
+        double time_d;
+        sscanf(time_s, "%lf", &time_d);
         list_update(name_s, time_d);
       }
       else {
@@ -169,7 +170,7 @@ int main(int argc, char *argv[], char *envp[]) {
         }
       }
       new_time = time(NULL);
-      if (new_time - old_time > 0.1f) {
+      if ((new_time - old_time) > 0.1f) {
         list_print();
         old_time = time(NULL);
       }

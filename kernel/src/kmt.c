@@ -1,19 +1,5 @@
 #include <os.h>
 
-typedef struct task_t {
-    // TODO: define task_t
-} task_t;
-
-typedef struct spinlock_t {
-    int locked;
-    char *name;
-} spinlock_t;
-
-typedef struct sem_t{
-    // TODO: define semaphore
-} sem_t;
-
-
 static void kmt_init() {
     //TODO: kmt init
 }

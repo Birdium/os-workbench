@@ -26,10 +26,15 @@ static void kmt_sem_wait(sem_t *sem) {
 }
 
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
-    //TODO: spin init
+    lk->locked = 0;
+    lk->name = name;
 }
 static void kmt_spin_lock(spinlock_t *lk) {
-    //TODO: spin lock
+    // TODO:
+    bool i = ienabled();
+    iset(false);
+    while(atomic_xchg(&lk->locked, 1) != 0);
+    if (i) iset(true);
 }
 static void kmt_spin_unlock(spinlock_t *lk) {
     //TODO: spin unlock

@@ -29,17 +29,7 @@ static void test_free(void *addr) {
   // buddy_debug_print();
 }
 
-<<<<<<< HEAD
-#ifndef TEST
-static void os_run() {
-  // for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
-  //   putch(*s == '*' ? '0' + cpu_current() : *s);
-  // }
-  iset(true);
-  printf("Hello World from CPU #%d\n", cpu_current());
-=======
 static void test_pmm() {
->>>>>>> ead516d950a3d90c652c9761570593433d53690b
   test_alloc(1);
   test_alloc(2);
   test_alloc(4);

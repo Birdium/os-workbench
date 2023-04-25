@@ -90,6 +90,7 @@ static void os_run() {
 
 Context *os_trap(Event ev, Context *context) {
   // TODO: os trap
+  return NULL;
 }
 
 void os_on_irq(int seq, int event, handler_t handler) {

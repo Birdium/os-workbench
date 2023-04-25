@@ -4,33 +4,34 @@ static void kmt_init() {
     //TODO: kmt init
 }
 
-static void kmt_create() {
+static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
     //TODO: kmt create
+    return 0;
 }
 
-static void kmt_teardown() {
+static void kmt_teardown(task_t *task) {
     //TODO: kmt teardown
 }
 
-static void kmt_sem_init() {
+static void kmt_sem_init(sem_t *sem, const char *name, int value) {
     //TODO: sem init
 }
 
-static void kmt_sem_signal() {
+static void kmt_sem_signal(sem_t *sem) {
     //TODO: sem signal
 }
 
-static void kmt_sem_wait() {
+static void kmt_sem_wait(sem_t *sem) {
     //TODO: sem wait
 }
 
-static void kmt_spin_init() {
+static void kmt_spin_init(spinlock_t *lk, const char *name) {
     //TODO: spin init
 }
-static void kmt_spin_lock() {
+static void kmt_spin_lock(spinlock_t *lk) {
     //TODO: spin lock
 }
-static void kmt_spin_unlock() {
+static void kmt_spin_unlock(spinlock_t *lk) {
     //TODO: spin unlock
 }
 

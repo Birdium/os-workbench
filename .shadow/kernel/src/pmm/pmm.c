@@ -17,10 +17,7 @@ static inline size_t align(size_t size) {
 
 extern TableEntry *table;
 
-// myspinlock_t lk;
-// uintptr_t pm_cur;
-
-static void *kalloc(size_t size) {
+static void *_kalloc(size_t size) {
   if (size > (1 << 24)) return NULL;
   if (size < 16) size = 16;
   // slow-path: buddy system
@@ -30,21 +27,27 @@ static void *kalloc(size_t size) {
   else {
     return slab_alloc(align(size));
   }
-  // // OJ hacker
-  // myspin_lock(&lk);
-  // uintptr_t pm_ret = ((pm_cur-1) & (-align(size))) + align(size);
-  // pm_cur = pm_ret + size;
-// #ifdef TEST
-  // printf("kalloc: allocated from %p, size %u\n", pm_ret, size);
-// #endif
-  // myspin_unlock(&lk);
-  // return (void*) pm_ret;
 }
 
-static void kfree(void *ptr) {
+static void _kfree(void *ptr) {
   TableEntry *tbe = ADDR_2_TBE(ptr);
   if (tbe->is_slab) slab_free(ptr);
   else buddy_free(ptr);
+}
+
+static void *kalloc(size_t size) {
+  bool i = ienabled();
+  iset(false);
+  void *ret = _kalloc(size);
+  if (i) iset(true);
+  return ret;
+}
+
+static void kfree(void *ptr) {
+  bool i = ienabled();
+  iset(false);
+  _kfree(ptr);
+  if (i) iset(true);
 }
 
 #ifndef TEST

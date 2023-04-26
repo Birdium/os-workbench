@@ -32,6 +32,7 @@
 #define RIGHT_SON_ADDR(tbe) ((void*)(((uintptr_t) TBE_2_ADDR(tbe)) | (1 << tbe->size)))
 #define RIGHT_SON_TBE(tbe) (ADDR_2_TBE(RIGHT_SON_ADDR(tbe)))
 
+
 #ifdef DEBUG 
 #define LOG_INFO(fmt, ...)  printf("\033[1;34mLOG_INFO CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define LOG_LOCK(fmt, ...)  

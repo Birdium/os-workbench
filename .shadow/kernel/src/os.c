@@ -89,15 +89,31 @@ static void os_run() {
 }
 #endif
 
-Context *os_trap(Event ev, Context *context) {
-  // TODO: os trap
-  return NULL;
-}
-
 LIST_DEC_EXTERN(irq_t, irq_list);
 
+static inline bool sane_context(Context *ctx) {
+  // TODO: feat sane context
+  return true;
+}
+
+Context *os_trap(Event ev, Context *context) {
+  Context *next = NULL;
+  // TODO: acquire a lock here!!!
+  for_list(irq_t, it, irq_list) {
+    if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
+      Context *r = it->elem.handler(ev, context);
+      panic_on(r && next, "returning multiple contexts");
+      if (r) next = r;  
+    }
+  }
+  panic_on(!next, "returning NULL context");
+  panic_on(!sane_context(next), "returning to invalid context");
+  // TODO: release the lock 
+  return next;
+}
+
+
 void os_on_irq(int seq, int event, handler_t handler) {
-  // TODO: os on irq
   irq_t irq = {
     .seq = seq,
     .event = event,

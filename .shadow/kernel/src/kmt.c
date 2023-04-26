@@ -1,6 +1,10 @@
 #include <os.h>
 
+DEF_LIST(irq_t);
+LIST_DEC(irq_t, irq_list);
+
 static void kmt_init() {
+    LIST_INIT(irq_t, irq_list);
     //TODO: kmt init
 }
 

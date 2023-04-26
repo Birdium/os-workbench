@@ -101,8 +101,14 @@
         return l; \
     } \
 
-#define LIST_INIT(type, l) \
+#define LIST_DEC(type, l) \
+    type##_list *l = NULL;
+
+#define LIST_DEC_INIT(type, l) \
     type##_list *l = type##_list_init()
+
+#define LIST_INIT(type, l) \
+    l = type##_list_init()
 
 #define for_list(type, it, list) \
     for (type##_list_node *it = (list)->head; it != NULL; it = it->next)

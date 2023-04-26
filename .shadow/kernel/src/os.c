@@ -89,8 +89,6 @@ static void os_run() {
 }
 #endif
 
-DEF_LIST(irq_t);
-
 Context *os_trap(Event ev, Context *context) {
   // TODO: os trap
   return NULL;
@@ -98,6 +96,7 @@ Context *os_trap(Event ev, Context *context) {
 
 void os_on_irq(int seq, int event, handler_t handler) {
   // TODO: os on irq
+  
 }
 
 

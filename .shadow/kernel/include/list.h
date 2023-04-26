@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <lock.h>
 
-
 #define LIST(type) \
     typedef struct type##_list_node { \
         type elem; \

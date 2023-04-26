@@ -94,9 +94,22 @@ Context *os_trap(Event ev, Context *context) {
   return NULL;
 }
 
+LIST_DEC_EXTERN(irq_t, irq_list);
+
 void os_on_irq(int seq, int event, handler_t handler) {
   // TODO: os on irq
-  
+  irq_t irq = {
+    .seq = seq,
+    .event = event,
+    .handler = handler
+  };
+  for_list(irq_t, it, irq_list) {
+    if (seq < it->elem.seq) {
+      irq_list->insert_prev(irq_list, it, irq);
+      return;
+    }
+  }
+  irq_list->push_back(irq_list, irq);
 }
 
 

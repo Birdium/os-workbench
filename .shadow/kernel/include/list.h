@@ -102,7 +102,10 @@
     } \
 
 #define LIST_DEC(type, l) \
-    type##_list *l = NULL;
+    type##_list *l
+
+#define LIST_DEC_EXTERN(type, l) \
+    extern LIST_DEC(type, l)
 
 #define LIST_DEC_INIT(type, l) \
     type##_list *l = type##_list_init()

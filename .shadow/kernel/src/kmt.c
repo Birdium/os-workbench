@@ -25,10 +25,13 @@ static void kmt_sem_wait(sem_t *sem) {
     //TODO: sem wait
 }
 
+// static kmt_spin_cpu_cnt[MAX_CPU];
+
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
     lk->locked = 0;
     lk->name = name;
 }
+
 static void kmt_spin_lock(spinlock_t *lk) {
     // TODO:
     bool i = ienabled();

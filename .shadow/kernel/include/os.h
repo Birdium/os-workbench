@@ -4,23 +4,23 @@
 #include <common.h>
 #include <list.h>
 
-struct task {
+typedef struct task {
   // TODO
-};
+} task_t;
 
-struct spinlock {
+typedef struct spinlock {
   int locked;
   const char *name;
-};
+} spinlock_t;
 
-struct semaphore {
+typedef struct semaphore {
   // TODO
-};
+} sem_t;
 
-struct irq {
+typedef struct irq {
   int seq;
   int event; 
   handler_t handler;
-};
+} irq_t;
 
 #endif

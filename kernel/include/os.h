@@ -12,3 +12,9 @@ struct spinlock {
 struct semaphore {
   // TODO
 };
+
+struct irq {
+  int seq;
+  int event; 
+  handler_t handler;
+};

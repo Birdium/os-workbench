@@ -1,5 +1,6 @@
 #include <common.h>
 #include <buddy.h>
+#include <os.h>
 
 static void os_init() {
   pmm->init();
@@ -87,6 +88,8 @@ static void os_run() {
   while (1) ;
 }
 #endif
+
+DEF_LIST(irq_t);
 
 Context *os_trap(Event ev, Context *context) {
   // TODO: os trap

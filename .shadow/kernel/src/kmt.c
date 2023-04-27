@@ -1,10 +1,23 @@
 #include <os.h>
+#include <limits.h>
 
 LIST_DEC(irq_t, irq_list);
 
+static Context *kmt_context_save(Event ev, Context *context) {
+    // TODO: feat
+    return NULL;
+}
+
+static Context *kmt_schedule(Event ev, Context *context) {
+    // TODO: feat
+    return NULL;
+}
+
 static void kmt_init() {
     LIST_INIT(irq_t, irq_list);
-    //TODO: kmt init
+    os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
+    os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
+    // TODO: more init
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {

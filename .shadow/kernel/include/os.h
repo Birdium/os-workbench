@@ -4,6 +4,8 @@
 #include <common.h>
 #include <list.h>
 
+typedef Context *(*handler_t)(Event, Context *);
+
 typedef struct task {
   // TODO
 } task_t;

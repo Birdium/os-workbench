@@ -1,5 +1,8 @@
+#include "am.h"
 #include <os.h>
 #include <limits.h>
+
+task_t tasks[MAX_CPU_NUM];
 
 LIST_DEC(irq_t, irq_list);
 
@@ -14,6 +17,9 @@ static Context *kmt_schedule(Event ev, Context *context) {
 }
 
 static void kmt_init() {
+    for (int i = 0; i < cpu_count(); i++) {
+        
+    }
     LIST_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);

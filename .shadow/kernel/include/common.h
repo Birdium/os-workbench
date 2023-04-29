@@ -9,6 +9,8 @@
 #define ROUNDUP(a, sz)      ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
 #define ROUNDDOWN(a, sz)    ((((uintptr_t)a)) & ~((sz) - 1))
 
+#define MAX_CPU_NUM 8
+
 #define MAX_ALLOC_SIZE_EXP 24
 #define MAX_ALLOC_SIZE (1 << MAX_ALLOC_SIZE_EXP)
 #define PAGE_SIZE_EXP 12

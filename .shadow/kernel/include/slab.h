@@ -21,7 +21,6 @@ typedef struct SlabList {
 // WARN: fatal error if size(SlabObj) > 16
 
 
-#define MAX_CPU_NUM 8
 #define MIN_CACHE_SIZE_EXP 4
 #define MAX_CACHE_SIZE_EXP 12
 #define SLAB_NUM (MAX_CACHE_SIZE_EXP - MIN_CACHE_SIZE_EXP + 1)

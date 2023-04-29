@@ -22,6 +22,7 @@ typedef struct task {
 typedef struct spinlock {
   int locked;
   const char *name;
+  int cpu;
 } spinlock_t;
 
 typedef struct semaphore {

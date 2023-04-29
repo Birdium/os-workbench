@@ -3,7 +3,7 @@
 #include <os.h>
 #include <limits.h>
 
-task_t tasks[MAX_CPU_NUM];
+extern task_t *current, tasks[MAX_CPU_NUM];
 
 DEF_LIST(irq_t);
 LIST_DEC(irq_t, irq_list);

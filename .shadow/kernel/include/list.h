@@ -96,7 +96,7 @@
 		LIST_FREE(l); \
 	} \
     static inline type##_list *type##_list_init() { \
-        type##_list *l = malloc(sizeof(type##_list)); \
+        type##_list *l = LIST_ALLOC(sizeof(type##_list)); \
 		l->self = l; \
         l->head = l->tail = NULL; \
         l->insert_prev	= type##_list_insert_prev; \

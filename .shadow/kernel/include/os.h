@@ -26,7 +26,9 @@ typedef struct spinlock {
 } spinlock_t;
 
 typedef struct semaphore {
-  // TODO
+  int cnt;
+  const char *name;
+  spinlock_t lk;
 } sem_t;
 
 typedef struct irq {

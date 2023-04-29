@@ -1,7 +1,7 @@
 #include "am.h"
 #include "common.h"
 #include "klib-macros.h"
-#include <spinlock.h>
+#include <kmt.h>
 
 static bool intena[MAX_CPU_NUM];
 static int noff[MAX_CPU_NUM];

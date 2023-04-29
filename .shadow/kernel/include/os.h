@@ -9,12 +9,16 @@ typedef Context *(*handler_t)(Event, Context *);
 #define STACK_SIZE 4096
 
 typedef struct task {
-  int status;
-  int id;
-  const char *name;
-  struct task *next;
-  Context *context;
-  uint8_t stack[STACK_SIZE];
+  union {
+    struct {
+      int status;
+      int id;
+      const char *name;
+      struct task *next;
+      Context *context;
+    };
+    uint8_t stack[STACK_SIZE];
+  };
 } task_t;
 
 typedef struct spinlock {

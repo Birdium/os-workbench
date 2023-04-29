@@ -4,8 +4,19 @@
 #include <common.h>
 #include <list.h>
 
+#define STACK_SIZE 4096
+
 typedef struct task {
-  // TODO
+  union {
+    struct {
+      int status;
+      int id;
+      const char *name;
+      struct task *next;
+      Context *context;
+    };
+    uint8_t stack[STACK_SIZE];
+  };
 } task_t;
 
 typedef struct spinlock {
@@ -23,5 +34,4 @@ typedef struct irq {
   handler_t handler;
 } irq_t;
 
-DEF_LIST(irq_t);
 #endif

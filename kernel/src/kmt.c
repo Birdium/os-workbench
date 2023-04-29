@@ -1,10 +1,31 @@
+#include "am.h"
+#include "list.h"
 #include <os.h>
+#include <limits.h>
 
+task_t tasks[MAX_CPU_NUM];
+
+DEF_LIST(irq_t);
 LIST_DEC(irq_t, irq_list);
 
+static Context *kmt_context_save(Event ev, Context *context) {
+    // TODO: feat
+    return NULL;
+}
+
+static Context *kmt_schedule(Event ev, Context *context) {
+    // TODO: feat
+    return NULL;
+}
+
 static void kmt_init() {
+    for (int i = 0; i < cpu_count(); i++) {
+        
+    }
     LIST_INIT(irq_t, irq_list);
-    //TODO: kmt init
+    os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
+    os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
+    // TODO: more init
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
@@ -21,7 +42,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void kmt_sem_signal(sem_t *sem) {
-    //TODO: sem signal
+    //TODO: sem signalirq_t
 }
 
 static void kmt_sem_wait(sem_t *sem) {

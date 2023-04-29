@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef TEST
+#define LIST_ALLOC malloc
+#define LIST_FREE free
+#else 
+#define LIST_ALLOC pmm->alloc
+#define LIST_FREE pmm->free
+#endif 
+
 #define DEF_LIST(type) \
     typedef struct type##_list_node { \
         type elem; \
@@ -25,7 +33,7 @@
 		void (*free)		(type##_list *l); \
     }; \
     static inline void type##_list_insert_prev(type##_list *l, type##_list_node *p, type elem) { \
-        type##_list_node *q = malloc(sizeof(type##_list_node)); \
+        type##_list_node *q = LIST_ALLOC(sizeof(type##_list_node)); \
         q->elem = elem; \
         if (p == NULL) { \
             l->head = l->tail = q; \
@@ -42,7 +50,7 @@
         p->prev = q; \
     } \
     static inline void type##_list_insert_next(type##_list *l, type##_list_node *p, type elem) { \
-        type##_list_node *q = malloc(sizeof(type##_list_node)); \
+        type##_list_node *q = LIST_ALLOC(sizeof(type##_list_node)); \
         q->elem = elem; \
         if (p == NULL) { \
             l->head = l->tail = q; \
@@ -70,7 +78,7 @@
         if (p == l->tail) l->tail = prev; \
         if (prev) prev->next = next; \
         if (next) next->prev = prev; \
-        free(p); \
+        LIST_FREE(p); \
     } \
     static inline void type##_list_pop_front(type##_list *l) { \
         type##_list_remove(l, l->head); \
@@ -82,13 +90,13 @@
 		type##_list_node *p = l->head; \
 		while (p) { \
 			type##_list_node *q = p->next; \
-			free(p); \
+			LIST_FREE(p); \
 			p = q; \
 		} \
-		free(l); \
+		LIST_FREE(l); \
 	} \
     static inline type##_list *type##_list_init() { \
-        type##_list *l = malloc(sizeof(type##_list)); \
+        type##_list *l = LIST_ALLOC(sizeof(type##_list)); \
 		l->self = l; \
         l->head = l->tail = NULL; \
         l->insert_prev	= type##_list_insert_prev; \

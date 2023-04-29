@@ -2,6 +2,7 @@
 #include "common.h"
 #include "klib-macros.h"
 #include "list.h"
+#include <assert.h>
 #include <os.h>
 #include <limits.h>
 #include <kmt.h>
@@ -12,7 +13,10 @@ extern task_t *current[MAX_CPU_NUM];
 LIST_PTR_DEC(irq_t, irq_list);
 
 static Context *kmt_context_save(Event ev, Context *context) {
-    // TODO: feat
+    int cpu = cpu_current();
+    panic_on(!current[cpu], "no valid task");
+    current[cpu]->status = SLEEPING;
+    current[cpu]->context = context;
     return NULL;
 }
 
@@ -35,6 +39,7 @@ static void kmt_init() {
         task->stack = pmm->alloc(KMT_STACK_SIZE);
         task->context = NULL;
         task->next = NULL;
+        current[cpu] = task;
     }
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);

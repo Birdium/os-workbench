@@ -7,16 +7,12 @@
 #define STACK_SIZE 4096
 
 typedef struct task {
-  union {
-    struct {
-      int status;
-      int id;
-      const char *name;
-      struct task *next;
-      Context *context;
-    };
-    uint8_t stack[STACK_SIZE];
-  };
+  int status;
+  int id;
+  const char *name;
+  struct task *next;
+  Context *context;
+  uint8_t *stack;
 } task_t;
 
 typedef task_t* task_t_ptr;

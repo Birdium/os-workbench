@@ -1,10 +1,11 @@
 #include "am.h"
+#include "common.h"
 #include "list.h"
 #include <os.h>
 #include <limits.h>
 #include <kmt.h>
 
-extern task_t *current, tasks[MAX_CPU_NUM];
+extern task_t *current[MAX_CPU_NUM];
 
 LIST_PTR_DEC(irq_t, irq_list);
 

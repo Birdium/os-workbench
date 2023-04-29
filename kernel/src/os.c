@@ -3,6 +3,8 @@
 #include <buddy.h>
 #include <os.h>
 
+task_t *current, tasks[MAX_CPU_NUM];
+
 static void os_init() {
   pmm->init();
   kmt->init();

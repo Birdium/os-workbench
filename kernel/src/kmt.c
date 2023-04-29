@@ -2,8 +2,9 @@
 #include "list.h"
 #include <os.h>
 #include <limits.h>
+#include <spinlock.h>
 
-task_t tasks[MAX_CPU_NUM];
+extern task_t *current, tasks[MAX_CPU_NUM];
 
 DEF_LIST(irq_t);
 LIST_DEC(irq_t, irq_list);
@@ -49,23 +50,6 @@ static void kmt_sem_wait(sem_t *sem) {
     //TODO: sem wait
 }
 
-// static kmt_spin_cpu_cnt[MAX_CPU];
-
-static void kmt_spin_init(spinlock_t *lk, const char *name) {
-    lk->locked = 0;
-    lk->name = name;
-}
-
-static void kmt_spin_lock(spinlock_t *lk) {
-    // TODO:
-    bool i = ienabled();
-    iset(false);
-    while(atomic_xchg(&lk->locked, 1) != 0);
-    if (i) iset(true);
-}
-static void kmt_spin_unlock(spinlock_t *lk) {
-    //TODO: spin unlock
-}
 
 MODULE_DEF(kmt) = {
     .init = kmt_init,

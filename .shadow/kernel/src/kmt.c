@@ -1,9 +1,11 @@
 #include "am.h"
+#include "list.h"
 #include <os.h>
 #include <limits.h>
 
 task_t tasks[MAX_CPU_NUM];
 
+DEF_LIST(irq_t);
 LIST_DEC(irq_t, irq_list);
 
 static Context *kmt_context_save(Event ev, Context *context) {
@@ -40,7 +42,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void kmt_sem_signal(sem_t *sem) {
-    //TODO: sem signal
+    //TODO: sem signalirq_t
 }
 
 static void kmt_sem_wait(sem_t *sem) {

@@ -34,5 +34,4 @@ typedef struct irq {
   handler_t handler;
 } irq_t;
 
-DEF_LIST(irq_t);
 #endif

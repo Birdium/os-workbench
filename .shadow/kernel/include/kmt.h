@@ -1,5 +1,5 @@
-#ifndef SPINLOCK_H
-#define SPINLOCK_H
+#ifndef KMT_H
+#define KMT_H
 
 #include "am.h"
 #include <os.h>

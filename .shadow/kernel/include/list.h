@@ -95,8 +95,7 @@
 		} \
 		LIST_FREE(l); \
 	} \
-    static inline type##_list *type##_list_init() { \
-        type##_list *l = LIST_ALLOC(sizeof(type##_list)); \
+    static inline void type##_list_init(type##_list *l) { \
 		l->self = l; \
         l->head = l->tail = NULL; \
         l->insert_prev	= type##_list_insert_prev; \
@@ -106,20 +105,33 @@
         l->pop_front	= type##_list_pop_front; \
         l->pop_back 	= type##_list_pop_back; \
 		l->free 		= type##_list_free; \
+    } \
+    static inline type##_list *type##_list_new_init() { \
+        type##_list *l = LIST_ALLOC(sizeof(type##_list)); \
+        type##_list_init(l); \
         return l; \
     } \
 
 #define LIST_DEC(type, l) \
-    type##_list *l
+    type##_list l
 
 #define LIST_DEC_EXTERN(type, l) \
     extern LIST_DEC(type, l)
 
-#define LIST_DEC_INIT(type, l) \
-    type##_list *l = type##_list_init()
+#define LIST_PTR_DEC(type, l) \
+    type##_list *l
+
+#define LIST_PTR_DEC_EXTERN(type, l) \
+    extern LIST_PTR_DEC(type, l)
+
+#define LIST_PTR_DEC_INIT(type, l) \
+    type##_list *l = type##_list_new_init()
 
 #define LIST_INIT(type, l) \
-    l = type##_list_init()
+    type##_list_init(l)
+
+#define LIST_PTR_INIT(type, l) \
+    l = type##_list_new_init()
 
 #define for_list(type, it, list) \
     for (type##_list_node *it = (list)->head; it != NULL; it = it->next)

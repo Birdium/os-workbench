@@ -27,7 +27,7 @@ static void os_run() {
 #endif
 
 DEF_LIST(irq_t);
-LIST_DEC_EXTERN(irq_t, irq_list);
+LIST_PTR_DEC_EXTERN(irq_t, irq_list);
 
 static inline bool sane_context(Context *ctx) {
   // TODO: feat sane context

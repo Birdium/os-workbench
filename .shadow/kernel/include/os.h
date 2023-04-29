@@ -4,8 +4,6 @@
 #include <common.h>
 #include <list.h>
 
-typedef Context *(*handler_t)(Event, Context *);
-
 #define STACK_SIZE 4096
 
 typedef struct task {

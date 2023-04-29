@@ -7,7 +7,7 @@
 #define STACK_SIZE 4096
 
 typedef struct task {
-  int status;
+  enum {SLEEPING, RUNNABLE, RUNNING} status;
   int id;
   const char *name;
   struct task *next;

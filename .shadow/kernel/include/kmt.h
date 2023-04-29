@@ -4,6 +4,8 @@
 #include "am.h"
 #include <os.h>
 
+#define KMT_STACK_SIZE 4096
+
 DEF_LIST(irq_t);
 
 void kmt_sem_init(sem_t *sem, const char *name, int value);

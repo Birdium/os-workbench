@@ -31,7 +31,7 @@ void kmt_sem_wait(sem_t *sem) {
 	kmt->spin_lock(&sem->lk);
 	--sem->cnt;
 	if (sem->cnt < 0) {
-		// mark as not runnable
+		
 	}
 	kmt->spin_unlock(&sem->lk);
 	if (sem->cnt < 0) {

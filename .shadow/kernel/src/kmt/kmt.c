@@ -1,9 +1,11 @@
 #include "am.h"
 #include "common.h"
+#include "klib-macros.h"
 #include "list.h"
 #include <os.h>
 #include <limits.h>
 #include <kmt.h>
+#include <stdio.h>
 
 extern task_t *current[MAX_CPU_NUM];
 
@@ -20,17 +22,36 @@ static Context *kmt_schedule(Event ev, Context *context) {
 }
 
 static void kmt_init() {
-    for (int i = 0; i < cpu_count(); i++) {
-        
+    for (int cpu = 0; cpu < cpu_count(); cpu++) {
+        // init idle
+        task_t *task = pmm->alloc(sizeof(task_t));
+        panic_on(!task, "alloc failed");
+        // 8 for "idle XX\0"
+        char *name = pmm->alloc(8);
+        sprintf(name, "idle %d", cpu);
+
+        task->name = name;
+        task->status = RUNNING;
+        task->stack = pmm->alloc(KMT_STACK_SIZE);
+        task->context = NULL;
+        task->next = NULL;
     }
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
-    // TODO: more init
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-    //TODO: kmt create
+    task->name = name;
+    task->status = RUNNABLE;
+    task->stack = pmm->alloc(KMT_STACK_SIZE);
+    task->context = kcontext(
+        (Area){
+            .start = task->stack, 
+            .end = task->stack + KMT_STACK_SIZE
+        }, entry, arg
+    );
+    task->next = NULL;
     return 0;
 }
 

@@ -4,11 +4,9 @@
 #include <common.h>
 #include <list.h>
 
-#define STACK_SIZE 4096
 
 typedef struct task {
   enum {SLEEPING, RUNNABLE, RUNNING} status;
-  int id;
   const char *name;
   struct task *next;
   Context *context;

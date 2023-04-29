@@ -6,6 +6,7 @@ void kmt_sem_init(sem_t *sem, const char *name, int value) {
 	sem->cnt = value;
 	kmt->spin_init(&sem->lk, name);
 	LIST_INIT(task_t, &sem->tasks);
+	panic("114");
 }
 
 void kmt_sem_signal(sem_t *sem) {

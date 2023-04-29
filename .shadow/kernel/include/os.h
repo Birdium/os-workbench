@@ -19,19 +19,21 @@ typedef struct task {
   };
 } task_t;
 
+typedef task_t* task_t_ptr;
+
 typedef struct spinlock {
   int locked;
   const char *name;
   int cpu;
 } spinlock_t;
 
-DEF_LIST(task_t);
+DEF_LIST(task_t_ptr);
 
 typedef struct semaphore {
   int cnt;
   const char *name;
   spinlock_t lk;
-  LIST_DEC(task_t, tasks);
+  LIST_DEC(task_t_ptr, tasks);
 } sem_t;
 
 typedef struct irq {

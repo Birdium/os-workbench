@@ -5,7 +5,6 @@
 #include <os.h>
 
 DEF_LIST(irq_t);
-// DEF_LIST(task_t);
 
 void kmt_sem_init(sem_t *sem, const char *name, int value);
 

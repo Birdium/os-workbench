@@ -23,6 +23,7 @@
     struct type##_list { \
         struct type##_list_node *head, *tail; \
 		type##_list *self; \
+        int size; \
         void (*insert_prev)	(type##_list *l, type##_list_node *p, type elem); \
         void (*insert_next)	(type##_list *l, type##_list_node *p, type elem); \
         void (*push_front)	(type##_list *l, type elem); \
@@ -33,6 +34,7 @@
 		void (*free)		(type##_list *l); \
     }; \
     static inline void type##_list_insert_prev(type##_list *l, type##_list_node *p, type elem) { \
+        ++l->size; \
         type##_list_node *q = LIST_ALLOC(sizeof(type##_list_node)); \
         q->elem = elem; \
         if (p == NULL) { \
@@ -50,6 +52,7 @@
         p->prev = q; \
     } \
     static inline void type##_list_insert_next(type##_list *l, type##_list_node *p, type elem) { \
+        ++l->size; \
         type##_list_node *q = LIST_ALLOC(sizeof(type##_list_node)); \
         q->elem = elem; \
         if (p == NULL) { \
@@ -73,6 +76,7 @@
         type##_list_insert_next(l, l->tail, elem); \
     } \
     static inline void type##_list_remove(type##_list *l, type##_list_node *p) { \
+        --l->size; \
         type##_list_node *prev = p->prev, *next = p->next; \
         if (p == l->head) l->head = next; \
         if (p == l->tail) l->tail = prev; \
@@ -97,6 +101,7 @@
 	} \
     static inline void type##_list_init(type##_list *l) { \
 		l->self = l; \
+        l->size = 0; \
         l->head = l->tail = NULL; \
         l->insert_prev	= type##_list_insert_prev; \
         l->insert_next	= type##_list_insert_next; \

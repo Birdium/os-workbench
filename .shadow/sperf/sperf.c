@@ -182,6 +182,6 @@ int main(int argc, char *argv[], char *envp[]) {
       }
     }
   }
-  perror(argv[0]);
-  exit(9);
+  // perror(argv[0]);
+  // exit(9);
 }

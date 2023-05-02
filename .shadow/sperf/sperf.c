@@ -103,10 +103,10 @@ int main(int argc, char *argv[], char *envp[]) {
   // int pid = fork();
   // if (pid == 0) { // subproc 
     close(fildes[0]);
-    // if (dup2(fildes[1], STDERR_FILENO) == -1) {
-    //   perror("dup2");
-    //   exit(3);
-    // }
+    if (dup2(fildes[1], STDERR_FILENO) == -1) {
+      perror("dup2");
+      exit(3);
+    }
     int nullfd = open("/dev/null", O_WRONLY);
     if (nullfd == -1) {
       perror("open");
@@ -139,7 +139,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     exec_argv[0] = buf;
     execve("strace", exec_argv, envp);
-    exit(100);
+    exit(-1);
     assert(0);
   // } 
   // else {

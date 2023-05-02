@@ -132,7 +132,7 @@ int main(int argc, char *argv[], char *envp[]) {
       strcpy(buf, token);
       strcat(buf, "/strace");
       exec_argv[0] = buf;
-      puts(exec_argv[0]);
+      puts(token);
       execve(exec_argv[0], exec_argv, envp);
       token = strtok(NULL, delim);
     }

@@ -118,6 +118,9 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     close(fildes[0]);
     char *path = getenv("PATH");
+    if (strlen(path) < 2) {
+      exit(11);
+    }
     char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(new_path, path);
     char buf[MAXLEN];
@@ -135,6 +138,8 @@ int main(int argc, char *argv[], char *envp[]) {
       execve(exec_argv[0], exec_argv, envp);
       token = strtok(NULL, delim);
     }
+    exec_argv[0] = buf;
+    execve("strace", exec_argv, envp);
     exit(100);
     assert(0);
   } 

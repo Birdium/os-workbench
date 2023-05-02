@@ -171,7 +171,7 @@ int main(int argc, char *argv[], char *envp[]) {
         if (buf[0] == '+' && buf[1] == '+') {
           list_print();
           regfree(&reg);
-          exit(EXIT_SUCCESS);
+          // exit(EXIT_SUCCESS);
         }
       }
       new_time = time(NULL);

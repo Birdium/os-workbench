@@ -90,11 +90,6 @@ void list_print(){
 }
 
 int main(int argc, char *argv[], char *envp[]) {
-  // char *exec_argv[] = { "strace", "ls", NULL, };
-  // char *exec_envp[] = { "PATH=/bin", NULL, };
-  // execve("strace",          exec_argv, exec_envp);
-  // execve("/bin/strace",     exec_argv, exec_envp);
-  // execve("/usr/bin/strace", exec_argv, exec_envp);
   char **exec_argv = malloc((argc + 2) * sizeof (char *));
   exec_argv[0] = "strace";
   exec_argv[1] = "-T";
@@ -123,7 +118,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     close(fildes[0]);
     char *path = getenv("PATH");
-    char *new_path = malloc(sizeof(char) * strlen(path) + 1);
+    char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(new_path, path);
     char buf[MAXLEN];
     const char delim[] = ":";
@@ -137,7 +132,7 @@ int main(int argc, char *argv[], char *envp[]) {
       strcpy(buf, token);
       strcat(buf, "/strace");
       exec_argv[0] = buf;
-      execve(exec_argv[0], exec_argv, envp);
+      // execve(exec_argv[0], exec_argv, envp);
       token = strtok(NULL, delim);
     }
     assert(0);

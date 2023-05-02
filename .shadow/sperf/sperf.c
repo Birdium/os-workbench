@@ -112,12 +112,12 @@ int main(int argc, char *argv[], char *envp[]) {
       perror("open");
       exit(4);
     }
-    if (dup2(nullfd, STDOUT_FILENO) == -1) {
-      perror("dup2");
-      exit(5);
-    }
+    // if (dup2(nullfd, STDOUT_FILENO) == -1) {
+    //   perror("dup2");
+    //   exit(5);
+    // }
     close(fildes[0]);
-    char *path = getenv("PATH");
+    char *path = "11111";
     char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(new_path, path);
     char buf[MAXLEN];

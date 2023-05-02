@@ -137,7 +137,6 @@ int main(int argc, char *argv[], char *envp[]) {
       execve(buf, exec_argv, envp);
       token = strtok(NULL, delim);
     }
-    exec_argv[0] = buf;
     execve("strace", exec_argv, envp);
     exit(100);
     assert(0);

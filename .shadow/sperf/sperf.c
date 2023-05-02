@@ -8,7 +8,7 @@
 #include <time.h>
 #include <regex.h>
 
-#define MAXLEN 1024
+#define MAXLEN 4096
 
 typedef struct Node {
   char name[MAXLEN];
@@ -116,7 +116,7 @@ int main(int argc, char *argv[], char *envp[]) {
     //   perror("dup2");
     //   exit(5);
     // }
-    char *path = "114:514:/usr/bin//:1919";
+    char *path = getenv("PATH");
     if (strlen(path) < 2) {
       exit(11);
     }

@@ -126,7 +126,7 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(5);
     }
     char *path = getenv("PATH");
-    int ret = path[0];
+    int ret = path[1];
     char buf[MAXLEN];
     const char delim = ':';
     while (*path) {

@@ -112,10 +112,10 @@ int main(int argc, char *argv[], char *envp[]) {
       perror("open");
       exit(EXIT_FAILURE);
     }
-    if (dup2(nullfd, STDOUT_FILENO) == -1) {
-      perror("dup2");
-      exit(EXIT_FAILURE);
-    }
+    // if (dup2(nullfd, STDOUT_FILENO) == -1) {
+    //   perror("dup2");
+    //   exit(EXIT_FAILURE);
+    // }
     close(fildes[0]);
     char *path = getenv("PATH");
     char *new_path = malloc(sizeof(char) * strlen(path) + 1);

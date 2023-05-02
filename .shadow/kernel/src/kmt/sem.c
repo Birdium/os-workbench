@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <kmt.h>
 
+extern task_t *current[MAX_CPU_NUM];
+
 void kmt_sem_init(sem_t *sem, const char *name, int value) {
 	sem->name = name;
 	sem->cnt = value;
@@ -31,10 +33,10 @@ void kmt_sem_wait(sem_t *sem) {
 	kmt->spin_lock(&sem->lk);
 	--sem->cnt;
 	if (sem->cnt < 0) {
-		
-	}
-	kmt->spin_unlock(&sem->lk);
-	if (sem->cnt < 0) {
+		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
+		current[cpu_current()]->status = SLEEPING;
+		kmt->spin_unlock(&sem->lk);
 		yield();
 	}
+	kmt->spin_unlock(&sem->lk);
 }

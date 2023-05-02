@@ -21,8 +21,9 @@ static Context *kmt_context_save(Event ev, Context *context) {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
-    // TODO: feat
-    return NULL;
+    int cpu = cpu_current();
+    if (current[cpu] && )
+    return current[cpu]->context;
 }
 
 static void kmt_init() {

@@ -122,6 +122,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(new_path, path);
+
     char buf[MAXLEN];
     const char delim[] = ":";
     char *token = strtok(new_path, delim);
@@ -133,8 +134,7 @@ int main(int argc, char *argv[], char *envp[]) {
       }
       strcpy(buf, token);
       strcat(buf, "/strace");
-      exec_argv[0] = buf;
-      execve(exec_argv[0], exec_argv, envp);
+      execve(buf, exec_argv, envp);
       token = strtok(NULL, delim);
     }
     exec_argv[0] = buf;

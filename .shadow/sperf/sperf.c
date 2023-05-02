@@ -116,7 +116,7 @@ int main(int argc, char *argv[], char *envp[]) {
     //   perror("dup2");
     //   exit(5);
     // }
-    char *path = "114:514:/usr/bin:1919";
+    char *path = getenv("PATH");
     if (strlen(path) < 2) {
       exit(11);
     }
@@ -139,7 +139,6 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     execve("./strace", exec_argv, envp);
     exit(100);
-    assert(0);
   // } 
   // else {
   //   close(fildes[1]);

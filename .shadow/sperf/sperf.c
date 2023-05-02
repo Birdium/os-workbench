@@ -116,7 +116,6 @@ int main(int argc, char *argv[], char *envp[]) {
     //   perror("dup2");
     //   exit(5);
     // }
-    close(fildes[0]);
     char *path = getenv("PATH");
     if (strlen(path) < 2) {
       exit(11);

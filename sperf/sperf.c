@@ -8,7 +8,7 @@
 #include <time.h>
 #include <regex.h>
 
-#define MAXLEN 1024
+#define MAXLEN 4096
 
 typedef struct Node {
   char name[MAXLEN];
@@ -89,6 +89,15 @@ void list_print(){
   fflush(stdout);
 }
 
+static char *strccpy(char *s1, char *s2, char c) {
+  char *d = s1; 
+  while (*s2 && *s2 != c) {
+    *s1++ = *s2++;
+  }
+  *s1 = 0;
+  return d;
+}
+
 int main(int argc, char *argv[], char *envp[]) {
   char **exec_argv = malloc((argc + 2) * sizeof (char *));
   exec_argv[0] = "strace";
@@ -112,35 +121,24 @@ int main(int argc, char *argv[], char *envp[]) {
       perror("open");
       exit(4);
     }
-    // if (dup2(nullfd, STDOUT_FILENO) == -1) {
-    //   perror("dup2");
-    //   exit(5);
-    // }
+    if (dup2(nullfd, STDOUT_FILENO) == -1) {
+      perror("dup2");
+      exit(5);
+    }
     char *path = getenv("PATH");
-    if (strlen(path) < 2) {
-      exit(11);
-    }
-    char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
-    strcpy(new_path, path);
     char buf[MAXLEN];
-    const char delim[] = ":";
-    char *token = strtok(new_path, delim);
-    while (token != NULL) {
-      int path_length = strlen(token);
-      if (path_length + strlen("/strace") >= MAXLEN) {
-        fprintf(stderr, "Error: strace path too long.\n");
-        exit(6);
+    const char delim = ':';
+    while (*path) {
+      strccpy(buf, path, delim);
+      if (*buf != 0 && buf[strlen(buf) - 1] != '/') {
+        strcat(buf, "/");
       }
-      strcpy(buf, token);
-      strcat(buf, "/strace");
-      exec_argv[0] = buf;
-      execve(exec_argv[0], exec_argv, envp);
-      token = strtok(NULL, delim);
+      strcat(buf, "strace");
+      execve(buf, exec_argv, envp);
+      while (*path && *path != delim) path++;
+      if (*path == delim) path++;
     }
-    exec_argv[0] = buf;
-    execve("strace", exec_argv, envp);
     exit(100);
-    assert(0);
   // } 
   // else {
   //   close(fildes[1]);

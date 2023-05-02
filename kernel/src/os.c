@@ -36,7 +36,6 @@ static inline bool sane_context(Context *ctx) {
 
 Context *os_trap(Event ev, Context *context) {
   Context *next = NULL;
-  // TODO: acquire a lock here!!!
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
       Context *r = it->elem.handler(ev, context);
@@ -46,7 +45,6 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
-  // TODO: release the lock 
   return next;
 }
 

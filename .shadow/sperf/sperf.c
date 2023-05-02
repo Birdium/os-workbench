@@ -95,7 +95,7 @@ static char *strccpy(char *s1, char *s2, char c) {
     *s1++ = *s2++;
   }
   *s1 = 0;
-  return
+  return d;
 }
 
 int main(int argc, char *argv[], char *envp[]) {

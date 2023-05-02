@@ -89,6 +89,15 @@ void list_print(){
   fflush(stdout);
 }
 
+static char *strccpy(char *s1, char *s2, char c) {
+  char *d = s1; 
+  while (*s2 && *s2 != c) {
+    *s1++ = *s2++;
+  }
+  *s1 = 0;
+  return
+}
+
 int main(int argc, char *argv[], char *envp[]) {
   char **exec_argv = malloc((argc + 2) * sizeof (char *));
   exec_argv[0] = "strace";
@@ -117,27 +126,18 @@ int main(int argc, char *argv[], char *envp[]) {
     //   exit(5);
     // }
     char *path = getenv("PATH");
-    if (strlen(path) < 2) {
-      exit(11);
-    }
-    char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
-    strcpy(new_path, path);
-
     char buf[MAXLEN];
-    const char delim[] = ":";
-    char *token = strtok(new_path, delim);
-    while (token != NULL) {
-      int path_length = strlen(token);
-      if (path_length + strlen("/strace") >= MAXLEN) {
-        fprintf(stderr, "Error: strace path too long.\n");
-        exit(6);
+    const char delim = ':';
+    while (*path) {
+      strccpy(buf, path, delim);
+      if (*buf != 0 && buf[strlen(buf) - 1] != '/') {
+        strcat(buf, "/");
       }
-      strcpy(buf, token);
-      strcat(buf, "/strace");
+      strcat(buf, "strace");
       execve(buf, exec_argv, envp);
-      token = strtok(NULL, delim);
+      while (*path && *path != delim) path++;
+      if (*path == delim) path++;
     }
-    execve("./strace", exec_argv, envp);
     exit(100);
   // } 
   // else {

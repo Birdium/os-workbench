@@ -112,10 +112,10 @@ int main(int argc, char *argv[], char *envp[]) {
       perror("open");
       exit(4);
     }
-    // if (dup2(nullfd, STDOUT_FILENO) == -1) {
-    //   perror("dup2");
-    //   exit(5);
-    // }
+    if (dup2(nullfd, STDOUT_FILENO) == -1) {
+      perror("dup2");
+      exit(5);
+    }
     close(fildes[0]);
     char *path = getenv("PATH");
     char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
@@ -132,8 +132,7 @@ int main(int argc, char *argv[], char *envp[]) {
       strcpy(buf, token);
       strcat(buf, "/strace");
       exec_argv[0] = buf;
-      puts(exec_argv[0]);
-      // execve(exec_argv[0], exec_argv, envp);
+      execve(exec_argv[0], exec_argv, envp);
       token = strtok(NULL, delim);
     }
     assert(0);

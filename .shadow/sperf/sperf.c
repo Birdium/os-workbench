@@ -175,7 +175,7 @@ int main(int argc, char *argv[], char *envp[]) {
         }
       }
       new_time = time(NULL);
-      if ((new_time - old_time) > 0.1f) {
+      if ((new_time - old_time) > 1) {
         list_print();
         old_time = time(NULL);
       }

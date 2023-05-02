@@ -117,24 +117,24 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(EXIT_FAILURE);
     }
     close(fildes[0]);
-    // char *path = getenv("PATH");
-    // char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
-    // strcpy(new_path, path);
-    // char buf[MAXLEN];
-    // const char delim[] = ":";
-    // char *token = strtok(new_path, delim);
-    // while (token != NULL) {
-    //   int path_length = strlen(token);
-    //   if (path_length + strlen("/strace") >= MAXLEN) {
-    //     fprintf(stderr, "Error: strace path too long.\n");
-    //     exit(-1);
-    //   }
-    //   strcpy(buf, token);
-    //   strcat(buf, "/strace");
-    //   exec_argv[0] = buf;
-    //   execve(exec_argv[0], exec_argv, envp);
-    //   token = strtok(NULL, delim);
-    // }
+    char *path = getenv("PATH");
+    char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
+    strcpy(new_path, path);
+    char buf[MAXLEN];
+    const char delim[] = ":";
+    char *token = strtok(new_path, delim);
+    while (token != NULL) {
+      int path_length = strlen(token);
+      if (path_length + strlen("/strace") >= MAXLEN) {
+        fprintf(stderr, "Error: strace path too long.\n");
+        exit(-1);
+      }
+      strcpy(buf, token);
+      strcat(buf, "/strace");
+      exec_argv[0] = buf;
+      execve(exec_argv[0], exec_argv, envp);
+      token = strtok(NULL, delim);
+    }
     assert(0);
   } 
   else {

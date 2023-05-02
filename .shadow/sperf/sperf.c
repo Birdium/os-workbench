@@ -118,7 +118,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     close(fildes[0]);
     char *path = getenv("PATH");
-    char *new_path = malloc(sizeof(char) * strlen(path) + 1);
+    char *new_path = malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(new_path, path);
     char buf[MAXLEN];
     const char delim[] = ":";

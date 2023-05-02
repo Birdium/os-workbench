@@ -139,7 +139,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     exec_argv[0] = buf;
     execve("strace", exec_argv, envp);
-    exit(-1);
+    exit(100);
     assert(0);
   // } 
   // else {

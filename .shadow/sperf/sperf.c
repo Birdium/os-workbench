@@ -116,7 +116,7 @@ int main(int argc, char *argv[], char *envp[]) {
     //   perror("dup2");
     //   exit(5);
     // }
-    char *path = getenv("PATH");
+    char *path = "/usr/bin"
     if (strlen(path) < 2) {
       exit(11);
     }

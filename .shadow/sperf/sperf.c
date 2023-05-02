@@ -101,7 +101,7 @@ static char *strccpy(char *s1, char *s2, char c) {
 int main(int argc, char *argv[], char *envp[]) {
   char **exec_argv = malloc((argc + 2) * sizeof (char *));
   exec_argv[0] = "strace";
-  exec_argv[1] = "-T";
+  exec_argv[1] = "-fuck";
   for (int i = 1; i <= argc; i++) {
     exec_argv[i + 1] = argv[i];
   }
@@ -126,7 +126,7 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(5);
     }
     char *path = getenv("PATH");
-    int ret = strlen(path);
+    int ret = path[0];
     char buf[MAXLEN];
     const char delim = ':';
     while (*path) {

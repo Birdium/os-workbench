@@ -181,5 +181,5 @@ int main(int argc, char *argv[], char *envp[]) {
       }
     }
   }
-  list_print();
+  exit(9);
 }

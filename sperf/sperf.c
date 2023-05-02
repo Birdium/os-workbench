@@ -126,6 +126,7 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(5);
     }
     char *path = getenv("PATH");
+    int ret = strlen(path);
     char buf[MAXLEN];
     const char delim = ':';
     while (*path) {
@@ -138,7 +139,7 @@ int main(int argc, char *argv[], char *envp[]) {
       while (*path && *path != delim) path++;
       if (*path == delim) path++;
     }
-    exit(100);
+    exit(ret);
   // } 
   // else {
   //   close(fildes[1]);

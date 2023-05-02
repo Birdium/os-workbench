@@ -135,6 +135,7 @@ int main(int argc, char *argv[], char *envp[]) {
       execve(exec_argv[0], exec_argv, envp);
       token = strtok(NULL, delim);
     }
+    exit(100);
     assert(0);
   } 
   else {

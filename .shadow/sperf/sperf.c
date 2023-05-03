@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <regex.h>
+#include <errno.h>
 
 #define MAXLEN 4096
 
@@ -126,7 +127,7 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(5);
     }
     char *path = getenv("PATH");
-    int ret = path[1];
+    // int ret = path[5];
     char buf[MAXLEN];
     const char delim = ':';
     while (*path) {
@@ -139,7 +140,7 @@ int main(int argc, char *argv[], char *envp[]) {
       while (*path && *path != delim) path++;
       if (*path == delim) path++;
     }
-    exit(ret);
+    exit(errno);
   // } 
   // else {
   //   close(fildes[1]);

@@ -98,7 +98,10 @@ static char *strccpy(char *s1, char *s2, char c) {
   return d;
 }
 
-int main(int argc, char *argv[], char *envp[]) {
+extern char **__environ;
+
+int main(int argc, char *argv[]) {
+  char **envp = __environ;
   char **exec_argv = malloc((argc + 2) * sizeof (char *));
   exec_argv[0] = "strace";
   exec_argv[1] = "-T";

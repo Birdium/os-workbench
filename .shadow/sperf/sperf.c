@@ -7,7 +7,6 @@
 #include <fcntl.h>
 #include <time.h>
 #include <regex.h>
-#include <errno.h>
 
 #define MAXLEN 4096
 
@@ -110,8 +109,8 @@ int main(int argc, char *argv[], char *envp[]) {
   if (pipe(fildes) != 0) {
     exit(2);
   }
-  // int pid = fork();
-  // if (pid == 0) { // subproc 
+  int pid = fork();
+  if (pid == 0) { // subproc 
     close(fildes[0]);
     if (dup2(fildes[1], STDERR_FILENO) == -1) {
       perror("dup2");
@@ -127,7 +126,6 @@ int main(int argc, char *argv[], char *envp[]) {
       exit(5);
     }
     char *path = getenv("PATH");
-    // int ret = path[5];
     char buf[MAXLEN];
     const char delim = ':';
     while (*path) {
@@ -140,52 +138,52 @@ int main(int argc, char *argv[], char *envp[]) {
       while (*path && *path != delim) path++;
       if (*path == delim) path++;
     }
-    exit(errno);
-  // } 
-  // else {
-  //   close(fildes[1]);
-  //   if (dup2(fildes[0], STDIN_FILENO) == -1) {
-  //     perror("dup2");
-  //     exit(7);
-  //   }
-  //   char buf[MAXLEN];
-  //   time_t new_time, old_time;
+    exit(100);
+  } 
+  else {
+    close(fildes[1]);
+    if (dup2(fildes[0], STDIN_FILENO) == -1) {
+      perror("dup2");
+      exit(7);
+    }
+    char buf[MAXLEN];
+    time_t new_time, old_time;
 
-  //   regmatch_t pmatch[3];
-  //   const size_t nmatch = 3;
-  //   regex_t reg;
-  //   // const char *pattern = "(\\w+)\\(.+\\).+<(\\d+\\.\\d+)>\\s*";
-  //   const char *pattern = "(\\w+)\\(.+\\).+<(.+)>\\s*";
-  //   if (regcomp(&reg, pattern, REG_EXTENDED)) {
-  //     perror("regcomp");
-  //     exit(8);
-  //   }
+    regmatch_t pmatch[3];
+    const size_t nmatch = 3;
+    regex_t reg;
+    // const char *pattern = "(\\w+)\\(.+\\).+<(\\d+\\.\\d+)>\\s*";
+    const char *pattern = "(\\w+)\\(.+\\).+<(.+)>\\s*";
+    if (regcomp(&reg, pattern, REG_EXTENDED)) {
+      perror("regcomp");
+      exit(8);
+    }
 
-  //   old_time = time(NULL);
-  //   while (fgets(buf, MAXLEN, stdin) != NULL) { 
-  //     if (regexec(&reg, buf, nmatch, pmatch, 0) != REG_NOMATCH) {
-  //       char name_s[MAXLEN], time_s[MAXLEN];
-  //       strncpy(name_s, buf + pmatch[1].rm_so, pmatch[1].rm_eo - pmatch[1].rm_so);
-  //       strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);
-  //       name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[2].rm_eo - pmatch[2].rm_so] = 0;
-  //       double time_d = atof(time_s);
-  //       // printf("%s %s %lf\n", name_s, time_s, time_d);
-  //       list_update(name_s, time_d);
-  //     }
-  //     else {
-  //       if (buf[0] == '+' && buf[1] == '+') {
-  //         list_print();
-  //         regfree(&reg);
-  //         exit(EXIT_SUCCESS);
-  //       }
-  //     }
-  //     new_time = time(NULL);
-  //     if ((new_time - old_time) > .1f) {
-  //       list_print();
-  //       old_time = time(NULL);
-  //     }
-  //   }
-  // }
-  // perror(argv[0]);
-  // exit(9);
+    old_time = time(NULL);
+    while (fgets(buf, MAXLEN, stdin) != NULL) { 
+      if (regexec(&reg, buf, nmatch, pmatch, 0) != REG_NOMATCH) {
+        char name_s[MAXLEN], time_s[MAXLEN];
+        strncpy(name_s, buf + pmatch[1].rm_so, pmatch[1].rm_eo - pmatch[1].rm_so);
+        strncpy(time_s, buf + pmatch[2].rm_so, pmatch[2].rm_eo - pmatch[2].rm_so);
+        name_s[pmatch[1].rm_eo - pmatch[1].rm_so] = time_s[pmatch[2].rm_eo - pmatch[2].rm_so] = 0;
+        double time_d = atof(time_s);
+        // printf("%s %s %lf\n", name_s, time_s, time_d);
+        list_update(name_s, time_d);
+      }
+      else {
+        if (buf[0] == '+' && buf[1] == '+') {
+          list_print();
+          regfree(&reg);
+          exit(EXIT_SUCCESS);
+        }
+      }
+      new_time = time(NULL);
+      if ((new_time - old_time) > .1f) {
+        list_print();
+        old_time = time(NULL);
+      }
+    }
+  }
+  perror(argv[0]);
+  exit(9);
 }

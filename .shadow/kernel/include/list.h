@@ -84,7 +84,6 @@
         if (p == l->tail) l->tail = prev; \
         if (prev) prev->next = next; \
         if (next) next->prev = prev; \
-        LIST_FREE(p); \
     } \
     static inline type type##_list_front(type##_list *l) { \
         return l->head->elem; \

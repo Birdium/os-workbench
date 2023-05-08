@@ -100,7 +100,7 @@ void *slab_alloc(size_t size) {
     int size_exp = 0;
     while (size_exp < PAGE_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
-    LOG_INFO("allocating 2^(%d) memory (%x)", size_exp, size);
+    LOG_INFO("allocating 2^(%d) memory", size_exp);
 
 	// first try local list
 	int cpu = cpu_current();
@@ -127,6 +127,7 @@ void slab_free(void *addr) {
 	TableEntry *tbe = ADDR_2_TBE(addr);
 	// local list
 	int size_exp = tbe->size;
+    LOG_INFO("freeing 2^(%d) memory", size_exp);
 	int slab_idx = SIZE_EXP_2_IDX(size_exp);
 	int cpu = tbe->cpu_cnt;
 	SlabList *list = &slab[cpu][slab_idx];

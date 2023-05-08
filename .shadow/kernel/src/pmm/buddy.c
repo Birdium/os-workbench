@@ -1,9 +1,14 @@
 #include "buddy.h"
 
+#ifndef BUDDY_DEBUG
+#undef LOG_INFO
+#define LOG_INFO(fmt, ...)
+#endif
+
 // table is a bitmap maintains the mapping to buddy system's addrspace 
 // mem layout now:
 // [heap] = [table, buddy]
-// TODO: implement slab
+
 TableEntry *table, *buddy_start;
 
 // buddy is a static array with buddy[i] indicating to size (2^i)'s 
@@ -22,7 +27,6 @@ void init_buddy() {
     memset(buddy, 0, sizeof(buddy));
     // init all table and insert them into buddy sys
     for (int i = buddy_page; i < PAGE_NUM; i += MAX_ALLOC_PAGE_NUM) {
-        LOG_INFO("%p", &table[i]);
         table[i].size = MAX_ALLOC_SIZE_EXP;
         table[i].allocated = 0;
         table[i].is_slab = 0;

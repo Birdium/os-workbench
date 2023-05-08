@@ -26,6 +26,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
+    TRACE_ENTRY;
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     switch (ev.event) {
@@ -42,6 +43,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
         default:
             break;
     }
+    TRACE_EXIT;
     return current[cpu]->context;
 }
 

@@ -62,6 +62,7 @@ static void kmt_init() {
         task->context = NULL;
         task->next = NULL;
         current[cpu] = task;
+        LOG_INFO("task init on CPU %d, name: %s", cpu, name);
     }
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);

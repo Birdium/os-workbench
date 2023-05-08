@@ -13,8 +13,7 @@ run: build-arg
 	@qemu-system-x86_64 $(QEMU_FLAGS)
 
 .gdbinit: $(AM_HOME)/scripts/.gdbinit.tmpl-x86_64
-    $(info $^)
-    # sed "s/:1234/:$(GDBPORT)/" < $^ > $@
+	sed "s/:1234/:$(GDBPORT)/" < $^ > $@
 
 QEMU = qemu-system-x86_64
 # try to generate a unique GDB port

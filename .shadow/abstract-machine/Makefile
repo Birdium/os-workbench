@@ -148,6 +148,13 @@ image-dep: $(OBJS) am $(LIBS)
 	@echo \# Creating image [$(ARCH)]
 .PHONY: image image-dep archive run gdb $(LIBS)
 
+# try to generate a unique GDB port
+GDBPORT = $(shell expr `id -u` % 5000 + 25000)
+# QEMU's gdb stub command line changed in 0.11
+QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
+	then echo "-gdb tcp::$(GDBPORT)"; \
+	else echo "-s -p $(GDBPORT)"; fi)
+
 ### Clean a single project (remove `build/`)
 clean:
 	rm -rf Makefile.html $(WORK_DIR)/build/

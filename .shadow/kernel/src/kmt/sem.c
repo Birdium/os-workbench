@@ -1,4 +1,5 @@
 #include "am.h"
+#include "common.h"
 #include "klib-macros.h"
 #include "list.h"
 #include "os.h"
@@ -40,8 +41,8 @@ void kmt_sem_wait(sem_t *sem) {
 	kmt->spin_lock(&sem->lk);
 	--sem->cnt;
 	if (sem->cnt < 0) {
+		LOG_INFO("111");
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
-		current[cpu_current()]->status = SLEEPING;
 		kmt->spin_unlock(&sem->lk);
 		yield();
 	}

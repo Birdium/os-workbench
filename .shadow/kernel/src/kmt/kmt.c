@@ -50,6 +50,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
         case EVENT_IRQ_TIMER: 
         {   
             kmt->spin_lock(task_list_lk);
+            task_list->push_back(task_list, cur_task);
             task_t *next_task = task_list->front(task_list);
             task_list->pop_front(task_list);
             kmt->spin_unlock(task_list_lk);

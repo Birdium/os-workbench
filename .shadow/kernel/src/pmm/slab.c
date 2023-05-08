@@ -2,6 +2,11 @@
 
 extern TableEntry *table;
 
+#ifndef SLAB_DEBUG
+#undef LOG_INFO
+#define LOG_INFO(fmt, ...)
+#endif
+
 static SlabList slab[MAX_CPU_NUM][SLAB_NUM];
 
 void slab_fetch_buddy(int slab_idx, int cpu) {

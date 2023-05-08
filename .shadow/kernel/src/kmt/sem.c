@@ -21,13 +21,13 @@ void kmt_sem_signal(sem_t *sem) {
 	kmt->spin_lock(&sem->lk);
 	++sem->cnt;
 	if (sem->tasks.size > 0) {
-		LOG_INFO("1111");
 		int idx = rand() % sem->tasks.size;
 		task_t_ptr_list_node *p = sem->tasks.head;
 		for (int i = 0; i < idx; i++) {
 			p = p->next;
 		}
 		task_t *ntask = p->elem;
+		LOG_INFO("%s", ntask->name);
 		kmt->spin_lock(task_list_lk);
 		sem->tasks.remove(&sem->tasks, p);
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");

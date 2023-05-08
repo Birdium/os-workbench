@@ -78,7 +78,7 @@
         type##_list_insert_next(l, l->tail, elem); \
     } \
     static inline void type##_list_remove(type##_list *l, type##_list_node *p) { \
-        --(l->size); \
+        --l->size; \
         type##_list_node *prev = p->prev, *next = p->next; \
         if (p == l->head) l->head = next; \
         if (p == l->tail) l->tail = prev; \

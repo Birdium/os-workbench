@@ -30,11 +30,9 @@ static void *_kalloc(size_t size) {
 }
 
 static void _kfree(void *ptr) {
-  TRACE_ENTRY;
   TableEntry *tbe = ADDR_2_TBE(ptr);
   if (tbe->is_slab) slab_free(ptr);
   else buddy_free(ptr);
-  TRACE_EXIT;
 }
 
 static void *kalloc(size_t size) {

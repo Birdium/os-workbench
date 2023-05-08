@@ -5,6 +5,8 @@
 #include <kmt.h>
 
 extern task_t *current[MAX_CPU_NUM];
+extern spinlock_t *task_list_lk;
+LIST_DEC_EXTERN(task_t_ptr, task_list);
 
 void kmt_sem_init(sem_t *sem, const char *name, int value) {
 	sem->name = name;
@@ -23,8 +25,10 @@ void kmt_sem_signal(sem_t *sem) {
 			p = p->next;
 		}
 		task_t *ntask = p->elem;
+		kmt->spin_lock(task_list_lk);
 		sem->tasks.remove(&sem->tasks, p);
 		ntask->status = RUNNABLE;
+		kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);
 }

@@ -28,6 +28,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
 static Context *kmt_schedule(Event ev, Context *context) {
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
+    LOG_INFO("current task: %s", cur_task->name);
     switch (ev.event) {
         case EVENT_YIELD: case EVENT_IRQ_TIMER:
         // schedule to other tasks

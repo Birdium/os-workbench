@@ -37,17 +37,19 @@
 
 #ifdef DEBUG 
 #define LOG_INFO(fmt, ...)  printf("\033[1;34mLOG_INFO CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_TRACE(fmt, ...)  printf("\033[1;32mLOG_INFO CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define LOG_LOCK(fmt, ...)  
 //printf("\033[1;31mLOG_LOCK CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
 #define LOG_INFO(fmt, ...)  
+#define LOG_TRACE(fmt, ...)  
 #define LOG_LOCK(fmt, ...)  
 
 #endif
 
 #ifdef TRACE_F
-  #define TRACE_ENTRY printf("[trace] %s:entry\n", __func__)
-  #define TRACE_EXIT printf("[trace] %s:exit\n", __func__)
+  #define TRACE_ENTRY LOG_TRACE("entry")
+  #define TRACE_EXIT LOG_TRACE("exit")
 #else
   #define TRACE_ENTRY ((void)0)
   #define TRACE_EXIT ((void)0)

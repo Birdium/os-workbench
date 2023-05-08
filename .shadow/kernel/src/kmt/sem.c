@@ -29,7 +29,7 @@ void kmt_sem_signal(sem_t *sem) {
 		task_t *ntask = p->elem;
 		kmt->spin_lock(task_list_lk);
 		LOG_INFO("%s %d %p %d", ntask->name, ntask->status, ntask, sem->tasks.size);
-		sem->tasks.remove(&sem->tasks, p);
+		sem->tasks.remove(&(sem->tasks), p);
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
 		ntask->status = RUNNABLE;
 		task_list->push_back(task_list, ntask);

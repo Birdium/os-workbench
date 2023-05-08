@@ -10,7 +10,10 @@
 
 extern task_t *current[MAX_CPU_NUM];
 
+#define cur_task current[cpu_current()]
+
 LIST_PTR_DEC(irq_t, irq_list);
+LIST_PTR_DEC(task_t, task_list);
 
 static Context *kmt_context_save(Event ev, Context *context) {
     int cpu = cpu_current();
@@ -22,7 +25,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
 
 static Context *kmt_schedule(Event ev, Context *context) {
     int cpu = cpu_current();
-    if (current[cpu] && )
+    panic_on(cur_task == NULL, "no available task");
     return current[cpu]->context;
 }
 

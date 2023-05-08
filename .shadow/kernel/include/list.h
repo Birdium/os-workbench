@@ -32,6 +32,8 @@
         void (*pop_front)	(type##_list *l); \
         void (*pop_back)	(type##_list *l); \
 		void (*free)		(type##_list *l); \
+        type (*front)       (type##_list *l); \
+        type (*back)        (type##_list *l); \
     }; \
     static inline void type##_list_insert_prev(type##_list *l, type##_list_node *p, type elem) { \
         ++l->size; \
@@ -84,6 +86,12 @@
         if (next) next->prev = prev; \
         LIST_FREE(p); \
     } \
+    static inline type type##_list_front(type##_list *l) { \
+        return l->head->elem; \
+    } \
+    static inline type type##_list_back(type##_list *l) { \
+        return l->tail->elem; \
+    } \
     static inline void type##_list_pop_front(type##_list *l) { \
         type##_list_remove(l, l->head); \
     } \
@@ -110,6 +118,8 @@
         l->pop_front	= type##_list_pop_front; \
         l->pop_back 	= type##_list_pop_back; \
 		l->free 		= type##_list_free; \
+        l->front        = type##_list_front; \
+        l->back         = type##_list_back; \
     } \
     static inline type##_list *type##_list_new_init() { \
         type##_list *l = LIST_ALLOC(sizeof(type##_list)); \

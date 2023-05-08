@@ -13,7 +13,9 @@ extern task_t *current[MAX_CPU_NUM];
 #define cur_task current[cpu_current()]
 
 LIST_PTR_DEC(irq_t, irq_list);
-LIST_PTR_DEC(task_t, task_list);
+LIST_PTR_DEC(task_t_ptr, task_list);
+
+spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
     int cpu = cpu_current();
@@ -26,6 +28,20 @@ static Context *kmt_context_save(Event ev, Context *context) {
 static Context *kmt_schedule(Event ev, Context *context) {
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
+    switch (ev.event) {
+        case EVENT_YIELD: case EVENT_IRQ_TIMER:
+        // schedule to other tasks
+        {   
+            kmt->spin_lock(task_list_lk);
+            task_list->push_back(task_list, cur_task);
+            task_t *next_task = task_list->front(task_list);
+            task_list->pop_front(task_list);
+            kmt->spin_unlock(task_list_lk);
+            cur_task = next_task;
+        }
+        default:
+            break;
+    }
     return current[cpu]->context;
 }
 
@@ -48,6 +64,8 @@ static void kmt_init() {
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
+    LIST_PTR_INIT(task_t_ptr, task_list);
+    kmt->spin_init(task_list_lk, "task list lock");
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
@@ -61,6 +79,9 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
         }, entry, arg
     );
     task->next = NULL;
+    kmt->spin_lock(task_list_lk);
+    task_list->push_back(task_list, task);
+    kmt->spin_unlock(task_list_lk);
     return 0;
 }
 

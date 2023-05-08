@@ -37,11 +37,19 @@ static Context *kmt_schedule(Event ev, Context *context) {
     LOG_INFO("current task: %s, status %d, itr type %d", cur_task->name, cur_task->status, ev.event);
     panic_on(cur_task->name[0] == 'c', "hdosao");
     switch (ev.event) {
-        case EVENT_YIELD: case EVENT_IRQ_TIMER:
+        case EVENT_YIELD:
         // schedule to other tasks
         {   
             kmt->spin_lock(task_list_lk);
             task_list->push_back(task_list, cur_task);
+            task_t *next_task = task_list->front(task_list);
+            task_list->pop_front(task_list);
+            kmt->spin_unlock(task_list_lk);
+            cur_task = next_task;
+        } 
+        case EVENT_IRQ_TIMER: 
+        {   
+            kmt->spin_lock(task_list_lk);
             task_t *next_task = task_list->front(task_list);
             task_list->pop_front(task_list);
             kmt->spin_unlock(task_list_lk);

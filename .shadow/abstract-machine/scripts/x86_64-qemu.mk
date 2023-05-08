@@ -17,4 +17,4 @@ run: build-arg
     # sed "s/:1234/:$(GDBPORT)/" < $^ > $@
 
 gdb: build-arg .gdbinit
-	@qemu-system-x86_64 $(QEMU_FLAGS)
+	@qemu-system-x86_64 $(QEMU_FLAGS) -S $(QEMUGDB)

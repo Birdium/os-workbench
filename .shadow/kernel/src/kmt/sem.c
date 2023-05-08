@@ -29,7 +29,7 @@ void kmt_sem_signal(sem_t *sem) {
 		task_t *ntask = p->elem;
 		kmt->spin_lock(task_list_lk);
 		LOG_INFO("%s %d %p %d", ntask->name, ntask->status, ntask, sem->tasks.size);
-		for_list(task_t_ptr, it, task_list) {
+		for_list(task_t_ptr, it, &sem->tasks) {
 			LOG_INFO("%p %s", it, it->elem->name);
 		}
 		sem->tasks.remove(&(sem->tasks), p);

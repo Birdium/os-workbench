@@ -1,4 +1,5 @@
 #include "am.h"
+#include "klib-macros.h"
 #include "list.h"
 #include "os.h"
 #include <assert.h>
@@ -6,7 +7,7 @@
 
 extern task_t *current[MAX_CPU_NUM];
 extern spinlock_t *task_list_lk;
-LIST_DEC_EXTERN(task_t_ptr, task_list);
+LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 void kmt_sem_init(sem_t *sem, const char *name, int value) {
 	sem->name = name;
@@ -27,7 +28,9 @@ void kmt_sem_signal(sem_t *sem) {
 		task_t *ntask = p->elem;
 		kmt->spin_lock(task_list_lk);
 		sem->tasks.remove(&sem->tasks, p);
+		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
 		ntask->status = RUNNABLE;
+		task_list->push_back(task_list, ntask);
 		kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);

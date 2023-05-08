@@ -38,7 +38,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     LOG_INFO("current task: %s, status %d, itr type %d", cur_task->name, cur_task->status, ev.event);
-    panic_on(cur_task->name[0] == 'c', "hdosao");
+    panic_on(cur_task->name[0] == 'c' && ev.event == EVENT_ERROR, "consumer error");
     switch (ev.event) {
         case EVENT_YIELD:
         // schedule to other tasks

@@ -18,10 +18,18 @@ LIST_PTR_DEC(task_t_ptr, task_list);
 spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
-    int cpu = cpu_current();
-    panic_on(!current[cpu], "no valid task");
-    current[cpu]->status = SLEEPING;
-    current[cpu]->context = context;
+    TRACE_ENTRY;
+    panic_on(!cur_task, "no valid task");
+    switch (ev.event) {
+        case EVENT_YIELD:
+            cur_task->status = SLEEPING;
+        case EVENT_IRQ_TIMER:
+            cur_task->status = RUNNABLE;
+        default:
+            cur_task->status = RUNNABLE;
+    }
+    cur_task->context = context;    \
+    TRACE_EXIT;
     return NULL;
 }
 
@@ -29,10 +37,21 @@ static Context *kmt_schedule(Event ev, Context *context) {
     TRACE_ENTRY;
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
+    LOG_INFO("current task: %s, status %d, itr type %d", cur_task->name, cur_task->status, ev.event);
+    panic_on(cur_task->name[0] == 'c' && ev.event == EVENT_ERROR, "consumer error");
     switch (ev.event) {
-        case EVENT_YIELD: case EVENT_IRQ_TIMER:
+        case EVENT_YIELD:
         // schedule to other tasks
         {   
+            kmt->spin_lock(task_list_lk);
+            task_t *next_task = task_list->front(task_list);
+            task_list->pop_front(task_list);
+            kmt->spin_unlock(task_list_lk);
+            cur_task = next_task;
+        }
+        break;
+        case EVENT_IRQ_TIMER:
+        {
             kmt->spin_lock(task_list_lk);
             task_list->push_back(task_list, cur_task);
             task_t *next_task = task_list->front(task_list);
@@ -62,7 +81,7 @@ static void kmt_init() {
         task->context = NULL;
         task->next = NULL;
         current[cpu] = task;
-        LOG_INFO("task init on CPU %d, name: %s", cpu, name);
+        LOG_INFO("task init on CPU %d, name: %s, status %d", cpu, name, task->status);
     }
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
@@ -85,6 +104,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     kmt->spin_lock(task_list_lk);
     task_list->push_back(task_list, task);
     kmt->spin_unlock(task_list_lk);
+    LOG_INFO("task created name: %s", name);
     return 0;
 }
 

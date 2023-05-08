@@ -21,6 +21,7 @@ void kmt_sem_signal(sem_t *sem) {
 	kmt->spin_lock(&sem->lk);
 	++sem->cnt;
 	if (sem->tasks.size > 0) {
+		LOG_INFO("1111");
 		int idx = rand() % sem->tasks.size;
 		task_t_ptr_list_node *p = sem->tasks.head;
 		for (int i = 0; i < idx; i++) {

@@ -28,7 +28,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
         default:
             cur_task->status = RUNNABLE;
     }
-    cur_task->context = context;    \
+    cur_task->context = context; 
     TRACE_EXIT;
     return NULL;
 }

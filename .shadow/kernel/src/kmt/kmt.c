@@ -20,7 +20,14 @@ spinlock_t *task_list_lk;
 static Context *kmt_context_save(Event ev, Context *context) {
     int cpu = cpu_current();
     panic_on(!current[cpu], "no valid task");
-    current[cpu]->status = SLEEPING;
+    switch (ev.event) {
+        case EVENT_YIELD:
+            cur_task->status = SLEEPING;
+        case EVENT_IRQ_TIMER:
+            cur_task->status = RUNNABLE;
+        default:
+            cur_task->status = RUNNABLE;
+    }
     current[cpu]->context = context;
     return NULL;
 }

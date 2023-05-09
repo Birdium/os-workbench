@@ -30,17 +30,17 @@ static void os_init() {
 
 #ifdef DEBUG_LOCAL
 
-  kmt->create(task_alloc(), "fooA", foo, "a");
-  kmt->create(task_alloc(), "fooB", foo, "b");
+  // kmt->create(task_alloc(), "fooA", foo, "a");
+  // kmt->create(task_alloc(), "fooB", foo, "b");
 
-  // kmt->sem_init(&empty, "empty", N);
-  // kmt->sem_init(&fill,  "fill",  0);
-  // for (int i = 0; i < NPROD; i++) {
-  //   kmt->create(task_alloc(), "producer", Tproduce, NULL);
-  // }
-  // for (int i = 0; i < NCONS; i++) {
-  //   kmt->create(task_alloc(), "consumer", Tconsume, NULL);
-  // }
+  kmt->sem_init(&empty, "empty", N);
+  kmt->sem_init(&fill,  "fill",  0);
+  for (int i = 0; i < NPROD; i++) {
+    kmt->create(task_alloc(), "producer", Tproduce, NULL);
+  }
+  for (int i = 0; i < NCONS; i++) {
+    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
+  }
 #endif
 }
 
@@ -50,7 +50,7 @@ static void os_run() {
   printf("Hello World from CPU #%d\n", cpu_current());
   while (1) {
     // yield();
-    putch('c');
+    // putch('c');
   }
 }
 #else 

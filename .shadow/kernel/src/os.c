@@ -50,6 +50,7 @@ static void os_run() {
   printf("Hello World from CPU #%d\n", cpu_current());
   while (1) {
     // yield();
+    putch('c');
   }
 }
 #else 

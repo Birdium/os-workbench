@@ -44,7 +44,6 @@ void kmt_spin_lock(spinlock_t *lk) {
 		;
 	__sync_synchronize();
 	lk->cpu = cpu_current();
-	LOG_INFO("current cpu %d", lk->cpu);
 }
 
 void kmt_spin_unlock(spinlock_t *lk) {

@@ -39,6 +39,7 @@ static void *kalloc(size_t size) {
   bool i = ienabled();
   iset(false);
   void *ret = _kalloc(size);
+  LOG_INFO("allocating mem starts from %p, size %d", ret, size);
   if (i) iset(true);
   return ret;
 }

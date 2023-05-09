@@ -20,6 +20,8 @@ sem_t empty, fill;
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
 
+void foo(void *s) { while (1) putch(*((const char *)s)); }
+
 #endif
 
 static void os_init() {
@@ -28,14 +30,17 @@ static void os_init() {
 
 #ifdef DEBUG_LOCAL
 
-  kmt->sem_init(&empty, "empty", N);
-  kmt->sem_init(&fill,  "fill",  0);
-  for (int i = 0; i < NPROD; i++) {
-    kmt->create(task_alloc(), "producer", Tproduce, NULL);
-  }
-  for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
-  }
+  kmt->create(task_alloc(), "fooA", foo, "a");
+  kmt->create(task_alloc(), "fooB", foo, "b");
+
+  // kmt->sem_init(&empty, "empty", N);
+  // kmt->sem_init(&fill,  "fill",  0);
+  // for (int i = 0; i < NPROD; i++) {
+  //   kmt->create(task_alloc(), "producer", Tproduce, NULL);
+  // }
+  // for (int i = 0; i < NCONS; i++) {
+  //   kmt->create(task_alloc(), "consumer", Tconsume, NULL);
+  // }
 #endif
 }
 

@@ -49,6 +49,7 @@ void kmt_spin_lock(spinlock_t *lk) {
 }
 
 void kmt_spin_unlock(spinlock_t *lk) {
+	LOG_INFO("%d", cpu_current());
 	if (!holding(lk)) LOG_INFO("%p", lk);
 	panic_on(!holding(lk), "kmt_spin_unlock: releasing unholding lock");
     lk->cpu = -1;

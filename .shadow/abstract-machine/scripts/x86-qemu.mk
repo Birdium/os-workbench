@@ -11,3 +11,17 @@ AM_SRCS := x86/qemu/start32.S \
 
 run: build-arg
 	@qemu-system-i386 $(QEMU_FLAGS)
+
+.gdbinit: $(AM_HOME)/scripts/.gdbinit.tmpl-x86
+	sed "s/:1234/:$(GDBPORT)/" < $^ > $@
+
+QEMU = qemu-system-i386
+# try to generate a unique GDB port
+GDBPORT = $(shell expr `id -u` % 5000 + 25000)
+# QEMU's gdb stub command line changed in 0.11
+QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
+	then echo "-gdb tcp::$(GDBPORT)"; \
+	else echo "-s -p $(GDBPORT)"; fi)
+
+gdb: build-arg .gdbinit
+	@qemu-system-i386 $(QEMU_FLAGS) -S $(QEMUGDB)

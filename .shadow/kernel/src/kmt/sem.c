@@ -35,7 +35,6 @@ void kmt_sem_signal(sem_t *sem) {
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
 		ntask->status = RUNNABLE;
 		task_list->push_back(task_list, ntask);
-		kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);
 	TRACE_EXIT;

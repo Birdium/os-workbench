@@ -67,6 +67,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
 }
 
 static void kmt_init() {
+    LOG_INFO("initializing kmt");
     for (int cpu = 0; cpu < cpu_count(); cpu++) {
         // init idle
         task_t *task = pmm->alloc(sizeof(task_t));

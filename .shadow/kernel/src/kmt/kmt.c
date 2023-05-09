@@ -67,7 +67,6 @@ static Context *kmt_schedule(Event ev, Context *context) {
 }
 
 static void kmt_init() {
-    LOG_INFO("initializing kmt");
     for (int cpu = 0; cpu < cpu_count(); cpu++) {
         // init idle
         task_t *task = pmm->alloc(sizeof(task_t));
@@ -89,6 +88,7 @@ static void kmt_init() {
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
     LIST_PTR_INIT(task_t_ptr, task_list);
     kmt->spin_init(task_list_lk, "task list lock");
+    LOG_INFO("kmt inited");
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {

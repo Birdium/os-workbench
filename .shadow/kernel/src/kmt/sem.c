@@ -46,7 +46,8 @@ void kmt_sem_wait(sem_t *sem) {
 		kmt->spin_unlock(&sem->lk);
 		LOG_INFO("sem sleeped task: %s", current[cpu_current()]->name);
 		yield();		
-		kmt->spin_lock(&sem->lk);
 	}
-	kmt->spin_unlock(&sem->lk);
+	else {
+		kmt->spin_unlock(&sem->lk);
+	}
 }

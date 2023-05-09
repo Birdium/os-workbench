@@ -94,7 +94,6 @@ static void kmt_init() {
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-    TRACE_ENTRY;
     task->name = name;
     task->status = RUNNABLE;
     task->stack = pmm->alloc(KMT_STACK_SIZE);
@@ -109,6 +108,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     task_list->push_back(task_list, task);
     kmt->spin_unlock(task_list_lk);
     LOG_INFO("task created name: %s, addr: %p", name, task);
+    TRACE_ENTRY;
     return 0;
 }
 

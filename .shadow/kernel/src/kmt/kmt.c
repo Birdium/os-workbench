@@ -52,7 +52,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
             cur_task = next_task;
         }
             break;
-        case EVENT_IRQ_TIMER:
+        case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
         {
             kmt->spin_lock(task_list_lk);
             task_list->push_back(task_list, cur_task);

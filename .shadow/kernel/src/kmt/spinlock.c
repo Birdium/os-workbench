@@ -43,6 +43,7 @@ void kmt_spin_lock(spinlock_t *lk) {
     while(atomic_xchg(&lk->locked, 1) != 0)
 		;
 	__sync_synchronize();
+	LOG_LOCK("acquired %s", lk->name);
 	lk->cpu = cpu_current();
 }
 

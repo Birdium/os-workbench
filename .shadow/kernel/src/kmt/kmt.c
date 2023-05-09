@@ -62,7 +62,9 @@ static Context *kmt_schedule(Event ev, Context *context) {
             task_t *next_task = task_list->front(task_list);
             task_list->pop_front(task_list);
             kmt->spin_unlock(task_list_lk);
+            LOG_INFO("%s", cur_task->name);
             cur_task = next_task;
+            LOG_INFO("%s", cur_task->name);
         }
             break;
         default:

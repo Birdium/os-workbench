@@ -105,7 +105,7 @@ void *slab_alloc(size_t size) {
     int size_exp = 0;
     while (size_exp < PAGE_SIZE_EXP && (1 << size_exp) != size) 
         ++size_exp;
-    LOG_INFO("allocating 2^(%d) memory", size_exp);
+    LOG_TRACE("allocating 2^(%d) memory", size_exp);
 
 	// first try local list
 	int cpu = cpu_current();

@@ -19,9 +19,6 @@ spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
-    LOG_INFO("context saving of %s, event type %d", cur_task->name, ev.event);
-    LOG_INFO("task num %d", task_list->size);
-    if (task_list->size > 0) LOG_INFO("first task name %s", task_list->head->elem->name);
     switch (ev.event) {
         case EVENT_YIELD:
             cur_task->status = SLEEPING;
@@ -34,7 +31,6 @@ static Context *kmt_context_save(Event ev, Context *context) {
             break;
     }
     cur_task->context = context; 
-    LOG_INFO("ctx saved of %p", cur_task->context);
     return NULL;
 }
 

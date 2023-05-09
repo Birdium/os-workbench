@@ -18,23 +18,23 @@ LIST_PTR_DEC(task_t_ptr, task_list);
 spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
-    TRACE_ENTRY;
     panic_on(!cur_task, "no valid task");
     switch (ev.event) {
         case EVENT_YIELD:
             cur_task->status = SLEEPING;
+            break;
         case EVENT_IRQ_TIMER:
             cur_task->status = RUNNABLE;
+            break;
         default:
             cur_task->status = RUNNABLE;
+            break;
     }
     cur_task->context = context; 
-    TRACE_EXIT;
     return NULL;
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
-    TRACE_ENTRY;
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     LOG_INFO("current task: %s, status %d, itr type %d", cur_task->name, cur_task->status, ev.event);
@@ -49,8 +49,8 @@ static Context *kmt_schedule(Event ev, Context *context) {
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }
-        break;
-        case EVENT_IRQ_TIMER:
+            break;
+        case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
         {
             kmt->spin_lock(task_list_lk);
             task_list->push_back(task_list, cur_task);
@@ -59,10 +59,10 @@ static Context *kmt_schedule(Event ev, Context *context) {
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }
+            break;
         default:
             break;
     }
-    TRACE_EXIT;
     return current[cpu]->context;
 }
 
@@ -81,12 +81,13 @@ static void kmt_init() {
         task->context = NULL;
         task->next = NULL;
         current[cpu] = task;
-        LOG_INFO("task init on CPU %d, name: %s, status %d", cpu, name, task->status);
+        LOG_INFO("task init on CPU %d, name: %s, addr: %p, stack: %p", cpu, name, task, task->stack);
     }
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
     LIST_PTR_INIT(task_t_ptr, task_list);
+    task_list_lk = pmm->alloc(sizeof(spinlock_t));
     kmt->spin_init(task_list_lk, "task list lock");
 }
 
@@ -104,12 +105,13 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     kmt->spin_lock(task_list_lk);
     task_list->push_back(task_list, task);
     kmt->spin_unlock(task_list_lk);
-    LOG_INFO("task created name: %s", name);
+    LOG_INFO("task created name: %s, addr: %p, stack: %p", name, task, task->stack);
     return 0;
 }
 
 static void kmt_teardown(task_t *task) {
     //TODO: kmt teardown
+    pmm->free(task->stack);
 }
 
 MODULE_DEF(kmt) = {

@@ -3,7 +3,7 @@
 #include <buddy.h>
 #include <os.h>
 
-task_t *current, tasks[MAX_CPU_NUM];
+task_t *current[MAX_CPU_NUM], tasks[MAX_CPU_NUM];
 
 #ifdef DEBUG_LOCAL
 task_t *task_alloc() {
@@ -13,7 +13,7 @@ task_t *task_alloc() {
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-#define N 2
+#define N 1
 #define NPROD 1
 #define NCONS 1
 
@@ -63,7 +63,11 @@ static inline bool sane_context(Context *ctx) {
   return true;
 }
 
+#define cur_task current[cpu_current()]
+
 Context *os_trap(Event ev, Context *context) {
+  TRACE_ENTRY;
+  LOG_INFO("context saving of %s with ctx at %p, event type %d", cur_task->name, context, ev.event);
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
@@ -74,6 +78,8 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
+  LOG_INFO("os trap returing %p", next);
+  TRACE_EXIT;
   return next;
 }
 

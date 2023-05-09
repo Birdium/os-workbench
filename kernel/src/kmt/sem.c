@@ -29,8 +29,6 @@ void kmt_sem_signal(sem_t *sem) {
 		}
 		task_t *ntask = p->elem;
 		kmt->spin_lock(task_list_lk);
-		LOG_INFO("%s %d %p %d", ntask->name, ntask->status, ntask, sem->tasks.size);
-		LOG_INFO("%p %p %p %p %p %p", &sem->tasks, sem->tasks.head, sem->tasks.tail, p, p->prev, p->next);
 		sem->tasks.remove(&(sem->tasks), p);
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
 		ntask->status = RUNNABLE;
@@ -42,13 +40,16 @@ void kmt_sem_signal(sem_t *sem) {
 }
 
 void kmt_sem_wait(sem_t *sem) {
+	TRACE_ENTRY;
 	kmt->spin_lock(&sem->lk);
 	--sem->cnt;
 	if (sem->cnt < 0) {
 		LOG_INFO("111");
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
 		kmt->spin_unlock(&sem->lk);
-		yield();
+		yield();		
+		kmt->spin_lock(&sem->lk);
 	}
 	kmt->spin_unlock(&sem->lk);
+	TRACE_EXIT;
 }

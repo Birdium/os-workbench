@@ -70,13 +70,13 @@ extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
-  int cnt = 0;
-  kmt->spin_lock(task_list_lk);
-  for_list(task_t_ptr, it, task_list) {
-    LOG_INFO("task %d: %s", cnt, it->elem->name);
-    cnt++;
-  }
-  kmt->spin_unlock(task_list_lk);
+  // int cnt = 0;
+  // kmt->spin_lock(task_list_lk);
+  // for_list(task_t_ptr, it, task_list) {
+  //   LOG_INFO("task %d: %s", cnt, it->elem->name);
+  //   cnt++;
+  // }
+  // kmt->spin_unlock(task_list_lk);
 }
 
 Context *os_trap(Event ev, Context *context) {

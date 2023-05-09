@@ -20,6 +20,8 @@ sem_t empty, fill;
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
 
+void foo(void *s) { while (1) putch(*((const char *)s)); }
+
 #endif
 
 static void os_init() {
@@ -27,6 +29,9 @@ static void os_init() {
   kmt->init();
 
 #ifdef DEBUG_LOCAL
+
+  // kmt->create(task_alloc(), "fooA", foo, "a");
+  // kmt->create(task_alloc(), "fooB", foo, "b");
 
   kmt->sem_init(&empty, "empty", N);
   kmt->sem_init(&fill,  "fill",  0);
@@ -45,6 +50,7 @@ static void os_run() {
   printf("Hello World from CPU #%d\n", cpu_current());
   while (1) {
     // yield();
+    // putch('c');
   }
 }
 #else 
@@ -65,9 +71,24 @@ static inline bool sane_context(Context *ctx) {
 
 #define cur_task current[cpu_current()]
 
+extern spinlock_t *task_list_lk;
+
+LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
+
+static void debug_task_list() {
+  // int cnt = 0;
+  // kmt->spin_lock(task_list_lk);
+  // for_list(task_t_ptr, it, task_list) {
+  //   LOG_INFO("task %d: %s", cnt, it->elem->name);
+  //   cnt++;
+  // }
+  // kmt->spin_unlock(task_list_lk);
+}
+
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
-  LOG_INFO("context saving of %s with ctx at %p, event type %d", cur_task->name, context, ev.event);
+  LOG_INFO("trap task %s with ctx at %p, intr type %d", cur_task->name, context, ev.event);
+  debug_task_list();
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
@@ -78,7 +99,7 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
-  LOG_INFO("os trap returing %p", next);
+  LOG_INFO("trap returning %p", next);
   TRACE_EXIT;
   return next;
 }

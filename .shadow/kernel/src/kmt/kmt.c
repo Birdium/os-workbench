@@ -23,10 +23,13 @@ static Context *kmt_context_save(Event ev, Context *context) {
     switch (ev.event) {
         case EVENT_YIELD:
             cur_task->status = SLEEPING;
+            break;
         case EVENT_IRQ_TIMER:
             cur_task->status = RUNNABLE;
+            break;
         default:
             cur_task->status = RUNNABLE;
+            break;
     }
     cur_task->context = context; 
     TRACE_EXIT;
@@ -49,7 +52,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }
-        break;
+            break;
         case EVENT_IRQ_TIMER:
         {
             kmt->spin_lock(task_list_lk);
@@ -59,6 +62,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }
+            break;
         default:
             break;
     }

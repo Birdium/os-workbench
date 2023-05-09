@@ -86,8 +86,8 @@ static void kmt_init() {
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
-    LOG_INFO("kmt inited");
     LIST_PTR_INIT(task_t_ptr, task_list);
+    LOG_INFO("kmt inited");
     kmt->spin_init(task_list_lk, "task list lock");
 }
 

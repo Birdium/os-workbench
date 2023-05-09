@@ -4,7 +4,9 @@ extern TableEntry *table;
 
 #ifndef SLAB_DEBUG
 #undef LOG_INFO
+#undef LOG_LOCK
 #define LOG_INFO(fmt, ...)
+#define LOG_LOCK(fmt, ...)
 #endif
 
 static SlabList slab[MAX_CPU_NUM][SLAB_NUM];

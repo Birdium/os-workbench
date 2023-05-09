@@ -2,7 +2,9 @@
 
 #ifndef BUDDY_DEBUG
 #undef LOG_INFO
+#undef LOG_LOCK
 #define LOG_INFO(fmt, ...)
+#define LOG_LOCK(fmt, ...)
 #endif
 
 // table is a bitmap maintains the mapping to buddy system's addrspace 

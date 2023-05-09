@@ -18,7 +18,6 @@ LIST_PTR_DEC(task_t_ptr, task_list);
 spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
-    TRACE_ENTRY;
     panic_on(!cur_task, "no valid task");
     LOG_INFO("context saving of %s, event type %d", cur_task->name, ev.event);
     switch (ev.event) {
@@ -34,12 +33,10 @@ static Context *kmt_context_save(Event ev, Context *context) {
     }
     cur_task->context = context; 
     LOG_INFO("ctx saved of %p", cur_task->context);
-    TRACE_EXIT;
     return NULL;
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
-    TRACE_ENTRY;
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     LOG_INFO("current task: %s, status %d, itr type %d", cur_task->name, cur_task->status, ev.event);
@@ -62,15 +59,12 @@ static Context *kmt_schedule(Event ev, Context *context) {
             task_t *next_task = task_list->front(task_list);
             task_list->pop_front(task_list);
             kmt->spin_unlock(task_list_lk);
-            LOG_INFO("%s", cur_task->name);
             cur_task = next_task;
-            LOG_INFO("%s", cur_task->name);
         }
             break;
         default:
             break;
     }
-    TRACE_EXIT;
     return current[cpu]->context;
 }
 

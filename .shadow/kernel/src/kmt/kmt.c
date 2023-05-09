@@ -20,6 +20,7 @@ spinlock_t *task_list_lk;
 static Context *kmt_context_save(Event ev, Context *context) {
     TRACE_ENTRY;
     panic_on(!cur_task, "no valid task");
+    LOG_INFO("context saving of %s, event type %d", cur_task->name, ev.event);
     switch (ev.event) {
         case EVENT_YIELD:
             cur_task->status = SLEEPING;

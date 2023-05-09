@@ -89,7 +89,7 @@ static void kmt_init() {
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
     LIST_PTR_INIT(task_t_ptr, task_list);
-    task_list_lk = pmm->alloc(sizeof(task_list_lk));
+    task_list_lk = pmm->alloc(sizeof(spinlock_t));
     kmt->spin_init(task_list_lk, "task list lock");
 }
 
@@ -105,6 +105,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     );
     task->next = NULL;
     kmt->spin_lock(task_list_lk);
+    LOG_INFO("lk cpu %d", task_list_lk->cpu);
     task_list->push_back(task_list, task);
     kmt->spin_unlock(task_list_lk);
     LOG_INFO("task created name: %s, addr: %p", name, task);

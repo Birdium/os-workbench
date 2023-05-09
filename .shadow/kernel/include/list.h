@@ -117,6 +117,7 @@
         l->push_back	= type##_list_push_back; \
         l->pop_front	= type##_list_pop_front; \
         l->pop_back 	= type##_list_pop_back; \
+        l->remove       = type##_list_remove; \
 		l->free 		= type##_list_free; \
         l->front        = type##_list_front; \
         l->back         = type##_list_back; \

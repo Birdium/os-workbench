@@ -81,7 +81,7 @@ static void kmt_init() {
         task->context = NULL;
         task->next = NULL;
         current[cpu] = task;
-        LOG_INFO("task init on CPU %d, name: %s, addr: %p", cpu, name, task);
+        LOG_INFO("task init on CPU %d, name: %s, addr: %p, stack: %p", cpu, name, task, task->stack);
     }
     LIST_PTR_INIT(irq_t, irq_list);
     os->on_irq(INT_MIN, EVENT_NULL, kmt_context_save);
@@ -105,7 +105,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     kmt->spin_lock(task_list_lk);
     task_list->push_back(task_list, task);
     kmt->spin_unlock(task_list_lk);
-    LOG_INFO("task created name: %s, addr: %p", name, task);
+    LOG_INFO("task created name: %s, addr: %p, stack: %p", name, task, task->stack);
     return 0;
 }
 

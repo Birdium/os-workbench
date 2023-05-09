@@ -20,7 +20,6 @@ extern TableEntry *table;
 static void *_kalloc(size_t size) {
   if (size > (1 << 24)) return NULL;
   if (size < 16) size = 16;
-  LOG_INFO("%d", align(size));
   // slow-path: buddy system
   if (size >= (1 << 12)) {
     return buddy_alloc(align(size));
@@ -40,7 +39,6 @@ static void *kalloc(size_t size) {
   bool i = ienabled();
   iset(false);
   void *ret = _kalloc(size);
-  LOG_INFO("allocating mem starts from %p, size %d", ret, size);
   if (i) iset(true);
   return ret;
 }

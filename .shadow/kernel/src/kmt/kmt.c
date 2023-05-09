@@ -111,6 +111,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
 
 static void kmt_teardown(task_t *task) {
     //TODO: kmt teardown
+    pmm->free(task->stack);
 }
 
 MODULE_DEF(kmt) = {

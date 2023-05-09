@@ -44,7 +44,7 @@ static void os_run() {
   iset(true);
   printf("Hello World from CPU #%d\n", cpu_current());
   while (1) {
-    printf("A");
+    printf("A\n");
     // yield();
   }
 }

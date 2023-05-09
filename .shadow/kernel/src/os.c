@@ -64,6 +64,7 @@ static inline bool sane_context(Context *ctx) {
 }
 
 Context *os_trap(Event ev, Context *context) {
+  TRACE_ENTRY;
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
@@ -74,6 +75,8 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
+  LOG_INFO("os trap returing %p", next);
+  TRACE_EXIT;
   return next;
 }
 

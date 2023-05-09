@@ -47,7 +47,8 @@ void kmt_sem_wait(sem_t *sem) {
 		LOG_INFO("111");
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
 		kmt->spin_unlock(&sem->lk);
-		yield();
+		yield();		
+		kmt->spin_lock(&sem->lk);
 	}
 	kmt->spin_unlock(&sem->lk);
 	TRACE_EXIT;

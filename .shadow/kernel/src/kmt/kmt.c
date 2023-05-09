@@ -90,11 +90,11 @@ static void kmt_init() {
     os->on_irq(INT_MAX, EVENT_NULL, kmt_schedule);
     LIST_PTR_INIT(task_t_ptr, task_list);
     task_list_lk = pmm->alloc(sizeof(task_list_lk));
-    LOG_INFO("19");
     kmt->spin_init(task_list_lk, "task list lock");
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+    TRACE_ENTRY;
     task->name = name;
     task->status = RUNNABLE;
     task->stack = pmm->alloc(KMT_STACK_SIZE);

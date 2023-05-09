@@ -28,14 +28,14 @@ static void os_init() {
 
 #ifdef DEBUG_LOCAL
 
-  // kmt->sem_init(&empty, "empty", N);
-  // kmt->sem_init(&fill,  "fill",  0);
-  // for (int i = 0; i < NPROD; i++) {
-  //   kmt->create(task_alloc(), "producer", Tproduce, NULL);
-  // }
-  // for (int i = 0; i < NCONS; i++) {
-  //   kmt->create(task_alloc(), "consumer", Tconsume, NULL);
-  // }
+  kmt->sem_init(&empty, "empty", N);
+  kmt->sem_init(&fill,  "fill",  0);
+  for (int i = 0; i < NPROD; i++) {
+    kmt->create(task_alloc(), "producer", Tproduce, NULL);
+  }
+  for (int i = 0; i < NCONS; i++) {
+    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
+  }
 #endif
 }
 
@@ -44,8 +44,6 @@ static void os_run() {
   iset(true);
   printf("Hello World from CPU #%d\n", cpu_current());
   while (1) {
-    for (int i = 0; i < 100000000; i++)
-      printf("%d\n", i);
     // yield();
   }
 }

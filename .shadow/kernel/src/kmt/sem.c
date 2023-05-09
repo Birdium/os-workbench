@@ -18,7 +18,6 @@ void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 void kmt_sem_signal(sem_t *sem) {
-	TRACE_ENTRY;
 	kmt->spin_lock(&sem->lk);
 	++sem->cnt;
 	if (sem->tasks.size > 0) {
@@ -37,20 +36,17 @@ void kmt_sem_signal(sem_t *sem) {
 		kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);
-	TRACE_EXIT;
 }
 
 void kmt_sem_wait(sem_t *sem) {
-	TRACE_ENTRY;
 	kmt->spin_lock(&sem->lk);
 	--sem->cnt;
 	if (sem->cnt < 0) {
-		LOG_INFO("111");
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
 		kmt->spin_unlock(&sem->lk);
+		LOG_INFO("sem sleeped task: %s", current[cpu_current()]->name);
 		yield();		
 		kmt->spin_lock(&sem->lk);
 	}
 	kmt->spin_unlock(&sem->lk);
-	TRACE_EXIT;
 }

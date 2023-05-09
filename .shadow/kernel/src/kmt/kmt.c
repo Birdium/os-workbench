@@ -60,6 +60,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
             task_list->push_back(task_list, cur_task);
             task_t *next_task = task_list->front(task_list);
             task_list->pop_front(task_list);
+            LOG_INFO("task list size %d", task_list->size);
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }

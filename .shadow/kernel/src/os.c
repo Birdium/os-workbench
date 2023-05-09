@@ -65,9 +65,20 @@ static inline bool sane_context(Context *ctx) {
 
 #define cur_task current[cpu_current()]
 
+LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
+
+static void debug_task_list() {
+  int cnt = 0;
+  for_list(task_t_ptr, it, task_list) {
+    LOG_INFO("task %d: %s", cnt, it->elem->name);
+    cnt++;
+  }
+}
+
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
   LOG_INFO("context saving of %s with ctx at %p, event type %d", cur_task->name, context, ev.event);
+  debug_task_list();
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {

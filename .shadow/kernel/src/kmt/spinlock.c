@@ -44,8 +44,8 @@ void kmt_spin_lock(spinlock_t *lk) {
     while(atomic_xchg(&lk->locked, 1) != 0)
 		;
 	__sync_synchronize();
-	LOG_INFO("current cpu %d", cpu_current());
 	lk->cpu = cpu_current();
+	LOG_INFO("current cpu %d", cpu_current());
 }
 
 void kmt_spin_unlock(spinlock_t *lk) {

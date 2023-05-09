@@ -47,6 +47,7 @@ void kmt_spin_lock(spinlock_t *lk) {
 }
 
 void kmt_spin_unlock(spinlock_t *lk) {
+	LOG_LOCK("releasing %s", lk->name);
 	panic_on(!holding(lk), "kmt_spin_unlock: releasing unholding lock");
     lk->cpu = -1;
 	__sync_synchronize();

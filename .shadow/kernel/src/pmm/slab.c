@@ -92,7 +92,6 @@ void *slab_list_poll(SlabCacheList *list) {
 		result->next = NULL;
 		--(list->cnt);
 	}	
-	LOG_INFO("%p", list->tail);
 	return result;
 }
 

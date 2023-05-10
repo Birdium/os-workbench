@@ -35,27 +35,30 @@ static Context *kmt_context_save(Event ev, Context *context) {
     return NULL;
 }
 
+static inline task_t *poll_rand_task() {
+    int idx = rand() % task_list->size;
+    task_t_ptr_list_node *node = task_list->head;
+    for (int i = 0; i < idx; i++) {
+        node = node->next;
+    }
+    task_t *result = node->elem;
+    task_list->remove(task_list, node);
+    return result;
+}
+
 static Context *kmt_schedule(Event ev, Context *context) {
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     panic_on(cur_task->name[0] == 'c' && ev.event == EVENT_ERROR, "consumer error");
     switch (ev.event) {
-        case EVENT_YIELD:
+        case EVENT_YIELD: case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
         // schedule to other tasks
         {   
             kmt->spin_lock(task_list_lk);
-            task_t *next_task = task_list->front(task_list);
-            task_list->pop_front(task_list);
-            kmt->spin_unlock(task_list_lk);
-            cur_task = next_task;
-        }
-            break;
-        case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
-        {
-            kmt->spin_lock(task_list_lk);
-            task_list->push_back(task_list, cur_task);
-            task_t *next_task = task_list->front(task_list);
-            task_list->pop_front(task_list);
+            task_t *next_task = poll_rand_task();
+            if (cur_task->status != SLEEPING) {
+                task_list->push_back(task_list, cur_task);
+            }
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }

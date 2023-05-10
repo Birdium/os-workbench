@@ -147,4 +147,5 @@ void slab_free(void *addr) {
 		slab_list_insert(&(list->thread), addr);
 		myspin_unlock(&(list->thread_lock));
 	}
+	memset(addr, 0, (1 << size_exp));
 }

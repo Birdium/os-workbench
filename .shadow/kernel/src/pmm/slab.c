@@ -79,6 +79,7 @@ void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 		obj->next = NULL;
 		list->tail = obj;
 	}
+	assert(list->tail != NULL);
 	++(list->cnt);
 }
 

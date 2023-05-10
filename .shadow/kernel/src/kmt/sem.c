@@ -34,8 +34,8 @@ void kmt_sem_signal(sem_t *sem) {
 			LOG_INFO("%s %s %d", sem->name, it->elem->name, it->elem->status);
 			panic_on(it == it->next, "it == it->next");
 		}
-		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
 		LOG_INFO("sem waked up task %s, %d", ntask->name, ntask->status);
+		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
 		kmt->spin_lock(task_list_lk);
 		ntask->status = RUNNABLE;
 		task_list->push_back(task_list, ntask);

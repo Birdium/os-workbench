@@ -10,6 +10,8 @@ extern task_t *current[MAX_CPU_NUM];
 extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
+#define cur_task current[cpu_current()]
+
 void kmt_sem_init(sem_t *sem, const char *name, int value) {
 	sem->name = name;
 	sem->cnt = value;
@@ -33,9 +35,9 @@ void kmt_sem_signal(sem_t *sem) {
 			panic_on(it == it->next, "it == it->next");
 		}
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
-		ntask->status = RUNNABLE;
 		LOG_INFO("sem waked up task %s, %d", ntask->name, ntask->status);
 		kmt->spin_lock(task_list_lk);
+		ntask->status = RUNNABLE;
 		task_list->push_back(task_list, ntask);
 		kmt->spin_unlock(task_list_lk);
 	}
@@ -53,8 +55,13 @@ void kmt_sem_wait(sem_t *sem) {
 			LOG_INFO("%s %s %d %p %p", sem->name, it->elem->name, it->elem->status, it, it->next);
 			panic_on(it == it->next, "it == it->next");
 		}
-		kmt->spin_unlock(&sem->lk);
 
+		kmt->spin_lock(task_list_lk);
+		cur_task->status = SLEEPING;
+		kmt->spin_unlock(task_list_lk);
+		
+		kmt->spin_unlock(&sem->lk);
+		
 		yield();		
 	}
 	else {

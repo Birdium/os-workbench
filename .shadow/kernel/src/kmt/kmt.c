@@ -21,7 +21,8 @@ static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
     switch (ev.event) {
         case EVENT_YIELD:
-            cur_task->status = SLEEPING;
+            if (cur_task->status == RUNNING)
+                cur_task->status = RUNNABLE;
             break;
         case EVENT_IRQ_TIMER:
             cur_task->status = RUNNABLE;

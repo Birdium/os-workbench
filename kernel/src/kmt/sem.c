@@ -18,17 +18,16 @@ void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 void kmt_sem_signal(sem_t *sem) {
-	TRACE_ENTRY;
 	kmt->spin_lock(&sem->lk);
 	++sem->cnt;
 	if (sem->tasks.size > 0) {
+		kmt->spin_lock(task_list_lk);
 		int idx = rand() % sem->tasks.size;
 		task_t_ptr_list_node *p = sem->tasks.head;
 		for (int i = 0; i < idx; i++) {
 			p = p->next;
 		}
 		task_t *ntask = p->elem;
-		kmt->spin_lock(task_list_lk);
 		sem->tasks.remove(&(sem->tasks), p);
 		LOG_INFO("sem waked task: %s", ntask->name);
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
@@ -37,20 +36,18 @@ void kmt_sem_signal(sem_t *sem) {
 		kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);
-	TRACE_EXIT;
 }
 
 void kmt_sem_wait(sem_t *sem) {
-	TRACE_ENTRY;
 	kmt->spin_lock(&sem->lk);
 	--sem->cnt;
 	if (sem->cnt < 0) {
-		LOG_INFO("111");
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
 		kmt->spin_unlock(&sem->lk);
+		LOG_INFO("sem sleeped task: %s", current[cpu_current()]->name);
 		yield();		
-		kmt->spin_lock(&sem->lk);
 	}
-	kmt->spin_unlock(&sem->lk);
-	TRACE_EXIT;
+	else {
+		kmt->spin_unlock(&sem->lk);
+	}
 }

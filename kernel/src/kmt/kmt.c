@@ -105,7 +105,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     kmt->spin_lock(task_list_lk);
     task_list->push_back(task_list, task);
     kmt->spin_unlock(task_list_lk);
-    LOG_INFO("task created name: %s, addr: %p, stack: %p", name, task, task->stack);
+    LOG_INFO("task created name: %s, entry: %p, addr: %p, stack: %p", name, entry, task, task->stack);
     return 0;
 }
 

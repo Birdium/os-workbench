@@ -28,6 +28,7 @@ void kmt_sem_signal(sem_t *sem) {
 			p = p->next;
 		}
 		task_t *ntask = p->elem;
+		LOG_INFO("sem waked up task %s", ntask->name);
 		sem->tasks.remove(&(sem->tasks), p);
 		for_list(task_t_ptr, it, &sem->tasks) {
 			LOG_INFO("%s %s %d", sem->name, it->elem->name, it->elem->status);

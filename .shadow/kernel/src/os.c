@@ -39,10 +39,7 @@ static void os_init() {
     kmt->create(task_alloc(), "producer", Tproduce, NULL);
   }
   for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer1", Tconsume, NULL);
-  }
-  for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer2", Tconsume, NULL);
+    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
   }
 #endif
 }

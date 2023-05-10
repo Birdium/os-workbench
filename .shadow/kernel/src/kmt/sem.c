@@ -29,7 +29,7 @@ void kmt_sem_signal(sem_t *sem) {
 		task_t *ntask = p->elem;
 		sem->tasks.remove(&(sem->tasks), p);
 		for_list(task_t_ptr, it, &sem->tasks) {
-			LOG_INFO("%s %s %d %p %p", sem->name, it->elem->name, it->elem->status, it, it->next);
+			LOG_INFO("%s %s %d", sem->name, it->elem->name, it->elem->status);
 			panic_on(it == it->next, "it == it->next");
 		}
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");

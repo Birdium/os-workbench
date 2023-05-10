@@ -47,13 +47,14 @@ void kmt_sem_wait(sem_t *sem) {
 	--sem->cnt;
 	if (sem->cnt < 0) {
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
-		kmt->spin_unlock(&sem->lk);
 		LOG_INFO("sem sleeped task: %s", current[cpu_current()]->name);
 
 		for_list(task_t_ptr, it, &sem->tasks) {
 			LOG_INFO("%s %s %d %p %p", sem->name, it->elem->name, it->elem->status, it, it->next);
 			panic_on(it == it->next, "it == it->next");
 		}
+		kmt->spin_unlock(&sem->lk);
+
 		yield();		
 	}
 	else {

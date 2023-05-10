@@ -14,7 +14,7 @@ sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 #define N 2
-#define NPROD 1
+#define NPROD 2
 #define NCONS 1
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }

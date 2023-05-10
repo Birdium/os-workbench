@@ -79,7 +79,7 @@ static void debug_task_list() {
   int cnt = 0;
   kmt->spin_lock(task_list_lk);
   for_list(task_t_ptr, it, task_list) {
-    LOG_INFO("task %d: %s", cnt, it->elem->name);
+    LOG_INFO("task %d: %s, status: %d", cnt, it->elem->name, it->elem->status);
     cnt++;
   }
   kmt->spin_unlock(task_list_lk);

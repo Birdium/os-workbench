@@ -13,9 +13,9 @@ task_t *task_alloc() {
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-#define N 1
-#define NPROD 1
-#define NCONS 1
+#define N 5
+#define NPROD 5
+#define NCONS 5
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
@@ -39,7 +39,7 @@ static void os_init() {
     kmt->create(task_alloc(), "producer", Tproduce, NULL);
   }
   for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
+    kmt->create(task_alloc(), "consumer1", Tconsume, NULL);
   }
 #endif
 }
@@ -76,13 +76,13 @@ extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
-  // int cnt = 0;
-  // kmt->spin_lock(task_list_lk);
-  // for_list(task_t_ptr, it, task_list) {
-  //   LOG_INFO("task %d: %s", cnt, it->elem->name);
-  //   cnt++;
-  // }
-  // kmt->spin_unlock(task_list_lk);
+  int cnt = 0;
+  kmt->spin_lock(task_list_lk);
+  for_list(task_t_ptr, it, task_list) {
+    LOG_INFO("task %d: %s, status: %d", cnt, it->elem->name, it->elem->status);
+    cnt++;
+  }
+  kmt->spin_unlock(task_list_lk);
 }
 
 Context *os_trap(Event ev, Context *context) {

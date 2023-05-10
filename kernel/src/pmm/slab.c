@@ -68,7 +68,6 @@ void slab_init() {
 
 void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 	if (list->tail == NULL) {
-		assert(list->cnt == 0);
 		list->head = list->tail = obj;
 		obj->next = obj->prev = NULL;
 	}
@@ -78,6 +77,7 @@ void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 		obj->next = NULL;
 		list->tail = obj;
 	}
+	assert(list->tail != NULL);
 	++(list->cnt);
 }
 
@@ -86,6 +86,7 @@ void *slab_list_poll(SlabCacheList *list) {
 	if (list->head != NULL) {
 		result = list->head;
 		list->head = result->next;
+		LOG_INFO("%p %p", list->head, list->tail);
 		if (list->head) list->head->prev = NULL;
 		else list->tail = NULL;
 		result->next = NULL;
@@ -146,4 +147,5 @@ void slab_free(void *addr) {
 		slab_list_insert(&(list->thread), addr);
 		myspin_unlock(&(list->thread_lock));
 	}
+	memset(addr, 0, (1 << size_exp));
 }

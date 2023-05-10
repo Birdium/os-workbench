@@ -69,7 +69,6 @@ void slab_init() {
 void slab_list_insert(SlabCacheList *list, SlabObj *obj) {
 	LOG_INFO("%p", list->tail);
 	if (list->tail == NULL) {
-		assert(list->cnt == 0);
 		list->head = list->tail = obj;
 		obj->next = obj->prev = NULL;
 	}
@@ -93,6 +92,7 @@ void *slab_list_poll(SlabCacheList *list) {
 		result->next = NULL;
 		--(list->cnt);
 	}	
+	LOG_INFO("%p", list->tail);
 	return result;
 }
 

@@ -30,8 +30,8 @@ static void os_init() {
 
 #ifdef DEBUG_LOCAL
 
-  kmt->create(task_alloc(), "fooA", foo, "a");
-  kmt->create(task_alloc(), "fooB", foo, "b");
+  // kmt->create(task_alloc(), "fooA", foo, "a");
+  // kmt->create(task_alloc(), "fooB", foo, "b");
 
   kmt->sem_init(&empty, "empty", N);
   kmt->sem_init(&fill,  "fill",  0);

@@ -28,7 +28,7 @@ static _spinlock_t buf_lock = _SPIN_INIT();
 static _spinlock_t printf_lock = _SPIN_INIT();
 
 int printf(const char *fmt, ...) {
-  char p_buf[4096];
+  char p_buf[1024];
   va_list ap;
   va_start(ap, fmt);
   int ret = vsprintf(p_buf, fmt, ap);

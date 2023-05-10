@@ -5,7 +5,7 @@
 #include "list.h"
 #include <os.h>
 
-#define KMT_STACK_SIZE 4096
+#define KMT_STACK_SIZE 8192
 
 DEF_LIST(irq_t);
 DEF_LIST(task_t);

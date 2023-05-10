@@ -15,7 +15,7 @@ sem_t empty, fill;
 #define V kmt->sem_signal
 #define N 2
 #define NPROD 1
-#define NCONS 2
+#define NCONS 1
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
@@ -39,7 +39,10 @@ static void os_init() {
     kmt->create(task_alloc(), "producer", Tproduce, NULL);
   }
   for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
+    kmt->create(task_alloc(), "consumer1", Tconsume, NULL);
+  }
+  for (int i = 0; i < NCONS; i++) {
+    kmt->create(task_alloc(), "consumer2", Tconsume, NULL);
   }
 #endif
 }

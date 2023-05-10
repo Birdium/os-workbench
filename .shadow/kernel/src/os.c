@@ -90,7 +90,7 @@ static void debug_task_list() {
 
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
-  LOG_INFO("trap task %s with ctx at %p, rip %x, intr type %d", cur_task->name, context, context->rip, ev.event);
+  LOG_INFO("task (%s), ctx at %p, rip %x, intr type %d", cur_task->name, context, context->rip, ev.event);
   debug_task_list();
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
@@ -102,7 +102,7 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
-  LOG_INFO("trap returning %p with rip %x", next, next->rip);
+  // LOG_INFO("trap returning %p with rip %x", next, next->rip);
   TRACE_EXIT;
   return next;
 }

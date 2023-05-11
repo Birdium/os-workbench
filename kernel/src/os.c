@@ -13,9 +13,9 @@ task_t *task_alloc() {
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-#define N 2
-#define NPROD 5
-#define NCONS 5
+#define N 5
+#define NPROD 10
+#define NCONS 10
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
@@ -39,10 +39,7 @@ static void os_init() {
     kmt->create(task_alloc(), "producer", Tproduce, NULL);
   }
   for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer1", Tconsume, NULL);
-  }
-  for (int i = 0; i < NCONS; i++) {
-    kmt->create(task_alloc(), "consumer2", Tconsume, NULL);
+    kmt->create(task_alloc(), "consumer", Tconsume, NULL);
   }
 #endif
 }

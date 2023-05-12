@@ -32,14 +32,8 @@ static Context *kmt_context_save(Event ev, Context *context) {
         default:
             if (cur_task->status == RUNNING)
                 cur_task->status = RUNNABLE;
-            if (cur_task->status != SLEEPING) {
-                task_list->push_back(task_list, cur_task);
-            }
             break;
     }
-            if (cur_task->status != SLEEPING) {
-                task_list->push_back(task_list, cur_task);
-            }
     cur_task->context = context; 
     return NULL;
 }

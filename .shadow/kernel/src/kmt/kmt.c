@@ -25,12 +25,21 @@ static Context *kmt_context_save(Event ev, Context *context) {
         case EVENT_YIELD:
             if (cur_task->status == RUNNING)
                 cur_task->status = RUNNABLE;
+            if (cur_task->status != SLEEPING) {
+                task_list->push_back(task_list, cur_task);
+            }
             break;
         default:
             if (cur_task->status == RUNNING)
                 cur_task->status = RUNNABLE;
+            if (cur_task->status != SLEEPING) {
+                task_list->push_back(task_list, cur_task);
+            }
             break;
     }
+            if (cur_task->status != SLEEPING) {
+                task_list->push_back(task_list, cur_task);
+            }
     cur_task->context = context; 
     return NULL;
 }
@@ -56,9 +65,6 @@ static Context *kmt_schedule(Event ev, Context *context) {
         {   
             kmt->spin_lock(task_list_lk);
             task_t *next_task = poll_rand_task();
-            if (cur_task->status != SLEEPING) {
-                task_list->push_back(task_list, cur_task);
-            }
             kmt->spin_unlock(task_list_lk);
             cur_task = next_task;
         }

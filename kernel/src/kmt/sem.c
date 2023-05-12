@@ -13,6 +13,7 @@ LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 #define cur_task current[cpu_current()]
 
 void kmt_sem_init(sem_t *sem, const char *name, int value) {
+	LOG_INFO("sem inited (%s)%p %d", name, sem, value);
 	sem->name = name;
 	sem->cnt = value;
 	kmt->spin_init(&sem->lk, name);
@@ -22,6 +23,7 @@ void kmt_sem_init(sem_t *sem, const char *name, int value) {
 void kmt_sem_signal(sem_t *sem) {
 	kmt->spin_lock(&sem->lk);
 	++sem->cnt;
+	LOG_INFO("(%s)%p: %d -> %d", sem->name, sem, sem->cnt - 1, sem->cnt);
 	if (sem->tasks.size > 0) {
 		int idx = rand() % sem->tasks.size;
 		task_t_ptr_list_node *p = sem->tasks.head;
@@ -29,10 +31,10 @@ void kmt_sem_signal(sem_t *sem) {
 			p = p->next;
 		}
 		task_t *ntask = p->elem;
-		for_list(task_t_ptr, it, &sem->tasks) {
-			LOG_INFO("%s %s %d", sem->name, it->elem->name, it->elem->status);
-			panic_on(it == it->next, "it == it->next");
-		}
+		// for_list(task_t_ptr, it, &sem->tasks) {
+		// 	LOG_INFO("%s %s %d", sem->name, it->elem->name, it->elem->status);
+		// 	panic_on(it == it->next, "it == it->next");
+		// }
 		sem->tasks.remove(&(sem->tasks), p);
 		LOG_INFO("sem waked up task %s, %d", ntask->name, ntask->status);
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
@@ -55,10 +57,10 @@ void kmt_sem_wait(sem_t *sem) {
 		cur_task->status = SLEEPING;
 		kmt->spin_unlock(task_list_lk);
 		
-		for_list(task_t_ptr, it, &sem->tasks) {
-			LOG_INFO("%s %s %d %p", sem->name, it->elem->name, it->elem->status, it->elem);
-			panic_on(it == it->next, "it == it->next");
-		}
+		// for_list(task_t_ptr, it, &sem->tasks) {
+		// 	LOG_INFO("%s %s %d %p", sem->name, it->elem->name, it->elem->status, it->elem);
+		// 	panic_on(it == it->next, "it == it->next");
+		// }
 
 
 		kmt->spin_unlock(&sem->lk);

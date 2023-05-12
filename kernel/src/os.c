@@ -14,9 +14,9 @@ task_t *task_alloc() {
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-#define N 5
-#define NPROD 10
-#define NCONS 10
+#define N 1
+#define NPROD 5
+#define NCONS 5
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
@@ -61,8 +61,8 @@ static void os_init() {
 
 #ifdef DEBUG_DEV
   dev->init();
-  kmt->create(task_alloc(), "tty_reader", tty_reader, "tty1");
-  kmt->create(task_alloc(), "tty_reader", tty_reader, "tty2");
+  kmt->create(task_alloc(), "tty_reader1", tty_reader, "tty1");
+  kmt->create(task_alloc(), "tty_reader2", tty_reader, "tty2");
 #endif
 
 }
@@ -99,13 +99,14 @@ extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
-  int cnt = 0;
-  kmt->spin_lock(task_list_lk);
-  for_list(task_t_ptr, it, task_list) {
-    LOG_INFO("task %d: %s, status: %d", cnt, it->elem->name, it->elem->status);
-    cnt++;
-  }
-  kmt->spin_unlock(task_list_lk);
+  LOG_INFO("task list size %d", task_list->size);
+  // int cnt = 0;
+  // kmt->spin_lock(task_list_lk);
+  // for_list(task_t_ptr, it, task_list) {
+  //   LOG_INFO("task %d: %s, status: %d", cnt, it->elem->name, it->elem->status);
+  //   cnt++;
+  // }
+  // kmt->spin_unlock(task_list_lk);
 }
 
 Context *os_trap(Event ev, Context *context) {

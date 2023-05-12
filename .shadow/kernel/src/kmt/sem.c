@@ -21,9 +21,9 @@ void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 void kmt_sem_signal(sem_t *sem) {
-	TRACE_ENTRY;
 	kmt->spin_lock(&sem->lk);
 	++sem->cnt;
+	LOG_INFO("(%s)%p: %d -> %d", sem->name, sem, sem->cnt - 1, sem->cnt);
 	if (sem->tasks.size > 0) {
 		int idx = rand() % sem->tasks.size;
 		task_t_ptr_list_node *p = sem->tasks.head;
@@ -44,7 +44,6 @@ void kmt_sem_signal(sem_t *sem) {
 		kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);
-	TRACE_EXIT;
 }
 
 void kmt_sem_wait(sem_t *sem) {

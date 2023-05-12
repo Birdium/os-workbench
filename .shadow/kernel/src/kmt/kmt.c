@@ -23,11 +23,13 @@ static Context *kmt_context_save(Event ev, Context *context) {
         case EVENT_IRQ_TIMER:
         case EVENT_IRQ_IODEV:
         case EVENT_YIELD:
+            kmt->spin_lock(task_list_lk);
             if (cur_task->status == RUNNING)
                 cur_task->status = RUNNABLE;
             if (cur_task->status != SLEEPING) {
                 task_list->push_back(task_list, cur_task);
             }
+            kmt->spin_unlock(task_list_lk);
             break;
         default:
             if (cur_task->status == RUNNING)

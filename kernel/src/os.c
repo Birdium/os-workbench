@@ -2,14 +2,15 @@
 #include <common.h>
 #include <buddy.h>
 #include <os.h>
+#include <devices.h>
 
 task_t *current[MAX_CPU_NUM], tasks[MAX_CPU_NUM];
 
-#ifdef DEBUG_LOCAL
 task_t *task_alloc() {
   return pmm->alloc(sizeof(task_t));
 }
 
+#ifdef DEBUG_LOCAL
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
@@ -22,6 +23,21 @@ void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
 
 void foo(void *s) { while (1) putch(*((const char *)s)); }
 
+#endif
+
+#ifdef DEBUG_DEV
+static void tty_reader(void *arg) {
+  device_t *tty = dev->lookup(arg);
+  char cmd[128], resp[128], ps[16];
+  snprintf(ps, 16, "(%s) $ ", (char*)arg);
+  while (1) {
+    tty->ops->write(tty, 0, ps, strlen(ps));
+    int nread = tty->ops->read(tty, 0, cmd, sizeof(cmd) - 1);
+    cmd[nread] = '\0';
+    sprintf(resp, "tty reader task: got %d character(s).\n", strlen(cmd));
+    tty->ops->write(tty, 0, resp, strlen(resp));
+  }
+}
 #endif
 
 static void os_init() {
@@ -42,6 +58,13 @@ static void os_init() {
     kmt->create(task_alloc(), "consumer", Tconsume, NULL);
   }
 #endif
+
+#ifdef DEBUG_DEV
+  dev->init();
+  kmt->create(task_alloc(), "tty_reader", tty_reader, "tty1");
+  kmt->create(task_alloc(), "tty_reader", tty_reader, "tty2");
+#endif
+
 }
 
 #ifndef TEST

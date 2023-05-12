@@ -56,7 +56,7 @@ void kmt_sem_wait(sem_t *sem) {
 		kmt->spin_unlock(task_list_lk);
 		
 		for_list(task_t_ptr, it, &sem->tasks) {
-			LOG_INFO("%s %s %d %p %p", sem->name, it->elem->name, it->elem->status, it, it->next);
+			LOG_INFO("%s %s %d %p", sem->name, it->elem->name, it->elem->status, it->elem);
 			panic_on(it == it->next, "it == it->next");
 		}
 

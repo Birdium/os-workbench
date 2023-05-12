@@ -19,23 +19,36 @@ spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
-    switch (ev.event) {
-        case EVENT_IRQ_TIMER:
-        case EVENT_IRQ_IODEV:
-        case EVENT_YIELD:
-            kmt->spin_lock(task_list_lk);
-            if (cur_task->status == RUNNING)
-                cur_task->status = RUNNABLE;
-            if (cur_task->status != SLEEPING) {
-                task_list->push_back(task_list, cur_task);
-            }
-            kmt->spin_unlock(task_list_lk);
-            break;
-        default:
-            if (cur_task->status == RUNNING)
-                cur_task->status = RUNNABLE;
-            break;
+
+    kmt->spin_lock(task_list_lk);
+    if (cur_task->status == RUNNING)
+        cur_task->status = RUNNABLE;
+    if (cur_task->status != SLEEPING) {
+        task_list->push_back(task_list, cur_task);
     }
+    kmt->spin_unlock(task_list_lk);
+    // switch (ev.event) {
+    //     case EVENT_IRQ_TIMER:
+    //     case EVENT_IRQ_IODEV:
+    //     case EVENT_YIELD:
+    //         kmt->spin_lock(task_list_lk);
+    //         if (cur_task->status == RUNNING)
+    //             cur_task->status = RUNNABLE;
+    //         if (cur_task->status != SLEEPING) {
+    //             task_list->push_back(task_list, cur_task);
+    //         }
+    //         kmt->spin_unlock(task_list_lk);
+    //         break;
+    //     default:
+    //         kmt->spin_lock(task_list_lk);
+    //         if (cur_task->status == RUNNING)
+    //             cur_task->status = RUNNABLE;
+    //         if (cur_task->status != SLEEPING) {
+    //             task_list->push_back(task_list, cur_task);
+    //         }
+    //         kmt->spin_unlock(task_list_lk);
+    //         break;
+    // }
     cur_task->context = context; 
     return NULL;
 }

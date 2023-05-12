@@ -21,7 +21,7 @@ sem_t empty, fill;
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
 
-void foo(void *s) { putch(*((const char *)s)); }
+void foo(void *s) { while (1) putch(*((const char *)s)); }
 
 #endif
 

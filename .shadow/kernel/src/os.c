@@ -99,6 +99,7 @@ extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
+  LOG_INFO("task list size %d", task_list->size);
   // int cnt = 0;
   // kmt->spin_lock(task_list_lk);
   // for_list(task_t_ptr, it, task_list) {

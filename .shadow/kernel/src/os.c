@@ -57,7 +57,6 @@ static void os_init() {
   for (int i = 0; i < NCONS; i++) {
     kmt->create(task_alloc(), "consumer", Tconsume, NULL);
   }
-  kmt->create(task_alloc(), "foo", foo, NULL);
 #endif
 
 #ifdef DEBUG_DEV

@@ -10,8 +10,6 @@ extern task_t *current[MAX_CPU_NUM];
 extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
-#define cur_task current[cpu_current()]
-
 void kmt_sem_init(sem_t *sem, const char *name, int value) {
 	LOG_INFO("sem inited (%s)%p %d", name, sem, value);
 	sem->name = name;

@@ -38,6 +38,7 @@ static int holding(spinlock_t *lk) {
 }
 
 void kmt_spin_lock(spinlock_t *lk) {
+	TRACE_ENTRY;
 	push_off();
 	panic_on(holding(lk), "kmt_spin_lock: locking holding lock");
     while(atomic_xchg(&lk->locked, 1) != 0)
@@ -45,6 +46,7 @@ void kmt_spin_lock(spinlock_t *lk) {
 	__sync_synchronize();
 	LOG_LOCK("acquired %s", lk->name);
 	lk->cpu = cpu_current();
+	TRACE_EXIT;
 }
 
 void kmt_spin_unlock(spinlock_t *lk) {

@@ -23,11 +23,11 @@ void kmt_sem_signal(sem_t *sem) {
 	++sem->cnt;
 	LOG_INFO("(%s)%p: %d -> %d", sem->name, sem, sem->cnt - 1, sem->cnt);
 	if (sem->tasks.size > 0) {
-		int idx = rand() % sem->tasks.size;
+		// int idx = rand() % sem->tasks.size;
 		task_t_ptr_list_node *p = sem->tasks.head;
-		for (int i = 0; i < idx; i++) {
-			p = p->next;
-		}
+		// for (int i = 0; i < idx; i++) {
+		// 	p = p->next;
+		// }
 		task_t *ntask = p->elem;
 		// for_list(task_t_ptr, it, &sem->tasks) {
 		// 	LOG_INFO("%s %s %d", sem->name, it->elem->name, it->elem->status);

@@ -36,4 +36,6 @@ typedef struct irq {
   handler_t handler;
 } irq_t;
 
+#define cur_task current[cpu_current()]
+
 #endif

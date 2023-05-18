@@ -14,9 +14,9 @@ task_t *task_alloc() {
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-#define N 10
-#define NPROD 5
-#define NCONS 5
+#define N 3
+#define NPROD 1
+#define NCONS 1
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }

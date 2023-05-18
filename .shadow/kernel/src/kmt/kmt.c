@@ -10,6 +10,8 @@
 
 extern task_t *current[MAX_CPU_NUM];
 
+task_t *idle_task[MAX_CPU_NUM];
+
 #define cur_task current[cpu_current()]
 
 LIST_PTR_DEC(irq_t, irq_list);
@@ -24,7 +26,9 @@ static Context *kmt_context_save(Event ev, Context *context) {
     if (cur_task->status == RUNNING)
         cur_task->status = RUNNABLE;
     if (cur_task->status != SLEEPING) {
-        task_list->push_back(task_list, cur_task);
+        if (cur_task != idle_task[cpu_current()]) {
+            task_list->push_back(task_list, cur_task);
+        }
     }
     kmt->spin_unlock(task_list_lk);
     // switch (ev.event) {
@@ -54,6 +58,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
 }
 
 static inline task_t *poll_rand_task() {
+    if (task_list->size == 0) return idle_task[cpu_current()];  
     int idx = rand() % task_list->size;
     task_t_ptr_list_node *node = task_list->head;
     for (int i = 0; i < idx; i++) {
@@ -88,7 +93,8 @@ static Context *kmt_schedule(Event ev, Context *context) {
 static void kmt_init() {
     for (int cpu = 0; cpu < cpu_count(); cpu++) {
         // init idle
-        task_t *task = pmm->alloc(sizeof(task_t));
+        idle_task[cpu] = pmm->alloc(sizeof(task_t));
+        task_t *task = idle_task[cpu];
         panic_on(!task, "alloc failed");
         // 8 for "idle XX\0"
         char *name = pmm->alloc(8);

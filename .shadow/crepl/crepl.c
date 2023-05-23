@@ -36,6 +36,7 @@ int comp_func(char *line) {
   }
   else {
     sprintf(func_name, "__expr_wrapper_%d", expr_cnt);
+    expr_cnt++;
   }
   sprintf(src_filename, "/tmp/crepl_%s.c-XXXXXX", func_name);
   sprintf(dst_filename, "/tmp/crepl_%s.so-XXXXXX", func_name);

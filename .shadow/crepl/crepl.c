@@ -73,7 +73,7 @@ int comp_func(char *line) {
     wait(NULL);
     void *dl = dlopen(dst_filename, RTLD_NOW);
     if (dl == NULL) {
-      perror("dlopen failed");
+      printf("dlopen failed.\n");
       return -1;
     }
     if (is_func) {

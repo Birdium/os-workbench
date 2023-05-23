@@ -12,7 +12,7 @@ bool is_Func(char *str) {
   return str[0] == 'i' && str[1] == 'n' && str[2] == 't';
 }
 
-char src_filename[128], dst_filename[128], func_name[128];
+char src_filename[128], dst_filename[128], func_name[32];
 
 void extract_func_name(char *line) {
   char *p = line + 3, *q = func_name;

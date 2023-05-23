@@ -73,17 +73,18 @@ int comp_func(char *line) {
   }
   else {
     wait(NULL);
-    void *dl = dlopen(dst_filename, RTLD_NOW);
-    if (dl == NULL) {
-      printf("dlopen failed.\n");
+    void *handle = dlopen(dst_filename, RTLD_NOW | RTLD_GLOBAL);
+    if (handle == NULL) {
+      fprintf(stderr, "Failed to open shared library: %s\n", dlerror());
       return -1;
     }
     if (is_func) {
       printf("OK.\n");
     }
     else {
-      int (*expr)() = dlsym(dl, func_name);
+      int (*expr)() = dlsym(handle, func_name);
       printf("= %d.\n", expr());
+      dlclose(handle);
     }
   }
   return 0;

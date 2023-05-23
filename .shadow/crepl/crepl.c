@@ -87,10 +87,6 @@ int comp_func(char *line) {
   return 0;
 }
 
-void comp_expr(char *line) {
-
-}
-
 int main(int argc, char *argv[]) {
   static char line[4096];
   while (1) {

@@ -60,10 +60,10 @@ int comp_func(char *line) {
     "-xc",
     "-shared",
     "-fPIC", 
+    "-ldl",
     "-o",
     dst_filename,
     src_filename,
-    "-ldl",
     NULL
   };
   int pid = fork();

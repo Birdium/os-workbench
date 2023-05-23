@@ -64,27 +64,26 @@ int comp_func(char *line) {
     "-ldl",
     NULL
   };
-  assert(0);
   int pid = fork();
   if (pid == 0) { // son
     execvp("gcc", new_argv);
     assert(0); // should not reach here
   }
-  else {
-    wait(NULL);
-    void *dl = dlopen(dst_filename, RTLD_NOW);
-    if (dl == NULL) {
-      printf("dlopen failed.\n");
-      return -1;
-    }
-    if (is_func) {
-      printf("OK.\n");
-    }
-    else {
-      int (*expr)() = dlsym(dl, func_name);
-      printf("= %d.\n", expr());
-    }
-  }
+  // else {
+  //   wait(NULL);
+  //   void *dl = dlopen(dst_filename, RTLD_NOW);
+  //   if (dl == NULL) {
+  //     printf("dlopen failed.\n");
+  //     return -1;
+  //   }
+  //   if (is_func) {
+  //     printf("OK.\n");
+  //   }
+  //   else {
+  //     int (*expr)() = dlsym(dl, func_name);
+  //     printf("= %d.\n", expr());
+  //   }
+  // }
   return 0;
 }
 

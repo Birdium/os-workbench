@@ -64,6 +64,7 @@ int comp_func(char *line) {
     "-ldl",
     NULL
   };
+  assert(0);
   int pid = fork();
   if (pid == 0) { // son
     execvp("gcc", new_argv);

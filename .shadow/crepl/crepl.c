@@ -84,6 +84,7 @@ int comp_func(char *line) {
       printf("= %d.\n", expr());
     }
   }
+  return 0;
 }
 
 void comp_expr(char *line) {

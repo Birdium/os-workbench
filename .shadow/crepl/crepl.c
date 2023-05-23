@@ -61,7 +61,7 @@ int comp_func(char *line) {
     "-shared",
     "-fPIC", 
     "-ldl",
-    "-Wno-implicit-function-declaration"
+    "-Wno-implicit-function-declaration",
     "-o",
     dst_filename,
     src_filename,

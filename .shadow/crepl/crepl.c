@@ -16,10 +16,10 @@ char src_filename[128], dst_filename[128], func_name[32];
 
 void extract_func_name(char *line) {
   char *p = line + 3, *q = func_name;
-  while (*p && !is_space(*p)) {
+  while (*p && !isspace(*p)) {
     p++;
   }
-  while (*p && is_space(*p)) {
+  while (*p && isspace(*p)) {
     *q = *p; 
     p++; q++;
   }

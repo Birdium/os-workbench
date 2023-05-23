@@ -53,7 +53,7 @@ int comp_func(char *line) {
     fprintf(src, "int %s() { return %s; } \n", func_name, line);
   }
   fclose(src);
-  char new_argv[] = {
+  char *new_argv[] = {
     "gcc", 
     "-shared",
     "-fPIC", 

@@ -59,7 +59,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
 
 static inline task_t *poll_rand_task() {
     if (task_list->size == 0) return idle_task[cpu_current()];  
-    int idx = 9;
+    int idx = 0;
     task_t_ptr_list_node *node = task_list->head;
     for (int i = 0; i < idx; i++) {
         node = node->next;

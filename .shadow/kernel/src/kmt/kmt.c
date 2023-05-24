@@ -32,9 +32,9 @@ static Context *kmt_context_save(Event ev, Context *context) {
 }
 
 static inline task_t *poll_rand_task() {
-    TRACE_ENTRY;
     task_t *result = cur_idle;
-    if (task_cnt == 0) return idle_task[cpu_current()];  
+    if (task_cnt == 0) return result;  
+    LOG_ERROR("task cnt %d", task_cnt);
     // int idx = rand() % task_list->size;
     while (1) {
         int idx = 0;
@@ -44,7 +44,6 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
-    TRACE_EXIT;
     return result;
 }
 

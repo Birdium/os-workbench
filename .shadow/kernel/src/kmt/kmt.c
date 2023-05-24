@@ -25,7 +25,6 @@ LIST_PTR_DEC(irq_t, irq_list);
 spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
-    TRACE_ENTRY;
     panic_on(!cur_task, "no valid task");
 
     cur_task->context = context; 
@@ -48,6 +47,7 @@ static inline task_t *poll_rand_task() {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
+    TRACE_ENTRY;
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     // switch (ev.event) {

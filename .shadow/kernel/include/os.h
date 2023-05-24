@@ -4,13 +4,15 @@
 #include <common.h>
 #include <list.h>
 
+#define CANARY_NUM 114514
 
 typedef struct task {
-  enum {SLEEPING, RUNNABLE, RUNNING} status;
+  enum {SLEEPING, RUNNABLE} status;
+  int running;
   const char *name;
-  struct task *next;
   Context *context;
   uint8_t *stack;
+  int canary;
 } task_t;
 
 typedef task_t* task_t_ptr;

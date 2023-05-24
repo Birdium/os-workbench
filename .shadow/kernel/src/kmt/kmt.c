@@ -30,7 +30,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
     cur_task->context = context; 
     // TODO: check last
     if (cur_last && cur_last != cur_task) {
-        // UNLOCK RUNNING LOCK
+        atomic_xchg(&cur_last->running, 0); // UNLOCK running
     }
     cur_last = cur_task;
     return NULL;
@@ -40,10 +40,11 @@ static inline task_t *poll_rand_task() {
     task_t *result = cur_idle;
     if (task_cnt == 0) return result;  
     // rand version
-    for (int i = 0; i < task_cnt * 2; i++) {
+    static const int round = 2; // choose task_cnt times for X round
+    for (int i = 0; i < task_cnt * round; i++) {
         int idx = rand() % task_cnt;
         task_t *task = task_list[idx];
-        if (task->status != SLEEPING) { // FIXME: should atomic change status
+        if (task->status != SLEEPING && (task == cur_task || atomic_xchg(&task->running, 1) == 0)) { // atomic set task running 
             result = task;
             break;
         }
@@ -58,29 +59,25 @@ static inline task_t *poll_rand_task() {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
-    int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     // switch (ev.event) {
     //     case EVENT_YIELD: case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
     //     // schedule to other tasks
     //     {   
-    kmt->spin_lock(task_list_lk);
-    if (cur_task->status != SLEEPING) {
-        if (cur_task != idle_task[cpu_current()]) {
-            // TODO: do some thing
-            // task_list->push_back(task_list, cur_task);
-        }
-    }
-    task_t *next_task = poll_rand_task();
-    kmt->spin_unlock(task_list_lk);
-    cur_task = next_task;
+    // if (cur_task->status != SLEEPING) {
+    //     if (cur_task != idle_task[cpu_current()]) {
+    //         // TODO: do some thing
+    //         // task_list->push_back(task_list, cur_task);
+    //     }
+    // }
+    cur_task = poll_rand_task();
     //     }
     //         break;
     //     default:
     //         break;
     // }
     LOG_INFO("scheduled to task: (%s)%p", cur_task->name, cur_task);
-    return current[cpu]->context;
+    return cur_task->context;
 }
 
 static void kmt_init() {
@@ -94,10 +91,11 @@ static void kmt_init() {
         sprintf(name, "idle %d", cpu);
 
         task->name = name;
-        task->status = RUNNING;
+        task->status = RUNNABLE;
         task->stack = pmm->alloc(KMT_STACK_SIZE);
         task->context = NULL;
-        task->next = NULL;
+        task->running = 1;
+        task->canary = CANARY_NUM;
         current[cpu] = task;
         LOG_INFO("task init on CPU %d, name: %s, addr: %p, stack: %p", cpu, name, task, task->stack);
     }
@@ -119,7 +117,8 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
             .end = task->stack + KMT_STACK_SIZE
         }, entry, arg
     );
-    task->next = NULL;
+    task->running = 0;
+    task->canary = CANARY_NUM;
     kmt->spin_lock(task_list_lk);
     task_cnt++;
     if (task_cnt > MAX_TASK_NUM) {

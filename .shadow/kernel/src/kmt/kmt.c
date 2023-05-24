@@ -36,7 +36,7 @@ static inline task_t *poll_rand_task() {
     if (task_cnt == 0) return result;  
     LOG_ERROR("task cnt %d", task_cnt);
     // rand version
-    while (1) {
+    for (int i = 0; i < task_cnt * 2; i++) {
         int idx = rand() % task_cnt;
         task_t *task = task_list[idx];
         if (task->status != SLEEPING) { // FIXME: should atomic change status

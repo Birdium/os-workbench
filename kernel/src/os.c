@@ -14,9 +14,9 @@ task_t *task_alloc() {
 sem_t empty, fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-#define N 2
-#define NPROD 1
-#define NCONS 1
+#define N 3
+#define NPROD 2
+#define NCONS 2
 
 void Tproduce(void *arg) { while (1) { P(&empty); putch('('); V(&fill);  } }
 void Tconsume(void *arg) { while (1) { P(&fill);  putch(')'); V(&empty); } }
@@ -98,8 +98,6 @@ extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
-  LOG_INFO("task list size %d", task_list->size);
-  // int cnt = 0;
   // kmt->spin_lock(task_list_lk);
   // for_list(task_t_ptr, it, task_list) {
   //   LOG_INFO("task %d: %s, status: %d", cnt, it->elem->name, it->elem->status);
@@ -122,7 +120,7 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
-  // LOG_INFO("trap returning %p with rip %x", next, next->rip);
+  LOG_INFO("trap returning %p with rip %x", next, next->rip);
   TRACE_EXIT;
   return next;
 }

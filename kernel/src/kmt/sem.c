@@ -36,10 +36,10 @@ void kmt_sem_signal(sem_t *sem) {
 		sem->tasks.remove(&(sem->tasks), p);
 		LOG_INFO("sem waked up task %s, %d", ntask->name, ntask->status);
 		panic_on(ntask->status != SLEEPING, "waiting task not sleeping");
-		kmt->spin_lock(task_list_lk);
+		// kmt->spin_lock(task_list_lk);
 		ntask->status = RUNNABLE;
-		task_list->push_back(task_list, ntask);
-		kmt->spin_unlock(task_list_lk);
+		// task_list->push_back(task_list, ntask);
+		// kmt->spin_unlock(task_list_lk);
 	}
 	kmt->spin_unlock(&sem->lk);
 }
@@ -51,9 +51,9 @@ void kmt_sem_wait(sem_t *sem) {
 		sem->tasks.push_back(&sem->tasks, current[cpu_current()]);		
 		LOG_INFO("sem sleeped task: %s, cnt %d", current[cpu_current()]->name, sem->cnt);
 
-		kmt->spin_lock(task_list_lk);
+		// kmt->spin_lock(task_list_lk);
 		cur_task->status = SLEEPING;
-		kmt->spin_unlock(task_list_lk);
+		// kmt->spin_unlock(task_list_lk);
 		
 		// for_list(task_t_ptr, it, &sem->tasks) {
 		// 	LOG_INFO("%s %s %d %p", sem->name, it->elem->name, it->elem->status, it->elem);

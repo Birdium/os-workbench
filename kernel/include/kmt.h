@@ -6,6 +6,7 @@
 #include <os.h>
 
 #define KMT_STACK_SIZE 8192
+#define MAX_TASK_NUM 256
 
 DEF_LIST(irq_t);
 DEF_LIST(task_t);

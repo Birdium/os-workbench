@@ -35,15 +35,21 @@ static inline task_t *poll_rand_task() {
     task_t *result = cur_idle;
     if (task_cnt == 0) return result;  
     LOG_ERROR("task cnt %d", task_cnt);
-    // int idx = rand() % task_list->size;
+    // rand version
     while (1) {
-        int idx = 0;
+        int idx = rand() % task_cnt;
         task_t *task = task_list[idx];
         if (task->status != SLEEPING) { // FIXME: should atomic change status
             result = task;
             break;
         }
     }
+    // // fixed version
+    // for (int i = 0; i < task_cnt; i++) {
+    //     if (task_list[i]->status != SLEEPING) {
+    //         result = task_list[i]; break;
+    //     }
+    // }
     return result;
 }
 

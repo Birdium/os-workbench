@@ -32,6 +32,7 @@ static Context *kmt_context_save(Event ev, Context *context) {
 }
 
 static inline task_t *poll_rand_task() {
+    TRACE_ENTRY;
     task_t *result = cur_idle;
     if (task_cnt == 0) return idle_task[cpu_current()];  
     // int idx = rand() % task_list->size;
@@ -43,11 +44,11 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
+    TRACE_EXIT;
     return result;
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
-    TRACE_ENTRY;
     int cpu = cpu_current();
     panic_on(cur_task == NULL, "no available task");
     // switch (ev.event) {

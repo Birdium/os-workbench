@@ -28,6 +28,11 @@ static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
 
     cur_task->context = context; 
+    // TODO: check last
+    if (cur_last && cur_last != cur_task) {
+        // UNLOCK RUNNING LOCK
+    }
+    cur_last = cur_task;
     return NULL;
 }
 

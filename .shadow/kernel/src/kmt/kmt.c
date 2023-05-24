@@ -39,7 +39,6 @@ static Context *kmt_context_save(Event ev, Context *context) {
 static inline task_t *poll_rand_task() {
     task_t *result = cur_idle;
     if (task_cnt == 0) return result;  
-    LOG_ERROR("task cnt %d", task_cnt);
     // rand version
     for (int i = 0; i < task_cnt * 2; i++) {
         int idx = rand() % task_cnt;

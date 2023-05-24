@@ -25,6 +25,7 @@ LIST_PTR_DEC(irq_t, irq_list);
 spinlock_t *task_list_lk;
 
 static Context *kmt_context_save(Event ev, Context *context) {
+    TRACE_ENTRY;
     panic_on(!cur_task, "no valid task");
 
     cur_task->context = context; 

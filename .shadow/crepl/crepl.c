@@ -55,7 +55,7 @@ int comp_func(char *line) {
     fprintf(src, "int %s() { return %s; } \n", func_name, line);
   }
   fclose(src);
-// #ifdef __x86_64__
+#ifdef __x86_64__
   char *new_argv[] = {
     "gcc", 
     "-xc",
@@ -68,20 +68,21 @@ int comp_func(char *line) {
     src_filename,
     NULL
   };
-// #else 
-//   char *new_argv[] = {
-//     "gcc", 
-//     "-xc",
-//     "-shared",
-//     "-fPIC", 
-//     "-ldl",
-//     "-Wno-implicit-function-declaration",
-//     "-o",
-//     dst_filename,
-//     src_filename,
-//     NULL
-//   };
-// #endif
+#else 
+  char *new_argv[] = {
+    "gcc", 
+    "-m32"
+    "-xc",
+    "-shared",
+    "-fPIC", 
+    "-ldl",
+    "-Wno-implicit-function-declaration",
+    "-o",
+    dst_filename,
+    src_filename,
+    NULL
+  };
+#endif
   int pid = fork();
   if (pid == 0) { // son
     execvp("gcc", new_argv);

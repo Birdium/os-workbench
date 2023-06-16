@@ -28,7 +28,6 @@ static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
 
     cur_task->context = context; 
-    // TODO: check last
     if (cur_last && cur_last != cur_task) {
         atomic_xchg(&cur_last->running, 0); // UNLOCK running
     }
@@ -66,7 +65,6 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     {   
     // if (cur_task->status != SLEEPING) {
     //     if (cur_task != idle_task[cpu_current()]) {
-    //         // TODO: do some thing
     //         // task_list->push_back(task_list, cur_task);
     //     }
     // }
@@ -131,7 +129,6 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
 }
 
 static void kmt_teardown(task_t *task) {
-    //TODO: kmt teardown
     kmt->spin_lock(task_list_lk);
     pmm->free(task->stack);
     bool ok = false;

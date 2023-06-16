@@ -71,7 +71,7 @@ int comp_func(char *line) {
 #else 
   char *new_argv[] = {
     "gcc", 
-    "-m32"
+    "-m32",
     "-xc",
     "-shared",
     "-fPIC", 

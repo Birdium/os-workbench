@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
   struct fat32hdr *hdr = map_disk(argv[1]);
 
   // TODO: frecov
-  int RootDirSectors = ((hdr->BPB_RootEntCnt * 32) + (hdr->BPB_BytsPerSec – 1)) / hdr->BPB_BytsPerSec;
+  int RootDirSectors = ((hdr->BPB_RootEntCnt * 32) + (hdr->BPB_BytsPerSec - 1)) / hdr->BPB_BytsPerSec;
   printf("%d\n", RootDirSectors);
 
   // file system traversal

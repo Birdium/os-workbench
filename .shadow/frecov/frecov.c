@@ -62,7 +62,14 @@ int main(int argc, char *argv[]) {
 
   // TODO: frecov
   int RootDirSectors = ((hdr->BPB_RootEntCnt * 32) + (hdr->BPB_BytsPerSec - 1)) / hdr->BPB_BytsPerSec;
-  printf("%d\n", RootDirSectors);
+  int FATSz = 0;
+  if (hdr->BPB_FATSz16 != 0) FATSz = hdr->BPB_FATSz16;
+  else FATSz = hdr->BPB_FATSz32;
+  if (hdr->BPB_TotSec16 != 0) FATSz = hdr->BPB_TotSec16;
+  else FATSz = hdr->BPB_TotSec32;
+  int DataSec = TotSec - (BPB_ResvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors);
+  int CountofClusters = DataSec / hdr->BPB_SecPerClus;
+  printf("%d\n", CountofClusters);
 
   // file system traversal
   munmap(hdr, hdr->BPB_TotSec32 * hdr->BPB_BytsPerSec);

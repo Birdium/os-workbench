@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   else FATSz = hdr->BPB_FATSz32;
   if (hdr->BPB_TotSec16 != 0) FATSz = hdr->BPB_TotSec16;
   else FATSz = hdr->BPB_TotSec32;
-  int DataSec = hdr->TotSec - (hdr->BPB_ResvdSecCnt + (hdr->BPB_NumFATs * FATSz) + RootDirSectors);
+  int DataSec = hdr->TotSec - (hdr->BPB_RsvdSecCnt + (hdr->BPB_NumFATs * FATSz) + RootDirSectors);
   int CountofClusters = DataSec / hdr->BPB_SecPerClus;
   printf("%d\n", CountofClusters);
 

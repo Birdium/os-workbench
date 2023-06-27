@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   else TotSec = hdr->BPB_TotSec32;
   int DataSec = TotSec - (hdr->BPB_RsvdSecCnt + (hdr->BPB_NumFATs * FATSz) + RootDirSectors);
   int CountofClusters = DataSec / hdr->BPB_SecPerClus;
-  printf("%d %d\n", TotSec, DataSec);
+  printf("%d %d\n", TotSec, hdr->BPB_SecPerClus);
 
   // file system traversal
   munmap(hdr, hdr->BPB_TotSec32 * hdr->BPB_BytsPerSec);

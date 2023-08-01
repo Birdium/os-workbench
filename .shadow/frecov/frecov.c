@@ -162,7 +162,6 @@ int main(int argc, char *argv[]) {
         if (dent->DIR_Name[0] == 0x00 || 
             dent->DIR_Name[0] == 0xe5) continue;
         else if (dent->DIR_Attr == ATTR_LONG_NAME) {
-          printf("111\n");
           struct LongDirent *ldent = (struct LongDirent *)dent;
           int Ord = ldent->LDIR_Ord;
           if (Ord & 0x40) Ord -= 0x40;

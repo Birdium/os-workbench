@@ -182,6 +182,7 @@ int main(int argc, char *argv[]) {
             }
           }
           filename[s++] = 0;
+        printf("%s%s\n", sha1sum, filename);
         }
         else {
           int i = 0, s = 0;
@@ -197,7 +198,6 @@ int main(int argc, char *argv[]) {
           filename[s++] = 0;
         }
         printf("%s%s\n", sha1sum, filename);
-        printf("%d\n", (dent - 1)->DIR_Attr);
       }
     }
   }

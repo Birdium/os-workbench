@@ -107,7 +107,6 @@ int is_dir_cluster(struct fat32dent *cluster) {
     if (dent->DIR_Name[0] == 0x00 || 
         dent->DIR_Name[0] == 0xe5) continue;
     else if (dent->DIR_Attr == ATTR_LONG_NAME) {
-      if (empty) return 0;
       struct LongDirent *ldent = (struct LongDirent *)dent;
       int Ord = ldent->LDIR_Ord;
       if (Ord & 0x40) Ord -= 0x40;

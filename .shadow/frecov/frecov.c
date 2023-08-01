@@ -183,6 +183,7 @@ int main(int argc, char *argv[]) {
           }
           filename[s++] = 0;
         printf("%s%s\n", sha1sum, filename);
+        assert(0);
         }
         else {
           int i = 0, s = 0;

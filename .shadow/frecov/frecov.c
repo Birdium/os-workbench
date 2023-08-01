@@ -100,7 +100,7 @@ int is_dir_cluster(struct fat32dent *cluster) {
   int empty = 0;
   for (int d = 0; d < ndents; d++) {
     struct fat32dent *dent = cluster + d;
-    printf("debug: %p %d\n", dent, hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus);
+    // printf("debug: %p %d\n", dent, hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus);
     if (dent->DIR_Name[0] == 0x00) {
       empty = 1;
     }
@@ -154,6 +154,7 @@ int main(int argc, char *argv[]) {
 
   for (int i = 2; i < CountOfCluster; i++) {
     void *cluster = idx_to_clus_addr(i);
+    printf("debug: %p %d\n", cluster, hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus);
     if (is_dir_cluster(cluster)) {
       int ndents = hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus / sizeof(struct fat32dent);
       for (int d = 0; d < ndents; d++) {

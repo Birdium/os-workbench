@@ -92,7 +92,7 @@ void *idx_to_clus_addr(int N) {
   int FATSz = (hdr->BPB_FATSz16 != 0) ? hdr->BPB_FATSz16 : hdr->BPB_FATSz32;
   int FATOffset = N * 4;
   int ThisFATSecNum = hdr->BPB_RsvdSecCnt + (FATOffset / hdr->BPB_BytsPerSec);
-  return hdr + N * hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus;
+  return ((void*)hdr) + N * hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus;
 }
 
 int is_dir_cluster(struct fat32dent *cluster) {
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
 
   for (int i = 2; i < CountOfCluster; i++) {
     void *cluster = idx_to_clus_addr(i);
-    printf("debug: %p %d\n", cluster, hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus);
+    // printf("debug: %p %d\n", cluster, hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus);
     if (is_dir_cluster(cluster)) {
       int ndents = hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus / sizeof(struct fat32dent);
       for (int d = 0; d < ndents; d++) {

@@ -96,11 +96,11 @@ void *idx_to_clus_addr(int N) {
 }
 
 int is_dir_cluster(struct fat32dent *cluster) {
-  printf("debug: %p\n", cluster);
   int ndents = hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus / sizeof(struct fat32dent);
   int empty = 0;
   for (int d = 0; d < ndents; d++) {
     struct fat32dent *dent = cluster + d;
+    printf("debug: %p\n", dent);
     if (dent->DIR_Name[0] == 0x00) {
       empty = 1;
     }

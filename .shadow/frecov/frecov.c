@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <math.h>
 
 typedef uint8_t u8;
 typedef uint16_t u16;
@@ -44,8 +45,89 @@ struct fat32hdr {
   u16 Signature_word;
 } __attribute__((packed));
 
+struct fat32dent {
+  u8  DIR_Name[11];
+  u8  DIR_Attr;
+  u8  DIR_NTRes;
+  u8  DIR_CrtTimeTenth;
+  u16 DIR_CrtTime;
+  u16 DIR_CrtDate;
+  u16 DIR_LastAccDate;
+  u16 DIR_FstClusHI;
+  u16 DIR_WrtTime;
+  u16 DIR_WrtDate;
+  u16 DIR_FstClusLO;
+  u32 DIR_FileSize;
+} __attribute__((packed));
+
+struct LongDirent {
+  u8  LDIR_Ord;         /* 0  */       
+  u8  LDIR_Name1[10];   /* 1  */             
+  u8  LDIR_Attr;        /* 11 */        
+  u8  LDIR_Type;        /* 12 */        
+  u8  LDIR_Chksum;      /* 13 */          
+  u8  LDIR_Name2[12];   /* 14 */             
+  u16 LDIR_FstClusLO;   /* 26 */             
+  u8  LDIR_Name3[4];    /* 28 */            
+}__attribute__((__packed__));
+
+char sha1sum[] = "d60e7d3d2b47d19418af5b0ba52406b86ec6ef83  ";
+
+
+#define CLUS_INVALID   0xffffff7
+
+#define ATTR_READ_ONLY 0x01
+#define ATTR_HIDDEN    0x02
+#define ATTR_SYSTEM    0x04
+#define ATTR_VOLUME_ID 0x08
+#define ATTR_DIRECTORY 0x10
+#define ATTR_ARCHIVE   0x20
+#define ATTR_LONG_NAME (ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME_ID)
 
 void *map_disk(const char *fname);
+
+struct fat32hdr *hdr;
+
+void *idx_to_clus_addr(int N) {  
+  int FATSz = (hdr->BPB_FATSz16 != 0) ? hdr->BPB_FATSz16 : hdr->BPB_FATSz32;
+  int FATOffset = N * 4;
+  int ThisFATSecNum = hdr->BPB_RsvdSecCnt + (FATOffset / hdr->BPB_BytsPerSec);
+  return hdr + N * hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus;
+}
+
+int is_dir_cluster(struct fat32dent *cluster) {
+  int ndents = hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus / sizeof(struct fat32dent);
+  int empty = 0;
+  for (int d = 0; d < ndents; d++) {
+    struct fat32dent *dent = cluster + d;
+    if (dent->DIR_Name[0] == 0x00) {
+      empty = 1;
+    }
+    if (dent->DIR_Name[0] == 0x00 || 
+        dent->DIR_Name[0] == 0xe5 ||
+        dent->DIR_Attr & ATTR_HIDDEN) continue;
+    else if (dent->DIR_Attr == ATTR_LONG_NAME) {
+      if (empty) return 0;
+      struct LongDirent *ldent = (struct LongDirent *)dent;
+      int Ord = ldent->LDIR_Ord;
+      if (Ord & 0x40) Ord -= 0x40;
+      if (ldent->LDIR_Type != 0 || ldent->LDIR_FstClusLO != 0) return 0;
+      for (int i = Ord; i >= 1; i--) {
+        struct LongDirent *ldent = (struct LongDirent *)dent;
+        if (d >= ndents) break;
+        if (Ord != ldent->LDIR_Ord || ldent->LDIR_Type != 0 || ldent->LDIR_FstClusLO) return 0;
+        if (i > 1) {
+          d++; dent++;
+        }
+      }
+    }
+    else {
+      if (empty) return 0;
+      if (dent->DIR_NTRes) return 0;
+    }
+  }
+  return 1;
+}
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -58,9 +140,64 @@ int main(int argc, char *argv[]) {
   assert(sizeof(struct fat32hdr) == 512); // defensive
 
   // map disk image to memory
-  struct fat32hdr *hdr = map_disk(argv[1]);
+  hdr = map_disk(argv[1]);
 
   // TODO: frecov
+  int FATSz = hdr->BPB_FATSz32;
+  int TotSec = hdr->BPB_TotSec32;
+  int DataSec = TotSec - (hdr->BPB_RsvdSecCnt + (hdr->BPB_NumFATs * FATSz));
+  int CountOfCluster = DataSec / hdr->BPB_SecPerClus;
+
+
+  char filename[1024];
+
+  for (int i = 2; i < CountOfCluster; i++) {
+    void *cluster = idx_to_clus_addr(i);
+    if (is_dir_cluster(cluster)) {
+      int ndents = hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus / sizeof(struct fat32dent);
+      for (int d = 0; d < ndents; d++) {
+        struct fat32dent *dent = cluster + d;
+        if (dent->DIR_Name[0] == 0x00 || 
+            dent->DIR_Name[0] == 0xe5 ||
+            dent->DIR_Attr & ATTR_HIDDEN) continue;
+        else if (dent->DIR_Attr == ATTR_LONG_NAME) {
+          struct LongDirent *ldent = (struct LongDirent *)dent;
+          int Ord = ldent->LDIR_Ord;
+          if (Ord & 0x40) Ord -= 0x40;
+          d += Ord;
+          if (d - 1 >= ndents) continue;
+          int s = 0;
+          for (int i = Ord - 1; i >= 0; i--) {
+            struct LongDirent *ident = ldent + i;
+            for (int j = 0; j < 10; j += 2) {
+              filename[s++] = ident->LDIR_Name1[j];
+            }
+            for (int j = 0; j < 12; j += 2) {
+              filename[s++] = ident->LDIR_Name2[j];
+            }
+            for (int j = 0; j < 4; j += 2) {
+              filename[s++] = ident->LDIR_Name3[j];
+            }
+          }
+          filename[s++] = 0;
+        }
+        else {
+          int i = 0, s = 0;
+          for (; i < 8 && dent->DIR_Name[i] != ' '; i++) {
+            filename[s++] = dent->DIR_Name[i];
+          }
+          if (dent->DIR_Name[8] != ' ') {
+            i = 8; filename[s++] = '.';
+            for (; i < 11 && dent->DIR_Name[i]; i++) {
+              filename[s++] = dent->DIR_Name[i];
+            }
+          }
+          filename[s++] = 0;
+        }
+        printf("%s%s\n", sha1sum, filename);
+      }
+    }
+  }
 
   // file system traversal
   munmap(hdr, hdr->BPB_TotSec32 * hdr->BPB_BytsPerSec);

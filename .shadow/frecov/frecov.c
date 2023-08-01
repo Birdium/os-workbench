@@ -223,7 +223,7 @@ void *map_disk(const char *fname) {
     goto release;
   }
 
-  printf("debug: [%p %p)\n", hdr, ((void*)hdr) + size);
+  printf("debug: [%p %p), size: %u\n", hdr, ((void*)hdr) + size, size);
 
   close(fd);
 

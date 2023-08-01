@@ -105,8 +105,7 @@ int is_dir_cluster(struct fat32dent *cluster) {
       empty = 1;
     }
     if (dent->DIR_Name[0] == 0x00 || 
-        dent->DIR_Name[0] == 0xe5 ||
-        dent->DIR_Attr & ATTR_HIDDEN) continue;
+        dent->DIR_Name[0] == 0xe5) continue;
     else if (dent->DIR_Attr == ATTR_LONG_NAME) {
       if (empty) return 0;
       struct LongDirent *ldent = (struct LongDirent *)dent;
@@ -116,7 +115,7 @@ int is_dir_cluster(struct fat32dent *cluster) {
       for (int i = Ord; i >= 1; i--) {
         struct LongDirent *ldent = (struct LongDirent *)dent;
         if (d >= ndents) break;
-        if (Ord != ldent->LDIR_Ord || ldent->LDIR_Type != 0 || ldent->LDIR_FstClusLO) return 0;
+        // if (Ord != ldent->LDIR_Ord || ldent->LDIR_Type != 0 || ldent->LDIR_FstClusLO) return 0;
         if (i > 1) {
           d++; dent++;
         }

@@ -107,7 +107,7 @@ int is_dir_cluster(struct fat32dent *cluster) {
     if (dent->DIR_Name[0] == 0x00 || 
         dent->DIR_Name[0] == 0xe5 ||
         dent->DIR_Attr & ATTR_HIDDEN) continue;
-    else if ((dent->DIR_Attr & ATTR_LONG_NAME) == ATTR_LONG_NAME) {
+    else if (dent->DIR_Attr == ATTR_LONG_NAME) {
       if (empty) return 0;
       struct LongDirent *ldent = (struct LongDirent *)dent;
       int Ord = ldent->LDIR_Ord;
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
         if (dent->DIR_Name[0] == 0x00 || 
             dent->DIR_Name[0] == 0xe5 ||
             dent->DIR_Attr & ATTR_HIDDEN) continue;
-        else if ((dent->DIR_Attr & ATTR_LONG_NAME) == ATTR_LONG_NAME) {
+        else if (dent->DIR_Attr == ATTR_LONG_NAME) {
           struct LongDirent *ldent = (struct LongDirent *)dent;
           int Ord = ldent->LDIR_Ord;
           if (Ord & 0x40) Ord -= 0x40;
@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
           filename[s++] = 0;
         }
         printf("%s%s\n", sha1sum, filename);
-        // printf("%p\n", dent);
+        printf("%d\n", (dent - 1)->DIR_Attr);
       }
     }
   }

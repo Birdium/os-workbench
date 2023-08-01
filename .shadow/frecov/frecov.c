@@ -223,6 +223,8 @@ void *map_disk(const char *fname) {
     goto release;
   }
 
+  printf("debug: [%p %p)", hdr, hdr + size);
+
   close(fd);
 
   if (hdr->Signature_word != 0xaa55 ||

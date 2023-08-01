@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
           struct LongDirent *ldent = (struct LongDirent *)dent;
           int Ord = ldent->LDIR_Ord;
           if (Ord & 0x40) Ord -= 0x40;
-          // d += Ord;
+          d += Ord;
           if (d - 1 >= ndents) continue;
           int s = 0;
           for (int i = Ord - 1; i >= 0; i--) {

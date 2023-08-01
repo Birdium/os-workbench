@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
   char filename[1024];
 
   for (int i = 2; i < CountOfCluster; i++) {
-    void *cluster = idx_to_clus_addr(i);
+    struct fat32dent *cluster = idx_to_clus_addr(i);
     // printf("debug: %p %d\n", cluster, hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus);
     if (is_dir_cluster(cluster)) {
       int ndents = hdr->BPB_BytsPerSec * hdr->BPB_SecPerClus / sizeof(struct fat32dent);

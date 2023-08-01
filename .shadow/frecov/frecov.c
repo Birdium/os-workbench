@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
           filename[s++] = 0;
         }
         printf("%s%s\n", sha1sum, filename);
-        printf("%p\n", dent);
+        // printf("%p\n", dent);
       }
     }
   }

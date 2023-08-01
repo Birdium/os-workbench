@@ -115,6 +115,7 @@ int is_dir_cluster(struct fat32dent *cluster) {
       for (int i = Ord; i >= 1; i--) {
         struct LongDirent *ldent = (struct LongDirent *)dent;
         if (d >= ndents) break;
+        printf("%d %d\n", i, ldent->LDIR_Ord);
         if (ldent->LDIR_Type != 0 || ldent->LDIR_FstClusLO) return 0;
         if (i > 1) {
           d++; dent++;

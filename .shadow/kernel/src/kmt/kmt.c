@@ -149,7 +149,7 @@ static int kmt_ucreate(task_t *task, const char *name) {
     }
     task_list[task_cnt - 1] = task;
     kmt->spin_unlock(task_list_lk);
-    LOG_INFO("task created name: %s, entry: %p, addr: %p, stack: %p", name, entry, task, task->stack);
+    LOG_INFO("utask created name: %s, entry: %p, addr: %p, stack: %p", name, task->as.area.start, task, task->stack);
     return 0;
 }
 

@@ -5,6 +5,7 @@
 
 void init() {
 	vme_init((void * (*)(int))pmm->alloc, pmm->free);
+	// TODO: finish init
 }
 
 int kputc(task_t *task, char ch) {

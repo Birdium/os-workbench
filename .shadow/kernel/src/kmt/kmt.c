@@ -128,6 +128,31 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     return 0;
 }
 
+static int kmt_ucreate(task_t *task, const char *name) {
+    task->name = name;
+    task->status = RUNNABLE;
+    task->stack = pmm->alloc(KMT_STACK_SIZE);
+    protect(&task->as);
+    task->context = ucontext(
+        &task->as,
+        (Area){
+            .start = task->stack, 
+            .end = task->stack + KMT_STACK_SIZE
+        }, task->as.area.start
+    );
+    task->running = 0;
+    task->canary = CANARY_NUM;
+    kmt->spin_lock(task_list_lk);
+    task_cnt++;
+    if (task_cnt > MAX_TASK_NUM) {
+        panic("too many tasks");
+    }
+    task_list[task_cnt - 1] = task;
+    kmt->spin_unlock(task_list_lk);
+    LOG_INFO("task created name: %s, entry: %p, addr: %p, stack: %p", name, entry, task, task->stack);
+    return 0;
+}
+
 static void kmt_teardown(task_t *task) {
     kmt->spin_lock(task_list_lk);
     pmm->free(task->stack);

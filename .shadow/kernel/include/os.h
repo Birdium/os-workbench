@@ -12,6 +12,7 @@ typedef struct task {
   const char *name;
   Context *context;
   uint8_t *stack;
+  AddrSpace as;
   int canary;
 } task_t;
 

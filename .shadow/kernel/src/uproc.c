@@ -1,6 +1,7 @@
 #include "uproc.h"
 #include <assert.h>
 #include <os.h>
+#include <stdio.h>
 #include <syscall.h>
 #include <kmt.h>
 
@@ -38,6 +39,7 @@ void uproc_init() {
 	task_t *task = pmm->alloc(sizeof(task_t));
 	int pid = pid_alloc(); 
 	kmt_ucreate(task, "init", pid, 0);
+	printf("111\n");
 	panic_on(pid != 1, "first uproc id not 1");
 	// TODO: finish init
 }

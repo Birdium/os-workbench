@@ -110,7 +110,6 @@ static void debug_task_list() {
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
   LOG_INFO("task (%s)%p, ctx at %p, rip %x, intr type %d", cur_task->name, cur_task, context, context->rip, ev.event);
-  LOG_ERROR("%d", ienabled());
   debug_task_list();
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {

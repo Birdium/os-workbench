@@ -43,6 +43,7 @@ static void tty_reader(void *arg) {
 static void os_init() {
   pmm->init();
   kmt->init();
+  uproc->init();
 
 #ifdef DEBUG_LOCAL
 

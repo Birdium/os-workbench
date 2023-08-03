@@ -5,6 +5,7 @@
 #include <syscall.h>
 #include <kmt.h>
 
+#include "common.h"
 #include "initcode.inc"
 #include "klib-macros.h"
 
@@ -30,9 +31,16 @@ static int pid_alloc() {
 	return pid;
 }
 
+static Context *syscall_handler(Event ev, Context *context) {
+  // TODO: deal with syscall
+  LOG_INFO("%d", ienabled());
+  return NULL;
+}
+
 void uproc_init() {
 	vme_init((void * (*)(int))pmm->alloc, pmm->free);
 	kmt->spin_init(&pid_lock, "pid lock");
+  	os->on_irq(0, EVENT_SYSCALL, syscall_handler);
 	for (int i = 1; i < UPROC_PID_NUM; i++) {
 		pinfo[i].valid = 0;
 	}

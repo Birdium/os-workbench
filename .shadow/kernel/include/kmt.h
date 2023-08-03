@@ -23,4 +23,6 @@ void kmt_spin_lock(spinlock_t *lk);
 
 void kmt_spin_unlock(spinlock_t *lk);
 
+int kmt_ucreate(task_t *task, const char *name, pid_t pid, pid_t ppid);
+
 #endif

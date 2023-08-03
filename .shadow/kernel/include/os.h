@@ -14,7 +14,8 @@ typedef struct task {
   uint8_t *stack;
 
   // utask only
-  int pid;
+  pid_t pid;
+  pid_t ppid;
   AddrSpace as;
   int canary;
 } task_t;

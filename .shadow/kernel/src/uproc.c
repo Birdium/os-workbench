@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <os.h>
 #include <syscall.h>
+#include <kmt.h>
 
 #include "initcode.inc"
 #include "klib-macros.h"
@@ -34,7 +35,9 @@ void uproc_init() {
 	for (int i = 1; i < UPROC_PID_NUM; i++) {
 		pinfo[i].valid = 0;
 	}
+	task_t *task = pmm->alloc(sizeof(task_t));
 	int pid = pid_alloc(); 
+	kmt_ucreate(task, "init", pid, 0);
 	panic_on(pid != 1, "first uproc id not 1");
 	// TODO: finish init
 }

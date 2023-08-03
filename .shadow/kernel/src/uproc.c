@@ -39,7 +39,6 @@ static Context *syscall_handler(Event ev, Context *context) {
 
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with pgflt
-  LOG_INFO("%d", ienabled());
   return NULL;
 }
 

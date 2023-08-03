@@ -3,7 +3,7 @@
 
 #include "os.h"
 
-#define UPROC_PID_NUM 256
+#define UPROC_PID_NUM 32768
 
 typedef struct pid_entry {
 	int valid;

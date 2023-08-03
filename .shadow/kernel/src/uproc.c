@@ -26,7 +26,7 @@ static int pid_alloc() {
 		if (next_pid == UPROC_PID_NUM - 1) next_pid = 0;
 	}
 	panic_on(pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
-	kmt->spin_lock(&pid_lock);
+	kmt->spin_unlock(&pid_lock);
 	return pid;
 }
 
@@ -39,7 +39,6 @@ void uproc_init() {
 	task_t *task = pmm->alloc(sizeof(task_t));
 	int pid = pid_alloc(); 
 	kmt_ucreate(task, "init", pid, 0);
-	printf("111\n");
 	panic_on(pid != 1, "first uproc id not 1");
 	// TODO: finish init
 }

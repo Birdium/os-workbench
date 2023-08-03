@@ -39,6 +39,9 @@ static int holding(spinlock_t *lk) {
 
 void kmt_spin_lock(spinlock_t *lk) {
 	push_off();
+	if (holding(lk)) {
+		printf("%s", lk->name);
+	}
 	panic_on(holding(lk), "kmt_spin_lock: locking holding lock");
     while(atomic_xchg(&lk->locked, 1) != 0)
 		;

@@ -12,6 +12,9 @@ typedef struct task {
   const char *name;
   Context *context;
   uint8_t *stack;
+
+  // utask only
+  int pid;
   AddrSpace as;
   int canary;
 } task_t;

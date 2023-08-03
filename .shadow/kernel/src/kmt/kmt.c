@@ -128,10 +128,11 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     return 0;
 }
 
-static int kmt_ucreate(task_t *task, const char *name) {
+static int kmt_ucreate(task_t *task, const char *name, pid_t pid) {
     task->name = name;
     task->status = RUNNABLE;
     task->stack = pmm->alloc(KMT_STACK_SIZE);
+    task->pid = pid;
     protect(&task->as);
     task->context = ucontext(
         &task->as,

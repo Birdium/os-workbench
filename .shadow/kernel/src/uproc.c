@@ -177,8 +177,17 @@ int uproc_wait(task_t *task, int *status) {
 }
 
 int uproc_exit(task_t *task, int status) {
-	panic("TODO");
-	return 0;
+	kmt->spin_lock(&pid_lock);
+	int pid = task->pid;
+	pinfo[pid].valid = 1;
+	for_list(mapping_t, it, pinfo[pid].mappings) {
+		void *pa = it->elem.pa;
+		pmm->free(pa);
+	}
+	pinfo[pid].mappings->free(pinfo[pid].mappings);
+	kmt->teardown(task);
+	kmt->spin_lock(&pid_lock);
+	return status;
 }
 
 int uproc_kill(task_t *task, int pid) {

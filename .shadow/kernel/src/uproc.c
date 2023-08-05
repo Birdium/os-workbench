@@ -124,10 +124,16 @@ task_t *new_task(pid_t ppid) {
   return task;
 }
 
+static Context *error_handler(Event ev, Context *context) {
+	panic(ev.msg);
+	return NULL;
+}
+
 void uproc_init() {
   vme_init((void *(*)(int))pmm->alloc, pmm->free);
   kmt->spin_init(&pid_lock, "pid lock");
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
+  os->on_irq(0, EVENT_ERROR, error_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 1;

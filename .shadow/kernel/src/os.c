@@ -114,12 +114,12 @@ Context *os_trap(Event ev, Context *context) {
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
-      LOG_USER("t");
       Context *r = it->elem.handler(ev, context);
       panic_on(r && next, "returning multiple contexts");
       if (r) next = r;  
     }
   }
+  LOG_USER("%s %d", cur_task->name, cur_task->pid);
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
   LOG_INFO("trap returning %p with rip %x", next, next->rip);

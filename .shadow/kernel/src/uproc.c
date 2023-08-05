@@ -32,7 +32,10 @@ static int pid_alloc() {
   return pid;
 }
 
+// static Context syscall_context;
+
 static Context *syscall_handler(Event ev, Context *context) {
+//   memcpy(&syscall_context, context, sizeof(context));
   iset(true);
   switch (context->GPRx) {
 	case SYS_kputc: {

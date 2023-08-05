@@ -47,13 +47,11 @@ int main() {
   kputc('d');
   kputc('!');
   kputc('\n');
-  int p = getpid();
-  puti(p);
-  kputc('\n');
   int64_t lt = 0;
   int fk = fork();
   kputc('0' + fk);
   kputc('\n');
+  int p = getpid();
   // int fk2 = fork();
   // kputc('0' + fk2);
   // kputc('\n');

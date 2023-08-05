@@ -39,9 +39,11 @@ static Context *syscall_handler(Event ev, Context *context) {
 
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with pgflt
-//   AddrSpace *as = cur_task->as;
-//   void *pa = pmm->alloc(as->pgsize);
-//   void *va = ;
+  AddrSpace *as = &(cur_task->as);
+  int pg_mask = ~(as->pgsize-1);
+  void *pa = pmm->alloc(as->pgsize);
+  void *va = (void*)(ev.ref & pg_mask);
+  map(as, va, pa, MMAP_READ | MMAP_WRITE);
 //   printf("task: %s, %s, %d, %d\n", cur_task->name, ev.msg, ev.cause, ev.ref);
   return NULL;
 }
@@ -61,7 +63,7 @@ void init_alloc(task_t *init_task) {
 	void *pa = pmm->alloc(_init_len);
 	void *va = as->area.start;
 	for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-		printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+		// printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 		map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 	}
 	memcpy(pa, _init, _init_len);

@@ -34,6 +34,7 @@ static int pid_alloc() {
 
 static Context *syscall_handler(Event ev, Context *context) {
   iset(true);
+  while (1) {}
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(NULL, context->GPR1); 

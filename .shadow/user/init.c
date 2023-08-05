@@ -18,6 +18,7 @@ int main() {
   kputc('!');
   kputc('\n');
   int p = getpid();
+  if (p == 1) return 0;
   while (p) {
     kputc('0' + p % 10);
     p /= 10;

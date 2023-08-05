@@ -80,6 +80,7 @@ void uproc_init() {
 		pinfo[i].valid = 0;
 	}
 	task_t *task = pmm->alloc(sizeof(task_t));
+	LOG_INFO("%p", task->context->rsp);
 	int pid = pid_alloc(); 
 	kmt_ucreate(task, "init", pid, 0);
 	init_alloc(task);

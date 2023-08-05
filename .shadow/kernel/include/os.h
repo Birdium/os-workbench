@@ -45,6 +45,11 @@ typedef struct irq {
 } irq_t;
 
 extern task_t *current[MAX_CPU_NUM];
+extern task_t *idle_task[MAX_CPU_NUM];
+extern task_t *last_task[MAX_CPU_NUM];
+
 #define cur_task current[cpu_current()]
+#define cur_idle idle_task[cpu_current()]
+#define cur_last last_task[cpu_current()]
 
 #endif

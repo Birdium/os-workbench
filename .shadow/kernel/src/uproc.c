@@ -68,6 +68,12 @@ static Context *syscall_handler(Event ev, Context *context) {
   iset(false);
   if (cur_task) {
 	cur_task->context = syscall_context;
+	if (cur_task != cur_last) { // deal with re-entry
+		if (cur_last && cur_last != cur_task) {
+			atomic_xchg(&cur_last->running, 0); // UNLOCK running
+		}
+		cur_last = cur_task;
+	}
   }
   return NULL;
 }

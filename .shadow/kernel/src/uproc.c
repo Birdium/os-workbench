@@ -34,7 +34,7 @@ static int pid_alloc() {
 
 static Context *syscall_handler(Event ev, Context *context) {
   Context *syscall_context = context;
-//   iset(true);
+  iset(true);
 //   for (volatile int i = 1; i < 100000; i++);
   switch (syscall_context->GPRx) {
 	case SYS_kputc: {
@@ -65,7 +65,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 		syscall_context->GPRx = uproc->uptime(cur_task); 
 	} break;
   }
-//   iset(false);
+  iset(false);
   if (cur_task) {
 	cur_task->context = syscall_context;
   }
@@ -155,7 +155,7 @@ int uproc_kputc(task_t *task, char ch) {
 }
 
 int uproc_fork(task_t *father) {
-	// iset(false);
+	iset(false);
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
 	task_t *son = new_task(ppid);
@@ -186,7 +186,7 @@ int uproc_fork(task_t *father) {
 
 	int pid = son->pid;
 
-	// iset(true);
+	iset(true);
 	return pid;
 }
 
@@ -196,7 +196,7 @@ int uproc_wait(task_t *task, int *status) {
 }
 
 int uproc_exit(task_t *task, int status) {
-	// iset(false);
+	iset(false);
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
@@ -208,14 +208,14 @@ int uproc_exit(task_t *task, int status) {
 	// TODO: wake up
 	kmt->teardown(task);
 	kmt->spin_unlock(&pid_lock);
-	// iset(true);
+	iset(true);
 	return status;
 }
 
 int uproc_kill(task_t *task, int pid) {
-	// iset(false);
+	iset(false);
 	pinfo[pid].task->status = KILLED;
-	// iset(true);
+	iset(true);
 	return 0;
 }
 

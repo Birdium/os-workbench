@@ -125,7 +125,7 @@ void uproc_init() {
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
-    pinfo[i].valid = 0;
+    pinfo[i].valid = 1;
   }
   task_t *task = new_task(0);
   init_alloc(task);

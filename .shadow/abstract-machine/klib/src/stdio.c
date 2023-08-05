@@ -132,7 +132,9 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           break;
         case 'p': {
             uint64_t arg = va_arg(ap, unsigned);
-            u64itoa(arg, buf, 16);
+            *buf = '0';
+            *(buf + 1) = 'x';
+            u64itoa(arg, buf + 2, 16);
             buf_len = strlen(buf);
           }
           break;

@@ -100,11 +100,11 @@ LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
   // kmt->spin_lock(task_list_lk);
-  int cnt = 0;
-  for_list(task_t_ptr, it, task_list) {
-    LOG_USER("task %d: %d(%s), status: %d", cnt, it->elem->pid, it->elem->name, it->elem->status);
-    cnt++;
-  }
+  // int cnt = 0;
+  // for_list(task_t_ptr, it, task_list) {
+  //   LOG_USER("task %d: %d(%s), status: %d", cnt, it->elem->pid, it->elem->name, it->elem->status);
+  //   cnt++;
+  // }
   // kmt->spin_unlock(task_list_lk);
 }
 

@@ -47,9 +47,9 @@ int main() {
   // kputc('d');
   // kputc('!');
   // kputc('\n');
-  // int fk = fork();
-  // kputc('0' + fk);
-  // kputc('\n');
+  int fk = fork();
+  kputc('0' + fk);
+  kputc('\n');
   int64_t lt = 0;
   int fk2 = fork();
   int p = getpid();

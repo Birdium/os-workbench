@@ -41,6 +41,7 @@ static void tty_reader(void *arg) {
 #endif
 
 static void os_init() {
+	vme_init((void * (*)(int))pmm->alloc, pmm->free);
   pmm->init();
   kmt->init();
   uproc->init();

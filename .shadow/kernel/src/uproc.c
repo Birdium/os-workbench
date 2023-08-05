@@ -149,9 +149,9 @@ int uproc_fork(task_t *father) {
 	memcpy(son->stack, father->stack, KMT_STACK_SIZE);
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;
+	LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
 	son->context = father->context;
 	son->context->rsp = father->context->rsp + son->stack - father->stack;
-	LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;

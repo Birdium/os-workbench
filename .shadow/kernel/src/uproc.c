@@ -70,10 +70,9 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot) {
     LOG_USER("%d[%s]: %p <- %p", task->pid, task->name, va, pa);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
-	mapping_t_list *mp_list = pinfo[pid].mappings;
-	panic_on(mp_list == 0, "invalid task mappings");
-	mp_list->push_back(mp_list, (mapping_t){.va = va, .pa = pa});
-	LOG_USER("%d\n", mp_list->size);
+	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
+	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
+	LOG_USER("%d\n", pinfo[pid].mappings->size);
 	map(as, va, pa, prot);
 }
 

@@ -55,7 +55,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 		
 	} break;
 	case SYS_getpid: {
-		
+		context->GPRx = uproc->getpid(cur_task); 
 	} break;
 	case SYS_sleep: {
 		context->GPRx = uproc->sleep(cur_task, context->GPR1); 

@@ -165,6 +165,8 @@ int uproc_fork(task_t *father) {
 		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
 	}
 
+	son->status = RUNNABLE;
+
 	return son->pid;
 }
 

@@ -51,8 +51,8 @@ int main() {
   // kputc('0' + fk);
   // kputc('\n');
   int64_t lt = 0;
-  int p = getpid();
   int fk2 = fork();
+  int p = getpid();
   kputc('0' + fk2);
   kputc('\n');
   while(1){

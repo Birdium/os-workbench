@@ -62,7 +62,7 @@ void init_alloc(task_t *init_task) {
 	void *va = as->area.start;
 	printf("%p %p\n", pa, va);
 	for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-		map(as, va + offset, pa + offset, MMAP_READ);
+		map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 	}
 	return;
 }

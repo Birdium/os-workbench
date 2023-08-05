@@ -160,7 +160,6 @@ int uproc_fork(task_t *father) {
 		void *spa = pmm->alloc(pgsize);
 		memcpy(spa, fpa, pgsize);
 		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
-		pinfo[son->pid].mappings->push_back(pinfo[son->pid].mappings, it->elem);
 	}
 
 	int pid = son->pid;

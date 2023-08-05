@@ -15,9 +15,6 @@ int task_cnt = 0;
 task_t *task_list[MAX_TASK_NUM];
 
 
-#define cur_task current[cpu_current()]
-#define cur_idle idle_task[cpu_current()]
-#define cur_last last_task[cpu_current()]
 
 LIST_PTR_DEC(irq_t, irq_list);
 
@@ -27,8 +24,10 @@ static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
 
     cur_task->context = context; 
+    // printf("task %d entered with type %d\n", cur_task->pid, ev.event);
     if (cur_last && cur_last != cur_task) {
         atomic_xchg(&cur_last->running, 0); // UNLOCK running
+        // printf("unlocked task %d\n", cur_last->pid);
     }
     cur_last = cur_task;
     return NULL;
@@ -38,11 +37,22 @@ static inline task_t *poll_rand_task() {
     task_t *result = cur_idle;
     if (task_cnt == 0) return result;  
     // rand version
+    // static int cnt = 1;
+    // if (cnt == 100000) {
+    //     printf("[%d%d%d%d %p]", task_list[0]->running, task_list[1]->running, 
+    //                             task_list[2]->running, task_list[3]->running, cur_task);
+    //     cnt = 0;
+    // }
+    // cnt++;
     static const int round = 2; // choose task_cnt times for X round
     for (int i = 0; i < task_cnt * round; i++) {
         int idx = rand() % task_cnt;
         task_t *task = task_list[idx];
         if (task->status != SLEEPING && (task == cur_task || atomic_xchg(&task->running, 1) == 0)) { // atomic set task running 
+            // if (task != cur_task) {
+                
+            //     printf("locked task %d\n", task->pid);
+            // }
             result = task;
             break;
         }
@@ -57,6 +67,7 @@ static inline task_t *poll_rand_task() {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
+    // task_t *prev_task = cur_task;
     panic_on(cur_task == NULL, "no available task");
     if (cur_task->status == KILLED) {
         uproc->exit(cur_task, 0);
@@ -76,7 +87,8 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     default:
     //         break;
     // }
-    LOG_USER("scheduled to task: (%s)%p, ctx %p", cur_task->name, cur_task, cur_task->context);
+    LOG_USER("scheduled from task %d to task %d, ctx %p", prev_task->pid, cur_task->pid, cur_task->context);
+    // printf("scheduled from task %d to task %d, ctx %p, %d\n", prev_task->pid, cur_task->pid, cur_task->context, ev.event);
     return cur_task->context;
 }
 

@@ -92,16 +92,15 @@ static inline bool sane_context(Context *ctx) {
   return true;
 }
 
-#define cur_task current[cpu_current()]
-
 extern spinlock_t *task_list_lk;
 
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 
 static void debug_task_list() {
   // kmt->spin_lock(task_list_lk);
+  // int cnt = 0;
   // for_list(task_t_ptr, it, task_list) {
-  //   LOG_INFO("task %d: %s, status: %d", cnt, it->elem->name, it->elem->status);
+  //   LOG_USER("task %d: %d(%s), status: %d", cnt, it->elem->pid, it->elem->name, it->elem->status);
   //   cnt++;
   // }
   // kmt->spin_unlock(task_list_lk);
@@ -109,7 +108,7 @@ static void debug_task_list() {
 
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
-  LOG_USER("task (%s)%p, ctx at %p, rip %x, intr type %d", cur_task->name, cur_task, context, context->rip, ev.event);
+  // LOG_USER("task (%s)%p, ctx at %p, rip %x, intr type %d", cur_task->name, cur_task, context, context->rip, ev.event);
   debug_task_list();
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
@@ -121,7 +120,7 @@ Context *os_trap(Event ev, Context *context) {
   }
   panic_on(!next, "returning NULL context");
   panic_on(!sane_context(next), "returning to invalid context");
-  LOG_USER("trap returning %p with rip %x", next, next->rip);
+  // LOG_USER("trap returning %p with rip %x", next, next->rip);
   TRACE_EXIT;
   return next;
 }

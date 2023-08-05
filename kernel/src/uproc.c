@@ -68,6 +68,12 @@ static Context *syscall_handler(Event ev, Context *context) {
   iset(false);
   if (cur_task) {
 	cur_task->context = syscall_context;
+	if (cur_task != cur_last) { // deal with re-entry
+		if (cur_last && cur_last != cur_task) {
+			atomic_xchg(&cur_last->running, 0); // UNLOCK running
+		}
+		cur_last = cur_task;
+	}
   }
   return NULL;
 }
@@ -142,8 +148,11 @@ void uproc_init() {
   task_t *task = new_task(0);
   init_alloc(task);
   task->status = RUNNABLE;
-  panic_on(task->pid != 1, "first uproc id not 1");
-  LOG_INFO("%p", task->context->rsp);
+//   panic_on(task->pid != 1, "first uproc id not 1");
+//   LOG_INFO("%p", task->context->rsp);
+//   task_t *task2 = new_task(0);
+//   init_alloc(task2);
+//   task2->status = RUNNABLE;
 }
 
 int uproc_kputc(task_t *task, char ch) {
@@ -155,7 +164,6 @@ int uproc_fork(task_t *father) {
 	iset(false);
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
-	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 	task_t *son = new_task(ppid);
 	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
@@ -182,8 +190,10 @@ int uproc_fork(task_t *father) {
 
 	son->status = RUNNABLE;
 
+	int pid = son->pid;
+
 	iset(true);
-	return son->pid;
+	return pid;
 }
 
 int uproc_wait(task_t *task, int *status) {

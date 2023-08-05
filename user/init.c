@@ -33,39 +33,34 @@ void puti64(int64_t x) {
 
 int main() {
   // Example:
-  kputc('H');
-  kputc('e');
-  kputc('l');
-  kputc('l');
-  kputc('o');
-  kputc(',');
-  kputc(' ');
-  kputc('w');
-  kputc('o');
-  kputc('r');
-  kputc('l');
-  kputc('d');
-  kputc('!');
-  kputc('\n');
-  int p = getpid();
-  puti(p);
-  kputc('\n');
-  int64_t lt = 0;
+  // kputc('H');
+  // kputc('e');
+  // kputc('l');
+  // kputc('l');
+  // kputc('o');
+  // kputc(',');
+  // kputc(' ');
+  // kputc('w');
+  // kputc('o');
+  // kputc('r');
+  // kputc('l');
+  // kputc('d');
+  // kputc('!');
+  // kputc('\n');
   int fk = fork();
   kputc('0' + fk);
-  kputc('\n');
   int fk2 = fork();
+  int p = getpid();
   kputc('0' + fk2);
-  kputc('\n');
+  int64_t lt = 0;
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {
-      puti64(t / 100);
+      puti(p);
       lt = t;
       // if (fk && t / 100 == 10) {
       //   kill(fk);
       // }
-      kputc(' ');
     }
   }
   return p;

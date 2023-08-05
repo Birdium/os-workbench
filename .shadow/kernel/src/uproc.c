@@ -44,7 +44,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
   void *pa = pmm->alloc(as->pgsize);
   void *va = (void*)(ev.ref & pg_mask);
   printf("task: %s, %s, %d, %d\n", cur_task->name, ev.msg, ev.cause, ev.ref);
-  printf("%p %p %p\n", as, va, ev.ref);
+  printf("%p %p %p\n", as, pa, ev.ref);
   map(as, va, pa, MMAP_READ | MMAP_WRITE);
   return NULL;
 }

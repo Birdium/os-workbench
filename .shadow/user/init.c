@@ -53,7 +53,7 @@ int main() {
   while(1){
     // int64_t t = uptime();
     // puti64(t);
-    kputc(' ');
+    // kputc(' ');
   }
   return p;
 }

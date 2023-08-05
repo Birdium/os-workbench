@@ -160,8 +160,8 @@ int uproc_sleep(task_t *task, int seconds) {
 }
 int64_t uproc_uptime(task_t *task) {
 	int64_t time = io_read(AM_TIMER_UPTIME).us / 1000;
-	printf("%p\n", time);
-  	return io_read(AM_TIMER_UPTIME).us / 1000;
+	// printf("%p\n", time);
+  	return time;
 }
 
 MODULE_DEF(uproc) = {

@@ -44,7 +44,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
   void *pa = pmm->alloc(as->pgsize);
   void *va = (void*)(ev.ref & pg_mask);
   printf("task: %s, %s, %d, %d\n", cur_task->name, ev.msg, ev.cause, ev.ref);
-  printf("%p %p %p\n", as, pa, ev.ref);
+  printf("%p %p %p(%p)\n", as, pa, va, ev.ref);
   map(as, va, pa, MMAP_READ | MMAP_WRITE);
   return NULL;
 }
@@ -80,7 +80,6 @@ void uproc_init() {
 		pinfo[i].valid = 0;
 	}
 	task_t *task = pmm->alloc(sizeof(task_t));
-	LOG_INFO("%p", task->context->rsp);
 	int pid = pid_alloc(); 
 	kmt_ucreate(task, "init", pid, 0);
 	init_alloc(task);

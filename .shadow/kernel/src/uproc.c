@@ -107,7 +107,7 @@ void init_alloc(task_t *init_task) {
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
     LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
            pa + offset, MMAP_READ | MMAP_WRITE);
-    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+    map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }
   memcpy(pa, _init, _init_len);
   return;
@@ -129,11 +129,9 @@ void uproc_init() {
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 0;
   }
-  task_t *task = pmm->alloc(sizeof(task_t));
-  int pid = pid_alloc();
-  kmt_ucreate(task, "init", pid, 0);
+  task_t *task = new_task(0);
   init_alloc(task);
-  panic_on(pid != 1, "first uproc id not 1");
+  panic_on(task->pid != 1, "first uproc id not 1");
   LOG_INFO("%p", task->context->rsp);
   // TODO: finish init
 }

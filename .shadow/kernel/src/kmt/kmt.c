@@ -41,7 +41,7 @@ static inline task_t *poll_rand_task() {
     static int cnt = 0;
     if (cnt == 1000) {
         for (int i = 0; i < task_cnt; i++) {
-            printf("[%d, %d]", task_list[i]->status);
+            printf("[%d]", task_list[i]->status);
         }
     }
     cnt++;

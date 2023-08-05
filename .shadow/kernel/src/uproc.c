@@ -36,7 +36,7 @@ static Context *syscall_handler(Event ev, Context *context) {
   iset(true);
   switch (context->GPRx) {
 	case SYS_kputc: {
-		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
+		context->GPRx = uproc->kputc(NULL, context->GPR1); 
 	} break;
 	case SYS_fork: {
 		context->GPRx = uproc->fork(cur_task); 

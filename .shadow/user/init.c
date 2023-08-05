@@ -3,6 +3,20 @@
 
 int main() {
   // Example:
+  kputc('H');
+  kputc('e');
+  kputc('l');
+  kputc('l');
+  kputc('o');
+  kputc(',');
+  kputc(' ');
+  kputc('w');
+  kputc('o');
+  kputc('r');
+  kputc('l');
+  kputc('d');
+  kputc('!');
+  kputc('\n');
   int p = getpid();
   char buf[10];
   memset(buf, 0, sizeof(buf));

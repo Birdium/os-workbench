@@ -179,6 +179,7 @@ int uproc_wait(task_t *task, int *status) {
 }
 
 int uproc_exit(task_t *task, int status) {
+	iset(false);
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
@@ -190,6 +191,7 @@ int uproc_exit(task_t *task, int status) {
 	// TODO: wake up
 	kmt->teardown(task);
 	kmt->spin_unlock(&pid_lock);
+	iset(true);
 	return status;
 }
 

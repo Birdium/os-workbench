@@ -149,7 +149,7 @@ int uproc_fork(task_t *father) {
 	memcpy(son->stack, father->stack, KMT_STACK_SIZE);
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;
-	son->context = father->context;
+	memcpy(son->context, father->context, sizeof(Context));
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;

@@ -154,11 +154,13 @@ int uproc_fork(task_t *father) {
 	int pgsize = as->pgsize;
 
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
+		LOG_USER("1");
 		void *va = it->elem.va;
 		void *fpa = it->elem.pa;
 		void *spa = pmm->alloc(pgsize);
 		memcpy(spa, fpa, pgsize);
 		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
+		pinfo[son->pid].mappings->push_back(pinfo[son->pid].mappings, it->elem);
 	}
 	return son->pid;
 }

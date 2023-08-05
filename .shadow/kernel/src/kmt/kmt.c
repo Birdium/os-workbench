@@ -66,6 +66,7 @@ static inline task_t *poll_rand_task() {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
+    task_t *prev_task = cur_task;
     panic_on(cur_task == NULL, "no available task");
     if (cur_task->status == KILLED) {
         uproc->exit(cur_task, 0);
@@ -85,7 +86,8 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     default:
     //         break;
     // }
-    // LOG_USER("scheduled to task: (%s)%p, ctx %p", cur_task->name, cur_task, cur_task->context);
+    // LOG_USER("scheduled from task %d to task %d, ctx %p", prev_task->pid, cur_task->pid, cur_task->context);
+    printf("scheduled from task %d to task %d, ctx %p\n", prev_task->pid, cur_task->pid, cur_task->context);
     return cur_task->context;
 }
 

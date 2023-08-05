@@ -35,7 +35,7 @@ static int pid_alloc() {
 static Context *syscall_handler(Event ev, Context *context) {
   Context *syscall_context = context;
   iset(true);
-  for (volatile int i = 1; i < 100000; i++);
+//   for (volatile int i = 1; i < 100000; i++);
   switch (syscall_context->GPRx) {
 	case SYS_kputc: {
 		syscall_context->GPRx = uproc->kputc(cur_task, syscall_context->GPR1); 

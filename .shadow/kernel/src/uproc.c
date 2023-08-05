@@ -84,6 +84,7 @@ void uproc_init() {
 	kmt_ucreate(task, "init", pid, 0);
 	init_alloc(task);
 	panic_on(pid != 1, "first uproc id not 1");
+	LOG_INFO("%p", task->context->rsp);
 	// TODO: finish init
 }
 

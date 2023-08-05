@@ -56,8 +56,8 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
-    if (result == cur_idle) {
-        panic("1");
+    if (task_list[0]->running == 1 && task_list[1]->running == 1) {
+        printf("%p\n", result);
     }
     // // fixed version
     // for (int i = 0; i < task_cnt; i++) {

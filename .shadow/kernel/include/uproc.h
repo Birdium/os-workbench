@@ -19,7 +19,7 @@ DEF_LIST(mapping_t);
 
 typedef struct pid_entry {
 	int valid;
-	task_t task;
+	task_t *task;
 	mapping_t_list *mappings;
 } pid_entry_t;
 

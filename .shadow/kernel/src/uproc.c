@@ -181,7 +181,7 @@ int uproc_exit(task_t *task, int status) {
 }
 
 int uproc_kill(task_t *task, int pid) {
-	panic("TODO");
+	pinfo[pid].task->status = KILLED;
 	return 0;
 }
 

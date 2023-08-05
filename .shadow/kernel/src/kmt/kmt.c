@@ -58,6 +58,10 @@ static inline task_t *poll_rand_task() {
 
 static Context *kmt_schedule(Event ev, Context *context) {
     panic_on(cur_task == NULL, "no available task");
+    if (cur_task->status == KILLED) {
+        uproc->exit(cur_task, 0);
+        cur_task = NULL;
+    }
     // switch (ev.event) {
     //     case EVENT_YIELD: case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
     //     // schedule to other tasks

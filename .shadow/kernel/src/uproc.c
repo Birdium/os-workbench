@@ -66,9 +66,9 @@ static Context *syscall_handler(Event ev, Context *context) {
 	} break;
   }
   iset(false);
-//   if (cur_task) {
+  if (cur_task) {
 	cur_task->context = syscall_context;
-//   }
+  }
   return NULL;
 }
 

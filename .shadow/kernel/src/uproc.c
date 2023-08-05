@@ -153,7 +153,6 @@ int uproc_fork(task_t *father) {
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;
-	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;
@@ -163,6 +162,10 @@ int uproc_fork(task_t *father) {
 		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
 		pinfo[son->pid].mappings->push_back(pinfo[son->pid].mappings, it->elem);
 	}
+
+	int pid = son->pid;
+
+	LOG_USER("%d %d %d %d", ppid, pinfo[ppid].mappings->size, pid, pinfo[pid].mappings->size);
 	return son->pid;
 }
 

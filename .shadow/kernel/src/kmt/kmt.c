@@ -38,7 +38,7 @@ static inline task_t *poll_rand_task() {
     task_t *result = cur_idle;
     if (task_cnt == 0) return result;  
     // rand version
-    printf("%d\n", task_cnt);
+    printf("%d", task_cnt + 2);
     static const int round = 2; // choose task_cnt times for X round
     for (int i = 0; i < task_cnt * round; i++) {
         int idx = rand() % task_cnt;

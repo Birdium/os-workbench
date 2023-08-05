@@ -56,7 +56,7 @@ static inline task_t *poll_rand_task() {
         if (task->status != SLEEPING && (task == cur_task || atomic_xchg(&task->running, 1) == 0)) { // atomic set task running 
             if (task != cur_task) {
                 
-        printf("locked task %d\n", cur_last->pid);
+                printf("locked task %d\n", task->pid);
             }
             result = task;
             break;

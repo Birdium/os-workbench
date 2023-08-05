@@ -67,7 +67,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot) {
-	AddrSpace *as = &(cur_task->as);
+	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	mapping_t_list *mp_list = pinfo[pid].mappings;
 	panic_on(mp_list == 0, "invalid task mappings");

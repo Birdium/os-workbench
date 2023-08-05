@@ -163,6 +163,7 @@ int uproc_fork(task_t *father) {
 		void *fpa = it->elem.pa;
 		void *spa = pmm->alloc(pgsize);
 		memcpy(spa, fpa, pgsize);
+		LOG_USER("%p %p %p", va, fpa, spa);
 		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
 	}
 

@@ -128,6 +128,7 @@ void uproc_init() {
   }
   task_t *task = new_task(0);
   init_alloc(task);
+  task->status = RUNNABLE;
   panic_on(task->pid != 1, "first uproc id not 1");
   LOG_INFO("%p", task->context->rsp);
   // TODO: finish init
@@ -151,6 +152,7 @@ int uproc_fork(task_t *father) {
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;
+
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;

@@ -129,7 +129,12 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
 
 int kmt_ucreate(task_t *task, const char *name, pid_t pid, pid_t ppid) {
     task->name = name;
-    task->status = RUNNABLE;
+    // if (runnable) {
+    //     task->status = RUNNABLE;
+    // }
+    // else {
+        task->status = SLEEPING;
+    // }
     task->stack = pmm->alloc(KMT_STACK_SIZE);
     task->pid = pid;
     task->ppid = ppid;

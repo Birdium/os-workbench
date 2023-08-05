@@ -1,5 +1,4 @@
 #include "ulib.h"
-#include <string.h>
 
 int main() {
   // Example:

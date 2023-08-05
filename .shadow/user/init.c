@@ -51,8 +51,8 @@ int main() {
   puti(p);
   kputc('\n');
   while(1){
-    int64_t t = uptime();
-    puti64(t);
+    // int64_t t = uptime();
+    // puti64(t);
     kputc(' ');
   }
   return p;

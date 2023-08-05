@@ -67,9 +67,11 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot) {
-	// int pid = task->pid;
+	int pid = task->pid;
 	AddrSpace *as = &(cur_task->as);
-	
+	mapping_t_list *mp_list = pinfo[pid].mappings;
+	panic_on(mp_list == 0, "invalid task mappings");
+	mp_list->push_back(mp_list, (mapping_t){.va = va, .pa = pa});
 	map(as, va, pa, prot);
 }
 
@@ -105,13 +107,13 @@ void init_alloc(task_t *init_task) {
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
     LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
            pa + offset, MMAP_READ | MMAP_WRITE);
-    map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }
   memcpy(pa, _init, _init_len);\
   return;
 }
 
-task_t *task_init(pid_t ppid) {
+task_t *new_task(pid_t ppid) {
   task_t *task = pmm->alloc(sizeof(task_t));
   int pid = pid_alloc();
   kmt_ucreate(task, "init", pid, ppid);
@@ -127,7 +129,7 @@ void uproc_init() {
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 0;
   }
-  task_t *task = task_init(0);
+  task_t *task = new_task(0);
   init_alloc(task);
   panic_on(task->pid != 1, "first uproc id not 1");
   LOG_INFO("%p", task->context->rsp);

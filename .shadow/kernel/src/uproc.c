@@ -184,8 +184,10 @@ int uproc_fork(task_t *father) {
 
 	son->status = RUNNABLE;
 
+	int pid = son->pid;
+
 	iset(true);
-	return son->pid;
+	return pid;
 }
 
 int uproc_wait(task_t *task, int *status) {

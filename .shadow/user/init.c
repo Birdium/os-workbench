@@ -53,11 +53,9 @@ int main() {
   int64_t lt = 0;
   if (fork() == 0) {
     kputc('1');
-    kputc('\n');
   }
   else {
     kputc('2');
-    kputc('\n');
   }
   while(1){
     int64_t t = uptime();

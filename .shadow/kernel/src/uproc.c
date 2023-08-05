@@ -72,8 +72,8 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot) {
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
 	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
-	LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 	map(as, va, pa, prot);
+	LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
 static Context *pagefault_handler(Event ev, Context *context) {

@@ -51,12 +51,7 @@ int main() {
   puti(p);
   kputc('\n');
   int64_t lt = 0;
-  if (fork() == 0) {
-    kputc('1');
-  }
-  else {
-    kputc('2');
-  }
+  kputc('0' + fork());
   while(1){
     int64_t t = uptime();
     if (t - lt >= 1000) {

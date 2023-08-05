@@ -1,4 +1,5 @@
 #include "x86-qemu.h"
+#include <stdio.h>
 
 const struct mmu_config mmu = {
   .pgsize = 4096,
@@ -90,6 +91,7 @@ bool vme_init(void *(*_pgalloc)(int size), void (*_pgfree)(void *)) {
   panic_on(cpu_current() != 0, "init VME in non-bootstrap CPU");
   pgalloc = _pgalloc;
   pgfree  = _pgfree;
+  printf("111\n");
 
 #if __x86_64__
   kpt = (void *)PML4_ADDR;

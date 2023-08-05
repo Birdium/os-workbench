@@ -34,7 +34,6 @@ static int pid_alloc() {
 
 static Context *syscall_handler(Event ev, Context *context) {
   // TODO: deal with syscall
-  printf("%d", ienabled());
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(cur_task, context->GPR1); 

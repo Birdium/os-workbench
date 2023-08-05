@@ -158,11 +158,10 @@ int uproc_fork(task_t *father) {
 	iset(false);
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
-	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 	task_t *son = new_task(ppid);
 	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
-	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
+	memcpy(son->stack, father->stack, KMT_STACK_SIZE);
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;
 	memcpy(son->context, father->context, sizeof(Context));

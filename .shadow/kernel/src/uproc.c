@@ -39,6 +39,9 @@ static Context *syscall_handler(Event ev, Context *context) {
 
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with pgflt
+//   cur_task->as;
+//   void *pa = pmm->alloc(cur_task->as.pgsize);
+//   void *va = ev
   return NULL;
 }
 

@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <kmt.h>
 
-extern task_t *current[MAX_CPU_NUM];
 extern spinlock_t *task_list_lk;
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);
 

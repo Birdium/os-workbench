@@ -43,6 +43,7 @@ typedef struct irq {
   handler_t handler;
 } irq_t;
 
+extern task_t *current[MAX_CPU_NUM];
 #define cur_task current[cpu_current()]
 
 #endif

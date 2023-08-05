@@ -53,7 +53,6 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
-    printf("%p %p\n", cur_task, result);
     // // fixed version
     // for (int i = 0; i < task_cnt; i++) {
     //     if (task_list[i]->status != SLEEPING) {

@@ -141,9 +141,27 @@ int uproc_kputc(task_t *task, char ch) {
   return 0;
 }
 
-int uproc_fork(task_t *task) {
-	panic("TODO");
-	return 0;
+int uproc_fork(task_t *father) {
+	int ppid = father->pid;
+	task_t *son = new_task(ppid);
+	// memcpy(son->stack, father->stack);
+	uintptr_t rsp0 = son->context->rsp0;
+	void *cr3 = son->context->cr3;
+	son->context = father->context;
+	son->context->rsp0 = rsp0;
+	son->context->cr3 = cr3;
+
+	AddrSpace *as = &(cur_task->as);
+	int pgsize = as->pgsize;
+
+	for_list(mapping_t, it, pinfo[ppid].mappings) {
+		void *va = it->elem.va;
+		void *fpa = it->elem.pa;
+		void *spa = pmm->alloc(pgsize);
+		memcpy(spa, fpa, pgsize);
+		pgnewmap(cur_task, va, spa, MMAP_READ | MMAP_WRITE);
+	}
+	return son->pid;
 }
 
 int uproc_wait(task_t *task, int *status) {

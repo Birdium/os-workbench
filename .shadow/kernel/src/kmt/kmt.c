@@ -44,9 +44,6 @@ static inline task_t *poll_rand_task() {
     //     cnt = 0;
     // }
     // cnt++;
-    if (task_list[0]->running == 1 && task_list[1]->running == 1) {
-        printf("[11 %p]\n", cur_task);
-    }
     static const int round = 2; // choose task_cnt times for X round
     for (int i = 0; i < task_cnt * round; i++) {
         int idx = rand() % task_cnt;
@@ -56,9 +53,7 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
-    if (task_list[0]->running == 1 && task_list[1]->running == 1) {
-        printf("%p %p\n", cur_task, result);
-    }
+    printf("%p %p\n", cur_task, result);
     // // fixed version
     // for (int i = 0; i < task_cnt; i++) {
     //     if (task_list[i]->status != SLEEPING) {

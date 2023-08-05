@@ -33,34 +33,41 @@ static int pid_alloc() {
 }
 
 static Context *syscall_handler(Event ev, Context *context) {
-  switch (context->GPRx) {
+  Context *syscall_context = context;
+  iset(true);
+//   for (volatile int i = 1; i < 100000; i++);
+  switch (syscall_context->GPRx) {
 	case SYS_kputc: {
-		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
+		syscall_context->GPRx = uproc->kputc(cur_task, syscall_context->GPR1); 
 	} break;
 	case SYS_fork: {
-		context->GPRx = uproc->fork(cur_task); 
+		syscall_context->GPRx = uproc->fork(cur_task); 
 	} break;
 	case SYS_wait: {
-		context->GPRx = uproc->wait(cur_task, (int*)context->GPR1);
+		syscall_context->GPRx = uproc->wait(cur_task, (int*)syscall_context->GPR1);
 	} break;
 	case SYS_exit: {
-		context->GPRx = uproc->exit(cur_task, context->GPR1);	
+		syscall_context->GPRx = uproc->exit(cur_task, syscall_context->GPR1);	
 	} break;
 	case SYS_kill: {
-		context->GPRx = uproc->kill(cur_task, context->GPR1);	
+		syscall_context->GPRx = uproc->kill(cur_task, syscall_context->GPR1);	
 	} break;
 	case SYS_mmap: {
-		context->GPRx = (uint64_t)uproc->mmap(cur_task, (void*)context->GPR1, context->GPR2, context->GPR3, context->GPR4);
+		syscall_context->GPRx = (uint64_t)uproc->mmap(cur_task, (void*)syscall_context->GPR1, syscall_context->GPR2, syscall_context->GPR3, syscall_context->GPR4);
 	} break;
 	case SYS_getpid: {
-		context->GPRx = uproc->getpid(cur_task); 
+		syscall_context->GPRx = uproc->getpid(cur_task); 
 	} break;
 	case SYS_sleep: {
-		context->GPRx = uproc->sleep(cur_task, context->GPR1); 
+		syscall_context->GPRx = uproc->sleep(cur_task, syscall_context->GPR1); 
 	} break;
 	case SYS_uptime: {
-		context->GPRx = uproc->uptime(cur_task); 
+		syscall_context->GPRx = uproc->uptime(cur_task); 
 	} break;
+  }
+  iset(false);
+  if (cur_task) {
+	cur_task->context = syscall_context;
   }
   return NULL;
 }
@@ -118,10 +125,16 @@ task_t *new_task(pid_t ppid) {
   return task;
 }
 
+static Context *error_handler(Event ev, Context *context) {
+	panic(ev.msg);
+	return NULL;
+}
+
 void uproc_init() {
   vme_init((void *(*)(int))pmm->alloc, pmm->free);
   kmt->spin_init(&pid_lock, "pid lock");
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
+  os->on_irq(0, EVENT_ERROR, error_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 1;
@@ -139,6 +152,7 @@ int uproc_kputc(task_t *task, char ch) {
 }
 
 int uproc_fork(task_t *father) {
+	iset(false);
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
 	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
@@ -168,6 +182,7 @@ int uproc_fork(task_t *father) {
 
 	son->status = RUNNABLE;
 
+	iset(true);
 	return son->pid;
 }
 
@@ -177,6 +192,7 @@ int uproc_wait(task_t *task, int *status) {
 }
 
 int uproc_exit(task_t *task, int status) {
+	iset(false);
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
@@ -188,11 +204,14 @@ int uproc_exit(task_t *task, int status) {
 	// TODO: wake up
 	kmt->teardown(task);
 	kmt->spin_unlock(&pid_lock);
+	iset(true);
 	return status;
 }
 
 int uproc_kill(task_t *task, int pid) {
+	iset(false);
 	pinfo[pid].task->status = KILLED;
+	iset(true);
 	return 0;
 }
 

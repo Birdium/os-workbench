@@ -42,7 +42,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
 //   AddrSpace *as = cur_task->as;
 //   void *pa = pmm->alloc(as->pgsize);
 //   void *va = ;
-//   printf("%s, %p, %p\n", ev.msg, ev.cause, ev.ref);
+  printf("task: %s, %s, %p, %p\n", cur_task->name, ev.msg, ev.cause, ev.ref);
   return NULL;
 }
 
@@ -61,7 +61,7 @@ void init_alloc(task_t *init_task) {
 	void *pa = pmm->alloc(_init_len);
 	void *va = as->area.start;
 	for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-		printf("%p <- %p, PROT: %d\n", va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+		printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 		map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 	}
 	return;

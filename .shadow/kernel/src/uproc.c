@@ -152,7 +152,7 @@ int uproc_fork(task_t *father) {
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;
-	LOG_USER("1");
+	LOG_USER("%d", pinfo[ppid].mappings->size);
 
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;

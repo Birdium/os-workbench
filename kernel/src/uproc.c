@@ -18,7 +18,7 @@ static int next_pid = 1;
 static int pid_alloc() {
   kmt->spin_lock(&pid_lock);
   int pid = next_pid;
-  panic_on(pinfo[pid].valid, "NEXT_PID INVALID");
+  panic_on(!pinfo[pid].valid, "NEXT_PID INVALID");
   pinfo[pid].valid = 0;
   for (next_pid = pid + 1; next_pid != pid; next_pid++) {
     if (pinfo[next_pid].valid) {
@@ -27,7 +27,7 @@ static int pid_alloc() {
     if (next_pid == UPROC_PID_NUM - 1)
       next_pid = 0;
   }
-  panic_on(pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
+  panic_on(!pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
   kmt->spin_unlock(&pid_lock);
   return pid;
 }
@@ -67,12 +67,13 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot) {
+    LOG_USER("%d[%s]: %p <- %p", task->pid, task->name, va, pa);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
-	mapping_t_list *mp_list = pinfo[pid].mappings;
-	panic_on(mp_list == 0, "invalid task mappings");
-	mp_list->push_back(mp_list, (mapping_t){.va = va, .pa = pa});
+	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
+	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
 	map(as, va, pa, prot);
+	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
 static Context *pagefault_handler(Event ev, Context *context) {
@@ -81,8 +82,8 @@ static Context *pagefault_handler(Event ev, Context *context) {
   int pg_mask = ~(as->pgsize - 1);
   void *pa = pmm->alloc(as->pgsize);
   void *va = (void *)(ev.ref & pg_mask);
-  LOG_USER("task: %s, %s, %d\n", cur_task->name, ev.msg, ev.cause);
-  LOG_USER("%p %p %p(%p)\n", as, pa, va, ev.ref);
+  LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+  LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE);
   return NULL;
 }
@@ -97,16 +98,12 @@ static inline size_t align(size_t size) {
   return size + 1;
 }
 
-
-
 void init_alloc(task_t *init_task) {
   AddrSpace *as = &(init_task->as);
   int pa_size = _init_len > as->pgsize ? _init_len : as->pgsize;
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
-           pa + offset, MMAP_READ | MMAP_WRITE);
     pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }
   memcpy(pa, _init, _init_len);
@@ -127,10 +124,11 @@ void uproc_init() {
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
-    pinfo[i].valid = 0;
+    pinfo[i].valid = 1;
   }
   task_t *task = new_task(0);
   init_alloc(task);
+  task->status = RUNNABLE;
   panic_on(task->pid != 1, "first uproc id not 1");
   LOG_INFO("%p", task->context->rsp);
   // TODO: finish init
@@ -141,9 +139,37 @@ int uproc_kputc(task_t *task, char ch) {
   return 0;
 }
 
-int uproc_fork(task_t *task) {
-	panic("TODO");
-	return 0;
+int uproc_fork(task_t *father) {
+	LOG_USER("forking %d[%s]", father->pid, father->name);
+	int ppid = father->pid;
+	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
+	task_t *son = new_task(ppid);
+	LOG_USER("%p %p", son->context, father->context);
+	son->name = father->name;
+	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
+	uintptr_t rsp0 = son->context->rsp0;
+	void *cr3 = son->context->cr3;
+	memcpy(son->context, father->context, sizeof(Context));
+	son->context->rsp0 = rsp0;
+	son->context->cr3 = cr3;
+	son->context->GPRx = 0;
+	LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
+
+	AddrSpace *as = &(cur_task->as);
+	int pgsize = as->pgsize;
+
+	for_list(mapping_t, it, pinfo[ppid].mappings) {
+		void *va = it->elem.va;
+		void *fpa = it->elem.pa;
+		void *spa = pmm->alloc(pgsize);
+		memcpy(spa, fpa, pgsize);
+		LOG_USER("%p %p %p", va, fpa, spa);
+		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
+	}
+
+	son->status = RUNNABLE;
+
+	return son->pid;
 }
 
 int uproc_wait(task_t *task, int *status) {

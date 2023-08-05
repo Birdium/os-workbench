@@ -51,10 +51,12 @@ int main() {
   puti(p);
   kputc('\n');
   int64_t lt = 0;
+  kputc('0' + fork());
+  kputc('\n');
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {
-      puti64(t);
+      puti64(t / 100);
       lt = t;
       kputc(' ');
     }

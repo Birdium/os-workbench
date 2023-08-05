@@ -60,6 +60,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     panic_on(cur_task == NULL, "no available task");
     if (cur_task->status == KILLED) {
         uproc->exit(cur_task, 0);
+        cur_task = NULL;
     }
     // switch (ev.event) {
     //     case EVENT_YIELD: case EVENT_IRQ_TIMER: case EVENT_IRQ_IODEV:
@@ -77,7 +78,6 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //         break;
     // }
     LOG_USER("scheduled to task: (%s)%p, ctx %p", cur_task->name, cur_task, cur_task->context);
-    panic_on(!cur_task->context, "111");
     return cur_task->context;
 }
 

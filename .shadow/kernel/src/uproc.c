@@ -39,7 +39,7 @@ static Context *syscall_handler(Event ev, Context *context) {
   iset(true);
   switch (context->GPRx) {
 	case SYS_kputc: {
-		context->GPRx = uproc->kputc(NULL, context->GPR1); 
+		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
 	} break;
 	case SYS_fork: {
 		context->GPRx = uproc->fork(cur_task); 
@@ -60,10 +60,10 @@ static Context *syscall_handler(Event ev, Context *context) {
 		context->GPRx = uproc->getpid(cur_task); 
 	} break;
 	case SYS_sleep: {
-		context->GPRx = uproc->sleep(NULL, context->GPR1); 
+		context->GPRx = uproc->sleep(cur_task, context->GPR1); 
 	} break;
 	case SYS_uptime: {
-		context->GPRx = uproc->uptime(NULL); 
+		context->GPRx = uproc->uptime(cur_task); 
 	} break;
   }
   iset(false);
@@ -211,7 +211,6 @@ int uproc_exit(task_t *task, int status) {
 
 int uproc_kill(task_t *task, int pid) {
 	iset(false);
-	printf("EXIT\n");
 	pinfo[pid].task->status = KILLED;
 	iset(true);
 	return 0;

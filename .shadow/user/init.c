@@ -53,7 +53,7 @@ int main() {
   int64_t lt = 0;
   while(1){
     int64_t t = uptime();
-    if (t - lt > 100) {
+    if (t - lt >= 100) {
       puti64(t);
       lt = t;
       kputc(' ');

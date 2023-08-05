@@ -144,7 +144,7 @@ int uproc_fork(task_t *father) {
 	int ppid = father->pid;
 	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 	task_t *son = new_task(ppid);
-	LOG_USER("%p %p", son, father);
+	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
 	// memcpy(son->stack, father->stack);
 	uintptr_t rsp0 = son->context->rsp0;

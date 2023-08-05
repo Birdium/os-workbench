@@ -60,8 +60,8 @@ void init_alloc(task_t *init_task) {
 	AddrSpace *as = &(init_task->as);
 	void *pa = pmm->alloc(_init_len);
 	void *va = as->area.start;
-	printf("%p %p\n", pa, va);
 	for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
+		printf("%p %p\n", va + offset, pa + offset);
 		map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 	}
 	return;

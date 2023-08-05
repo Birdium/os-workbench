@@ -76,7 +76,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     default:
     //         break;
     // }
-    LOG_INFO("scheduled to task: (%s)%p", cur_task->name, cur_task);
+    LOG_USER("scheduled to task: (%s)%p", cur_task->name, cur_task);
     return cur_task->context;
 }
 

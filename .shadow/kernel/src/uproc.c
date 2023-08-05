@@ -32,10 +32,10 @@ static int pid_alloc() {
   return pid;
 }
 
-// static Context syscall_context;
+static Context *syscall_context;
 
 static Context *syscall_handler(Event ev, Context *context) {
-//   memcpy(&syscall_context, context, sizeof(context));
+  syscall_context = context;
   iset(true);
   for (volatile int i = 1; i < 100000; i++) {}
   switch (context->GPRx) {
@@ -68,6 +68,9 @@ static Context *syscall_handler(Event ev, Context *context) {
 	} break;
   }
   iset(false);
+  if (cur_task) {
+	cur_task->context = syscall_context;
+  }
   return NULL;
 }
 

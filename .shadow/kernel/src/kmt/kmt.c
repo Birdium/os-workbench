@@ -27,8 +27,10 @@ static Context *kmt_context_save(Event ev, Context *context) {
     panic_on(!cur_task, "no valid task");
 
     cur_task->context = context; 
+    printf("task %d entered with type %d\n", cur_task->pid, ev.event);
     if (cur_last && cur_last != cur_task) {
         atomic_xchg(&cur_last->running, 0); // UNLOCK running
+        printf("unlocked task %d\n", cur_last->pid);
     }
     cur_last = cur_task;
     return NULL;

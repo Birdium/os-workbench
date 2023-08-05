@@ -132,7 +132,7 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 	return NULL;
 }
 
-int uproc_getpid(task_t *task) { return task->pid; }
+int uproc_getpid(task_t *task) { printf("%s, %d", task->name, task->pid); return task->pid; }
 
 int uproc_sleep(task_t *task, int seconds) {
 	panic("TODO");

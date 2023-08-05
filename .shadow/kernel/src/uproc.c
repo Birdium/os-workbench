@@ -150,6 +150,7 @@ int uproc_fork(task_t *father) {
 	son->context = father->context;
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
+	son->context->GPRx = 0;
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;

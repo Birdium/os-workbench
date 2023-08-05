@@ -61,7 +61,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 		context->GPRx = uproc->sleep(cur_task, context->GPR1); 
 	} break;
 	case SYS_uptime: {
-		// context->GPRx = uproc->uptime(cur_task); 
+		context->GPRx = uproc->uptime(cur_task); 
 	} break;
   }
   return NULL;

@@ -61,7 +61,6 @@ int main() {
       if (fk && t / 100 == 10) {
         kill(fk);
       }
-      kputc(' ');
     }
   }
   return p;

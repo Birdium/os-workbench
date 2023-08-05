@@ -27,7 +27,6 @@ static int pid_alloc() {
     if (next_pid == UPROC_PID_NUM - 1)
       next_pid = 0;
   }
-  LOG_USER("%d %d", pid, next_pid);
   panic_on(!pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
   kmt->spin_unlock(&pid_lock);
   return pid;

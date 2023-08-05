@@ -58,9 +58,9 @@ int main() {
     if (t - lt >= 100) {
       puti(p);
       lt = t;
-      if (fk && t / 100 == 10) {
-        kill(fk);
-      }
+      // if (fk && t / 100 == 10) {
+      //   kill(fk);
+      // }
     }
   }
   return p;

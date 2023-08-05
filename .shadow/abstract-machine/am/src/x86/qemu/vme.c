@@ -1,4 +1,5 @@
 #include "x86-qemu.h"
+#include <stdio.h>
 
 const struct mmu_config mmu = {
   .pgsize = 4096,
@@ -131,6 +132,7 @@ void protect(AddrSpace *as) {
   }
   as->pgsize = mmu.pgsize;
   as->area   = uvm_area;
+  printf("%p\n", as->area.start);
   as->ptr    = (void *)((uintptr_t)upt | PTE_P | PTE_U);
 }
 

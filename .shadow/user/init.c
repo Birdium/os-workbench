@@ -36,8 +36,7 @@ int main() {
   puti(p);
   kputc('\n');
   while(1){
-    int t = uptime();
-    puti(t);
+    puti(uptime());
     kputc(' ');
   }
   return p;

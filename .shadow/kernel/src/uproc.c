@@ -141,7 +141,6 @@ int uproc_kputc(task_t *task, char ch) {
 }
 
 int uproc_fork(task_t *father) {
-	iset(false);
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
 	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
@@ -171,7 +170,6 @@ int uproc_fork(task_t *father) {
 
 	son->status = RUNNABLE;
 
-	iset(true);
 	return son->pid;
 }
 
@@ -198,7 +196,9 @@ int uproc_exit(task_t *task, int status) {
 }
 
 int uproc_kill(task_t *task, int pid) {
+	iset(false);
 	pinfo[pid].task->status = KILLED;
+	iset(true);
 	return 0;
 }
 

@@ -43,8 +43,26 @@ static Context *syscall_handler(Event ev, Context *context) {
 		context->GPRx = uproc->fork(cur_task); 
 	} break;
 	case SYS_wait: {
-
-	}
+		
+	} break;
+	case SYS_exit: {
+		
+	} break;
+	case SYS_kill: {
+		
+	} break;
+	case SYS_mmap: {
+		
+	} break;
+	case SYS_getpid: {
+		
+	} break;
+	case SYS_sleep: {
+		
+	} break;
+	case SYS_uptime: {
+		
+	} break;
   }
   return NULL;
 }
@@ -132,7 +150,10 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 	return NULL;
 }
 
-int uproc_getpid(task_t *task) { printf("%s, %d\n", task->name, task->pid); return task->pid; }
+int uproc_getpid(task_t *task) { 
+	printf("%s, %d\n", task->name, task->pid); 
+	return task->pid; 
+}
 
 int uproc_sleep(task_t *task, int seconds) {
 	panic("TODO");

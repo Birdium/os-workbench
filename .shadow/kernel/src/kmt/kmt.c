@@ -57,7 +57,7 @@ static inline task_t *poll_rand_task() {
         }
     }
     if (task_list[0]->running == 1 && task_list[1]->running == 1) {
-        printf("%p\n", result);
+        printf("%p %p\n", cur_task, result);
     }
     // // fixed version
     // for (int i = 0; i < task_cnt; i++) {

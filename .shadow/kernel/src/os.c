@@ -109,6 +109,7 @@ static void debug_task_list() {
 
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
+  iset(false);
   LOG_USER("task (%s)%p, ctx at %p, rip %x, intr type %d", cur_task->name, cur_task, context, context->rip, ev.event);
   debug_task_list();
   Context *next = NULL;

@@ -42,7 +42,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
 //   AddrSpace *as = cur_task->as;
 //   void *pa = pmm->alloc(as->pgsize);
 //   void *va = ;
-  printf("%s, %p, %p\n", ev.msg, ev.cause, ev.ref);
+//   printf("%s, %p, %p\n", ev.msg, ev.cause, ev.ref);
   return NULL;
 }
 

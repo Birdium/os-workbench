@@ -42,16 +42,16 @@ static Context *syscall_handler(Event ev, Context *context) {
 		context->GPRx = uproc->fork(cur_task); 
 	} break;
 	case SYS_wait: {
-		
+		context->GPRx = uproc->wait(cur_task, (int*)context->GPR1);
 	} break;
 	case SYS_exit: {
-		
+		context->GPRx = uproc->exit(cur_task, context->GPR1);	
 	} break;
 	case SYS_kill: {
-		
+		context->GPRx = uproc->kill(cur_task, context->GPR1);	
 	} break;
 	case SYS_mmap: {
-		
+		context->GPRx = (uint64_t)uproc->mmap(cur_task, (void*)context->GPR1, context->GPR2, context->GPR3, context->GPR4);
 	} break;
 	case SYS_getpid: {
 		context->GPRx = uproc->getpid(cur_task); 

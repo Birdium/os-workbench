@@ -2,6 +2,7 @@
 #define UPROC_H
 
 #include "os.h"
+#include "list.h"
 
 #define MMAP_NONE  0x00000000 // no access
 #define MMAP_READ  0x00000001 // can read

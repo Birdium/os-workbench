@@ -50,10 +50,14 @@ int main() {
   int p = getpid();
   puti(p);
   kputc('\n');
+  int64_t lt = 0;
   while(1){
     int64_t t = uptime();
-    puti64(t);
-    kputc(' ');
+    if (t - lt > 100) {
+      puti64(t);
+      lt = t;
+      kputc(' ');
+    }
   }
   return p;
 }

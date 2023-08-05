@@ -150,6 +150,7 @@ int uproc_fork(task_t *father) {
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;
 	son->context = father->context;
+	son->context->rsp = father->context->rsp + son->stack - father->stack;
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;

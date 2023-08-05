@@ -61,7 +61,8 @@ static inline size_t align(size_t size) {
 
 void init_alloc(task_t *init_task) {
 	AddrSpace *as = &(init_task->as);
-	void *pa = pmm->alloc(_init_len);
+	int pa_size = _init_len > as->pgsize ? _init_len : as->pgsize;
+	void *pa = pmm->alloc(pa_size);
 	void *va = as->area.start;
 	for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
 		printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);

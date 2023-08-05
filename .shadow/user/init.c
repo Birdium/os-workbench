@@ -25,7 +25,7 @@ int main() {
     m *= 10;
   }
   for (int n = m; n != 0; n /= 10, p /= 10) {
-    kputc('0' + p / n);
+    kputc('0' + p / (n / 10));
   }
   while(1){
     uptime();

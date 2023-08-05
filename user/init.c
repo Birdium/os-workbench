@@ -1,6 +1,36 @@
 #include "ulib.h"
 #include <string.h>
 
+void puti(int x) {
+  char buf[10];
+  for (int i = 0; i < 10; i++) {
+    buf[i] = 0;
+  }
+  int idx = 0;
+  while (x) {
+    buf[idx++] = '0' + x % 10;
+    x /= 10;
+  }
+  for (int j = idx - 1; j >= 0; j--) {
+    kputc(buf[j]);
+  }
+}
+
+void puti64(int64_t x) {
+  char buf[10];
+  for (int i = 0; i < 10; i++) {
+    buf[i] = 0;
+  }
+  int idx = 0;
+  while (x) {
+    buf[idx++] = '0' + x % 10;
+    x /= 10;
+  }
+  for (int j = idx - 1; j >= 0; j--) {
+    kputc(buf[j]);
+  }
+}
+
 int main() {
   // Example:
   kputc('H');
@@ -18,17 +48,16 @@ int main() {
   kputc('!');
   kputc('\n');
   int p = getpid();
-  char buf[10];
-  memset(buf, 0, sizeof(buf));
-  int m = 1;
-  for (int q = p; q != 0; q /= 10) {
-    m *= 10;
-  }
-  for (int n = m; n != 0; n /= 10, p /= 10) {
-    kputc('0' + p / n);
-  }
+  puti(p);
+  kputc('\n');
+  int64_t lt = 0;
   while(1){
-    uptime();
+    int64_t t = uptime();
+    if (t - lt >= 100) {
+      puti64(t);
+      lt = t;
+      kputc(' ');
+    }
   }
   return p;
 }

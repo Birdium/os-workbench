@@ -114,6 +114,7 @@ task_t *new_task(pid_t ppid) {
   int pid = pid_alloc();
   kmt_ucreate(task, "init", pid, ppid);
   LIST_PTR_INIT(mapping_t, pinfo[pid].mappings);
+  pinfo[pid].task = task;
   return task;
 }
 
@@ -181,7 +182,6 @@ int uproc_exit(task_t *task, int status) {
 }
 
 int uproc_kill(task_t *task, int pid) {
-	printf("1wsdasf\n");
 	pinfo[pid].task->status = KILLED;
 	return 0;
 }

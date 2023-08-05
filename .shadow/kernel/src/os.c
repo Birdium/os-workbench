@@ -109,12 +109,12 @@ static void debug_task_list() {
 
 Context *os_trap(Event ev, Context *context) {
   TRACE_ENTRY;
-  iset(false);
   LOG_USER("task (%s)%p, ctx at %p, rip %x, intr type %d", cur_task->name, cur_task, context, context->rip, ev.event);
   debug_task_list();
   Context *next = NULL;
   for_list(irq_t, it, irq_list) {
     if (it->elem.event == EVENT_NULL || it->elem.event == ev.event) {
+      LOG_USER("t");
       Context *r = it->elem.handler(ev, context);
       panic_on(r && next, "returning multiple contexts");
       if (r) next = r;  

@@ -94,7 +94,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
+    LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
            pa + offset, MMAP_READ | MMAP_WRITE);
     map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }

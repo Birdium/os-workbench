@@ -39,6 +39,12 @@ static Context *syscall_handler(Event ev, Context *context) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
 	} break;
+	case SYS_fork: {
+		context->GPRx = uproc->fork(cur_task); 
+	} break;
+	case SYS_wait: {
+
+	}
   }
   return NULL;
 }
@@ -101,9 +107,51 @@ int uproc_kputc(task_t *task, char ch) {
   return 0;
 }
 
+int uproc_fork(task_t *task) {
+	panic("TODO");
+	return 0;
+}
+
+int uproc_wait(task_t *task, int *status) {
+	panic("TODO");
+	return 0;
+}
+
+int uproc_exit(task_t *task, int status) {
+	panic("TODO");
+	return 0;
+}
+
+int uproc_kill(task_t *task, int pid) {
+	panic("TODO");
+	return 0;
+}
+
+void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
+	panic("TODO");
+	return NULL;
+}
+
 int uproc_getpid(task_t *task) { return task->pid; }
+
+int uproc_sleep(task_t *task, int seconds) {
+	panic("TODO");
+	return 0;
+}
+int64_t uproc_uptime(task_t *task) {
+	panic("TODO");
+	return 0;
+}
 
 MODULE_DEF(uproc) = {
     .init = uproc_init,
     .kputc = uproc_kputc,
+	.fork = uproc_fork,
+	.wait = uproc_wait,
+	.exit = uproc_exit,
+	.kill = uproc_kill,
+	.mmap = uproc_mmap,
+	.getpid = uproc_getpid,
+	.sleep = uproc_sleep,
+	.uptime = uproc_uptime,
 };

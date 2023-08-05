@@ -32,13 +32,16 @@ static int pid_alloc() {
 }
 
 static Context *syscall_handler(Event ev, Context *context) {
-  // TODO: deal with syscall
-  LOG_INFO("%d", ienabled());
-  return NULL;
+	// TODO: deal with syscall
+	LOG_INFO("%d", ienabled());
+	switch (context->GPRx) {
+
+	}
+	return NULL;
 }
 
 static Context *pagefault_handler(Event ev, Context *context) {
-	// TODO: deal with pgflt
+	// TODO: deal with COW
 	AddrSpace *as = &(cur_task->as);
 	int pg_mask = ~(as->pgsize-1);
 	void *pa = pmm->alloc(as->pgsize);

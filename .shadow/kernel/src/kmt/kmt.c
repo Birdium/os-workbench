@@ -47,7 +47,6 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
-    panic_on(result->context == NULL, "111");
     // // fixed version
     // for (int i = 0; i < task_cnt; i++) {
     //     if (task_list[i]->status != SLEEPING) {
@@ -78,6 +77,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //         break;
     // }
     LOG_INFO("scheduled to task: (%s)%p", cur_task->name, cur_task);
+    panic_on(cur_task->context == NULL, "111");
     return cur_task->context;
 }
 

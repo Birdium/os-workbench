@@ -7,7 +7,7 @@
 #define CANARY_NUM 114514
 
 typedef struct task {
-  enum {SLEEPING, RUNNABLE} status;
+  enum {SLEEPING, RUNNABLE, KILLED} status;
   int running;
   const char *name;
   Context *context;
@@ -16,6 +16,7 @@ typedef struct task {
   // utask only
   pid_t pid;
   pid_t ppid;
+  bool killed;
   AddrSpace as;
   int canary;
 } task_t;

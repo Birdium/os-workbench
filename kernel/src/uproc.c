@@ -33,7 +33,6 @@ static int pid_alloc() {
 }
 
 static Context *syscall_handler(Event ev, Context *context) {
-  // TODO: deal with syscall
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
@@ -115,6 +114,7 @@ task_t *new_task(pid_t ppid) {
   int pid = pid_alloc();
   kmt_ucreate(task, "init", pid, ppid);
   LIST_PTR_INIT(mapping_t, pinfo[pid].mappings);
+  pinfo[pid].task = task;
   return task;
 }
 
@@ -131,7 +131,6 @@ void uproc_init() {
   task->status = RUNNABLE;
   panic_on(task->pid != 1, "first uproc id not 1");
   LOG_INFO("%p", task->context->rsp);
-  // TODO: finish init
 }
 
 int uproc_kputc(task_t *task, char ch) {
@@ -178,12 +177,21 @@ int uproc_wait(task_t *task, int *status) {
 }
 
 int uproc_exit(task_t *task, int status) {
-	panic("TODO");
-	return 0;
+	kmt->spin_lock(&pid_lock);
+	int pid = task->pid;
+	pinfo[pid].valid = 1;
+	for_list(mapping_t, it, pinfo[pid].mappings) {
+		void *pa = it->elem.pa;
+		pmm->free(pa);
+	}
+	pinfo[pid].mappings->free(pinfo[pid].mappings);
+	kmt->teardown(task);
+	kmt->spin_unlock(&pid_lock);
+	return status;
 }
 
 int uproc_kill(task_t *task, int pid) {
-	panic("TODO");
+	pinfo[pid].task->status = KILLED;
 	return 0;
 }
 

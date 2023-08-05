@@ -42,16 +42,16 @@ static Context *syscall_handler(Event ev, Context *context) {
 		context->GPRx = uproc->fork(cur_task); 
 	} break;
 	case SYS_wait: {
-		
+		context->GPRx = uproc->wait(cur_task, (int*)context->GPR1);
 	} break;
 	case SYS_exit: {
-		
+		context->GPRx = uproc->exit(cur_task, context->GPR1);	
 	} break;
 	case SYS_kill: {
-		
+		context->GPRx = uproc->kill(cur_task, context->GPR1);	
 	} break;
 	case SYS_mmap: {
-		
+		context->GPRx = (uint64_t)uproc->mmap(cur_task, (void*)context->GPR1, context->GPR2, context->GPR3, context->GPR4);
 	} break;
 	case SYS_getpid: {
 		context->GPRx = uproc->getpid(cur_task); 
@@ -94,7 +94,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
+    LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
            pa + offset, MMAP_READ | MMAP_WRITE);
     map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }

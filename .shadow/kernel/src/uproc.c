@@ -37,7 +37,6 @@ static Context *syscall_context;
 static Context *syscall_handler(Event ev, Context *context) {
   syscall_context = context;
   iset(true);
-  for (volatile int i = 1; i < 100000; i++) {}
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(NULL, context->GPR1); 

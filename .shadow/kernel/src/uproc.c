@@ -34,7 +34,7 @@ static int pid_alloc() {
 
 static Context *syscall_handler(Event ev, Context *context) {
   // TODO: deal with syscall
-  LOG_INFO("%d", ienabled());
+  printf("%d", ienabled());
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
@@ -160,7 +160,6 @@ int uproc_sleep(task_t *task, int seconds) {
 }
 int64_t uproc_uptime(task_t *task) {
 	panic("TODO");
-
 	int64_t time = io_read(AM_TIMER_UPTIME).us / 1000;
 	printf("%p\n", time);
   	return time;

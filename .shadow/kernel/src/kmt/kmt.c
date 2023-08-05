@@ -8,7 +8,6 @@
 #include <kmt.h>
 #include <stdio.h>
 
-extern task_t *current[MAX_CPU_NUM];
 task_t *idle_task[MAX_CPU_NUM];
 task_t *last_task[MAX_CPU_NUM];
 

@@ -45,6 +45,26 @@ static Context *pagefault_handler(Event ev, Context *context) {
   return NULL;
 }
 
+static inline size_t align(size_t size) {
+  size--;
+  size |= size >> 1;
+  size |= size >> 2;
+  size |= size >> 4;
+  size |= size >> 8;
+  size |= size >> 16;
+  return size + 1;
+}
+
+void init_alloc(task_t *init_task) {
+	AddrSpace *as = &(init_task->as);
+	void *pa = pmm->alloc(_init_len);
+	void *va = as->area.start;
+	for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
+		map(as, va + offset, pa + offset, MMAP_READ);
+	}
+	return;
+}
+
 void uproc_init() {
 	vme_init((void * (*)(int))pmm->alloc, pmm->free);
 	kmt->spin_init(&pid_lock, "pid lock");
@@ -56,6 +76,7 @@ void uproc_init() {
 	task_t *task = pmm->alloc(sizeof(task_t));
 	int pid = pid_alloc(); 
 	kmt_ucreate(task, "init", pid, 0);
+	init_alloc(task);
 	panic_on(pid != 1, "first uproc id not 1");
 	// TODO: finish init
 }

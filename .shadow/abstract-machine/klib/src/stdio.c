@@ -124,9 +124,15 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
             buf_len = strlen(buf);
           }
           break;
-        case 'x': case 'p': {
+        case 'x': {
             unsigned arg = va_arg(ap, unsigned);
             uitoa(arg, buf, 16);
+            buf_len = strlen(buf);
+          }
+          break;
+        case 'p': {
+            uint64_t arg = va_arg(ap, unsigned);
+            u64itoa(arg, buf, 16);
             buf_len = strlen(buf);
           }
           break;

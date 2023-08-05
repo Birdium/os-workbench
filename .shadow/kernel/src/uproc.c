@@ -67,6 +67,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot) {
+    LOG_USER("%s: %p <- %p", task->name, va, pa);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	mapping_t_list *mp_list = pinfo[pid].mappings;
@@ -97,16 +98,12 @@ static inline size_t align(size_t size) {
   return size + 1;
 }
 
-
-
 void init_alloc(task_t *init_task) {
   AddrSpace *as = &(init_task->as);
   int pa_size = _init_len > as->pgsize ? _init_len : as->pgsize;
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
-           pa + offset, MMAP_READ | MMAP_WRITE);
     pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }
   memcpy(pa, _init, _init_len);
@@ -144,6 +141,7 @@ int uproc_kputc(task_t *task, char ch) {
 int uproc_fork(task_t *father) {
 	int ppid = father->pid;
 	task_t *son = new_task(ppid);
+	son->name = father->name;
 	// memcpy(son->stack, father->stack);
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;

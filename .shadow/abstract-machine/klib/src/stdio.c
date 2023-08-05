@@ -131,7 +131,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           }
           break;
         case 'p': {
-            uint64_t arg = va_arg(ap, unsigned);
+            uint64_t arg = va_arg(ap, uint64_t);
             *buf = '0';
             *(buf + 1) = 'x';
             u64itoa(arg, buf + 2, 16);

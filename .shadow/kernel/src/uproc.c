@@ -158,7 +158,6 @@ int uproc_sleep(task_t *task, int seconds) {
 	return 0;
 }
 int64_t uproc_uptime(task_t *task) {
-	panic("TODO");
 	int64_t time = io_read(AM_TIMER_UPTIME).us / 1000;
 	printf("%p\n", time);
   	return time;

@@ -71,6 +71,23 @@ void uitoa(unsigned uval, char* dest, int base){
   }
 }
 
+void u64itoa(uint64_t uval, char* dest, int base){
+  char index[]="0123456789ABCDEF";
+  char *dp = dest;
+  if (uval){
+    while(uval){
+      *dp = index[uval % base];
+      uval /= base; ++dp; 
+    }
+  } else {*dp = index[0]; ++dp;}
+  *dp = '\0'; dp--;
+  while(dest < dp){
+    char tmp = *dest; *dest = *dp; *dp = tmp;
+    dp--; dest++;
+  }
+}
+
+
 void *malloc(size_t size) {
   // On native, malloc() will be called during initializaion of C runtime.
   // Therefore do not call panic() here, else it will yield a dead recursion:

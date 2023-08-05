@@ -182,6 +182,7 @@ int uproc_wait(task_t *task, int *status) {
 
 int uproc_exit(task_t *task, int status) {
 	iset(false);
+	printf("EXIT\n");
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;

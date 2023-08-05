@@ -32,10 +32,8 @@ static int pid_alloc() {
   return pid;
 }
 
-static Context *syscall_context;
-
 static Context *syscall_handler(Event ev, Context *context) {
-  syscall_context = context;
+  Context *syscall_context = context;
   iset(true);
   for (volatile int i = 1; i < 100000; i++);
   switch (syscall_context->GPRx) {

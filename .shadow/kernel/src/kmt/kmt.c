@@ -76,7 +76,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     default:
     //         break;
     // }
-    LOG_USER("scheduled to task: (%s)%p", cur_task->name, cur_task);
+    LOG_INFO("scheduled to task: (%s)%p", cur_task->name, cur_task);
     panic_on(!cur_task->context, "111");
     return cur_task->context;
 }
@@ -127,7 +127,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
     }
     task_list[task_cnt - 1] = task;
     kmt->spin_unlock(task_list_lk);
-    LOG_INFO("task created name: %s, entry: %p, addr: %p, stack: %p", name, entry, task, task->stack);
+    LOG_USER("task created name: %s, entry: %p, addr: %p, stack: %p", name, entry, task, task->stack);
     return 0;
 }
 

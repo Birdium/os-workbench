@@ -33,31 +33,30 @@ static int pid_alloc() {
 
 static Context *syscall_handler(Event ev, Context *context) {
   // TODO: deal with syscall
-//   LOG_INFO("%d", ienabled());
-printf("meow");
+  LOG_INFO("%d", ienabled());
   return NULL;
 }
 
 static Context *pagefault_handler(Event ev, Context *context) {
-  // TODO: deal with pgflt
-  AddrSpace *as = &(cur_task->as);
-  int pg_mask = ~(as->pgsize-1);
-  void *pa = pmm->alloc(as->pgsize);
-  void *va = (void*)(ev.ref & pg_mask);
-  printf("task: %s, %s, %d\n", cur_task->name, ev.msg, ev.cause);
-  printf("%p %p %p(%p)\n", as, pa, va, ev.ref);
-  map(as, va, pa, MMAP_READ | MMAP_WRITE);
-  return NULL;
+	// TODO: deal with pgflt
+	AddrSpace *as = &(cur_task->as);
+	int pg_mask = ~(as->pgsize-1);
+	void *pa = pmm->alloc(as->pgsize);
+	void *va = (void*)(ev.ref & pg_mask);
+	printf("task: %s, %s, %d\n", cur_task->name, ev.msg, ev.cause);
+	printf("%p %p %p(%p)\n", as, pa, va, ev.ref);
+	map(as, va, pa, MMAP_READ | MMAP_WRITE);
+	return NULL;
 }
 
 static inline size_t align(size_t size) {
-  size--;
-  size |= size >> 1;
-  size |= size >> 2;
-  size |= size >> 4;
-  size |= size >> 8;
-  size |= size >> 16;
-  return size + 1;
+	size--;
+	size |= size >> 1;
+	size |= size >> 2;
+	size |= size >> 4;
+	size |= size >> 8;
+	size |= size >> 16;
+	return size + 1;
 }
 
 void init_alloc(task_t *init_task) {

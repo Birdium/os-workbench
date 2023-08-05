@@ -159,7 +159,7 @@ int uproc_fork(task_t *father) {
 		void *fpa = it->elem.pa;
 		void *spa = pmm->alloc(pgsize);
 		memcpy(spa, fpa, pgsize);
-		pgnewmap(cur_task, va, spa, MMAP_READ | MMAP_WRITE);
+		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
 	}
 	return son->pid;
 }

@@ -91,7 +91,7 @@ bool vme_init(void *(*_pgalloc)(int size), void (*_pgfree)(void *)) {
   panic_on(cpu_current() != 0, "init VME in non-bootstrap CPU");
   pgalloc = _pgalloc;
   pgfree  = _pgfree;
-  printf("uvm_area : [%p, %p)\n", vm_areas[0].area.start, vm_areas[0].area.end);
+  printf("uvm_area : [%p, %p)\n", vm_areas[1].area.start, vm_areas[1].area.end);
 
 #if __x86_64__
   kpt = (void *)PML4_ADDR;

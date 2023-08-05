@@ -142,8 +142,11 @@ void uproc_init() {
   task_t *task = new_task(0);
   init_alloc(task);
   task->status = RUNNABLE;
-  panic_on(task->pid != 1, "first uproc id not 1");
-  LOG_INFO("%p", task->context->rsp);
+//   panic_on(task->pid != 1, "first uproc id not 1");
+//   LOG_INFO("%p", task->context->rsp);
+  task_t *task2 = new_task(0);
+  init_alloc(task2);
+  task2->status = RUNNABLE;
 }
 
 int uproc_kputc(task_t *task, char ch) {

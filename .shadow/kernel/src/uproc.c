@@ -107,7 +107,7 @@ void init_alloc(task_t *init_task) {
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
     LOG_USER("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset,
            pa + offset, MMAP_READ | MMAP_WRITE);
-    map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
   }
   memcpy(pa, _init, _init_len);
   return;

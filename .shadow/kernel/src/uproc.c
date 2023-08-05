@@ -43,24 +43,24 @@ static Context *syscall_handler(Event ev, Context *context) {
 	case SYS_fork: {
 		syscall_context->GPRx = uproc->fork(cur_task); 
 	} break;
-	case SYS_wait: {
-		syscall_context->GPRx = uproc->wait(cur_task, (int*)syscall_context->GPR1);
-	} break;
-	case SYS_exit: {
-		syscall_context->GPRx = uproc->exit(cur_task, syscall_context->GPR1);	
-	} break;
-	case SYS_kill: {
-		syscall_context->GPRx = uproc->kill(cur_task, syscall_context->GPR1);	
-	} break;
-	case SYS_mmap: {
-		syscall_context->GPRx = (uint64_t)uproc->mmap(cur_task, (void*)syscall_context->GPR1, syscall_context->GPR2, syscall_context->GPR3, syscall_context->GPR4);
-	} break;
+	// case SYS_wait: {
+	// 	syscall_context->GPRx = uproc->wait(cur_task, (int*)syscall_context->GPR1);
+	// } break;
+	// case SYS_exit: {
+	// 	syscall_context->GPRx = uproc->exit(cur_task, syscall_context->GPR1);	
+	// } break;
+	// case SYS_kill: {
+	// 	syscall_context->GPRx = uproc->kill(cur_task, syscall_context->GPR1);	
+	// } break;
+	// case SYS_mmap: {
+	// 	syscall_context->GPRx = (uint64_t)uproc->mmap(cur_task, (void*)syscall_context->GPR1, syscall_context->GPR2, syscall_context->GPR3, syscall_context->GPR4);
+	// } break;
 	case SYS_getpid: {
 		syscall_context->GPRx = uproc->getpid(cur_task); 
 	} break;
-	case SYS_sleep: {
-		syscall_context->GPRx = uproc->sleep(cur_task, syscall_context->GPR1); 
-	} break;
+	// case SYS_sleep: {
+	// 	syscall_context->GPRx = uproc->sleep(cur_task, syscall_context->GPR1); 
+	// } break;
 	case SYS_uptime: {
 		syscall_context->GPRx = uproc->uptime(cur_task); 
 	} break;

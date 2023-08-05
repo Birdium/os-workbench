@@ -54,14 +54,14 @@ int main() {
   int fk = fork();
   kputc('0' + fk);
   kputc('\n');
-  if (fk) {
-    kill(fk);
-  }
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {
       puti64(t / 100);
       lt = t;
+      if (fk && t / 100 == 10) {
+        kill(fk);
+      }
       kputc(' ');
     }
   }

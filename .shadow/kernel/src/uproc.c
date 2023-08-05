@@ -73,7 +73,7 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot) {
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
 	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
 	map(as, va, pa, prot);
-	LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
+	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
 static Context *pagefault_handler(Event ev, Context *context) {
@@ -162,9 +162,6 @@ int uproc_fork(task_t *father) {
 		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
 	}
 
-	int pid = son->pid;
-
-	LOG_USER("%d %d %d %d", ppid, pinfo[ppid].mappings->size, pid, pinfo[pid].mappings->size);
 	return son->pid;
 }
 

@@ -72,7 +72,7 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot) {
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
 	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
-	LOG_USER("%d\n", pinfo[pid].mappings->size);
+	// LOG_USER("%d\n", pinfo[pid].mappings->size);
 	map(as, va, pa, prot);
 }
 
@@ -152,7 +152,7 @@ int uproc_fork(task_t *father) {
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;
-	LOG_USER("%d", pinfo[ppid].mappings->size);
+	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;

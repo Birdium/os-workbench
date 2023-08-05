@@ -119,8 +119,11 @@ Context *os_trap(Event ev, Context *context) {
       if (r) next = r;  
     }
   }
-  // LOG_USER("%s %d", cur_task->name, cur_task->pid);
-  panic_on(!next, "returning NULL context");
+  if (!next) {
+
+    LOG_USER("%s %d", cur_task->name, cur_task->pid);
+    panic_on(!next, "returning NULL context");
+  }
   panic_on(!sane_context(next), "returning to invalid context");
   LOG_INFO("trap returning %p with rip %x", next, next->rip);
   TRACE_EXIT;

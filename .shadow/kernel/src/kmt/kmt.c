@@ -57,6 +57,7 @@ static inline task_t *poll_rand_task() {
 }
 
 static Context *kmt_schedule(Event ev, Context *context) {
+    LOG_USER("111");
     panic_on(cur_task == NULL, "no available task");
     if (cur_task->status == KILLED) {
         uproc->exit(cur_task, 0);

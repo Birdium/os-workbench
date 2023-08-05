@@ -54,6 +54,9 @@ int main() {
   int fk = fork();
   kputc('0' + fk);
   kputc('\n');
+  int fk2 = fork();
+  kputc('0' + fk2);
+  kputc('\n');
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {

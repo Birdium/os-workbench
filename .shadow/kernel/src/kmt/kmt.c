@@ -40,8 +40,9 @@ static inline task_t *poll_rand_task() {
     // rand version
     static int cnt = 0;
     if (cnt == 1000) {
-        printf("%d", task_cnt + 2);
-        cnt = 0;
+        for (int i = 0; i < task_cnt; i++) {
+            printf("[%d, %d]", task_list[i]->status);
+        }
     }
     cnt++;
     static const int round = 2; // choose task_cnt times for X round

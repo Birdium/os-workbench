@@ -33,7 +33,6 @@ static int pid_alloc() {
 }
 
 static Context *syscall_handler(Event ev, Context *context) {
-  // TODO: deal with syscall
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
@@ -131,7 +130,6 @@ void uproc_init() {
   task->status = RUNNABLE;
   panic_on(task->pid != 1, "first uproc id not 1");
   LOG_INFO("%p", task->context->rsp);
-  // TODO: finish init
 }
 
 int uproc_kputc(task_t *task, char ch) {

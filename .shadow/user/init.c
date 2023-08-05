@@ -3,7 +3,7 @@
 
 int main() {
   // Example:
-  // printf("pid = %d\n", getpid());
+  printf("pid = %d\n", getpid());
   int p = getpid();
   while(1){
     uptime();

@@ -186,7 +186,7 @@ int uproc_exit(task_t *task, int status) {
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	kmt->teardown(task);
-	kmt->spin_lock(&pid_lock);
+	kmt->spin_unlock(&pid_lock);
 	return status;
 }
 

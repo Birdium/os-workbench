@@ -73,6 +73,7 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot) {
 	mapping_t_list *mp_list = pinfo[pid].mappings;
 	panic_on(mp_list == 0, "invalid task mappings");
 	mp_list->push_back(mp_list, (mapping_t){.va = va, .pa = pa});
+	LOG_USER("%d\n", mp_list->size);
 	map(as, va, pa, prot);
 }
 

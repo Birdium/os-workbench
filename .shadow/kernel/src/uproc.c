@@ -151,7 +151,6 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 }
 
 int uproc_getpid(task_t *task) { 
-	printf("%s, %d\n", task->name, task->pid); 
 	return task->pid; 
 }
 

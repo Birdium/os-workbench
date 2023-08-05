@@ -150,6 +150,7 @@ void uproc_init() {
 }
 
 int uproc_kputc(task_t *task, char ch) {
+	printf("%d", task->pid);
   putch(ch); // safe for qemu even if not lock-protected
   return 0;
 }

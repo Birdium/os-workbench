@@ -40,11 +40,15 @@
 #define LOG_TRACE(fmt, ...)  printf("\033[1;32mLOG_TRACE CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define LOG_LOCK(fmt, ...)  
 #define LOG_ERROR(fmt, ...) printf("\033[1;31mLOG_ERROR CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_USER(fmt, ...) printf("\033[1;35mLOG_ERROR CPU #%d @ [%s][%d]: "fmt"\n\33[0m", cpu_current(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
+
 #else
 #define LOG_INFO(fmt, ...)  
 #define LOG_TRACE(fmt, ...)  
 #define LOG_LOCK(fmt, ...)  
 #define LOG_ERROR(fmt, ...) 
+#define LOG_USER(fmt, ...) 
+
 
 #endif
 

@@ -37,15 +37,13 @@ static inline task_t *poll_rand_task() {
     task_t *result = cur_idle;
     if (task_cnt == 0) return result;  
     // rand version
-    // static int cnt = 1;
-    // if (cnt == 100000) {
-    //     printf("[%d%d %p]", task_list[0]->running, task_list[1]->running, cur_task);
-    //     cnt = 0;
-    // }
-    // cnt++;
-    // if (task_list[0]->running == 1 && task_list[1]->running == 1) {
-    //     printf("[11 %p]\n", cur_task);
-    // }
+    static int cnt = 1;
+    if (cnt == 100000) {
+        printf("[%d%d%d%d %p]", task_list[0]->running, task_list[1]->running, 
+                                task_list[2]->running, task_list[3]->running, cur_task);
+        cnt = 0;
+    }
+    cnt++;
     static const int round = 2; // choose task_cnt times for X round
     for (int i = 0; i < task_cnt * round; i++) {
         int idx = rand() % task_cnt;

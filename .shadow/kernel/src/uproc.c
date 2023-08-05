@@ -33,6 +33,7 @@ static int pid_alloc() {
 }
 
 static Context *syscall_handler(Event ev, Context *context) {
+  iset(true);
   switch (context->GPRx) {
 	case SYS_kputc: {
 		context->GPRx = uproc->kputc(cur_task, context->GPR1); 
@@ -62,6 +63,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 		context->GPRx = uproc->uptime(cur_task); 
 	} break;
   }
+  iset(false);
   return NULL;
 }
 

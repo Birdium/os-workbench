@@ -8,7 +8,6 @@
 #include <kmt.h>
 #include <stdio.h>
 
-extern task_t *current[MAX_CPU_NUM];
 task_t *idle_task[MAX_CPU_NUM];
 task_t *last_task[MAX_CPU_NUM];
 
@@ -151,7 +150,7 @@ int kmt_ucreate(task_t *task, const char *name, pid_t pid, pid_t ppid) {
     }
     task_list[task_cnt - 1] = task;
     kmt->spin_unlock(task_list_lk);
-    LOG_INFO("utask created name: %s, entry: %p, addr: %p, stack: %p", name, task->as.area.start, task, task->stack);
+    LOG_INFO("utask created name: %s, area: [%p, %p), addr: %p, stack: %p", name, task->as.area.start, task->as.area.end, task, task->stack);
     return 0;
 }
 

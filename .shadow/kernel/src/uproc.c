@@ -67,7 +67,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot) {
-    LOG_USER("%s: %p <- %p", task->name, va, pa);
+    LOG_USER("%d[%s]: %p <- %p", task->pid, task->name, va, pa);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	mapping_t_list *mp_list = pinfo[pid].mappings;

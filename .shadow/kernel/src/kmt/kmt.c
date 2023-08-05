@@ -47,6 +47,7 @@ static inline task_t *poll_rand_task() {
             break;
         }
     }
+    panic_on(result == NULL, "111");
     // // fixed version
     // for (int i = 0; i < task_cnt; i++) {
     //     if (task_list[i]->status != SLEEPING) {

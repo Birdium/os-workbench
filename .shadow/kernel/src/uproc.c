@@ -64,6 +64,7 @@ void init_alloc(task_t *init_task) {
 		printf("%s: %p <- %p, PROT: %d\n", init_task->name, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 		map(as, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
 	}
+	memcpy(pa, _init, _init_len);
 	return;
 }
 

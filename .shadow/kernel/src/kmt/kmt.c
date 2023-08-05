@@ -76,7 +76,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     default:
     //         break;
     // }
-    // LOG_USER("scheduled to task: (%s)%p, ctx %p", cur_task->name, cur_task, cur_task->context);
+    LOG_USER("scheduled to task: (%s)%p, ctx %p", cur_task->name, cur_task, cur_task->context);
     panic_on(!cur_task->context, "111");
     return cur_task->context;
 }

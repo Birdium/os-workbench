@@ -92,8 +92,6 @@ static inline bool sane_context(Context *ctx) {
   return true;
 }
 
-#define cur_task current[cpu_current()]
-
 extern spinlock_t *task_list_lk;
 
 LIST_PTR_DEC_EXTERN(task_t_ptr, task_list);

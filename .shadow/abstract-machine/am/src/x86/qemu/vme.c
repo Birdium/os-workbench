@@ -132,7 +132,7 @@ void protect(AddrSpace *as) {
   }
   as->pgsize = mmu.pgsize;
   as->area   = uvm_area;
-  printf("%p\n", as->area.start);
+  printf("%p\n", as->area.end);
   as->ptr    = (void *)((uintptr_t)upt | PTE_P | PTE_U);
 }
 

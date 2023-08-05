@@ -144,6 +144,7 @@ int uproc_fork(task_t *father) {
 	int ppid = father->pid;
 	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 	task_t *son = new_task(ppid);
+	LOG_USER("%p %p", son, father);
 	son->name = father->name;
 	// memcpy(son->stack, father->stack);
 	uintptr_t rsp0 = son->context->rsp0;
@@ -152,7 +153,6 @@ int uproc_fork(task_t *father) {
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;
-
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;
@@ -167,7 +167,7 @@ int uproc_fork(task_t *father) {
 
 	son->status = RUNNABLE;
 
-	return son->pid + 1;
+	return son->pid;
 }
 
 int uproc_wait(task_t *task, int *status) {

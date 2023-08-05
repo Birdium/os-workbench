@@ -39,7 +39,7 @@ static inline task_t *poll_rand_task() {
     if (task_cnt == 0) return result;  
     // rand version
     static int cnt = 0;
-    if (cnt == 100) {
+    if (cnt == 1000) {
         printf("%d", task_cnt + 2);
         cnt = 0;
     }

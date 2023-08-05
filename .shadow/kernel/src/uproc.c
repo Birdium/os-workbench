@@ -27,6 +27,7 @@ static int pid_alloc() {
     if (next_pid == UPROC_PID_NUM - 1)
       next_pid = 0;
   }
+  LOG_USER("%d %d", pid, next_pid);
   panic_on(pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
   kmt->spin_unlock(&pid_lock);
   return pid;
@@ -143,7 +144,6 @@ int uproc_fork(task_t *father) {
 	int ppid = father->pid;
 	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 	task_t *son = new_task(ppid);
-	LOG_USER("%d %d", ppid, pinfo[ppid].mappings->size);
 	son->name = father->name;
 	// memcpy(son->stack, father->stack);
 	uintptr_t rsp0 = son->context->rsp0;

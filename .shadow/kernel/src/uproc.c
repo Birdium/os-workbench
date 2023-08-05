@@ -34,6 +34,7 @@ static int pid_alloc() {
 static Context *syscall_handler(Event ev, Context *context) {
   // TODO: deal with syscall
 //   LOG_INFO("%d", ienabled());
+printf("meow");
   return NULL;
 }
 

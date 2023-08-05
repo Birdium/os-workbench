@@ -120,7 +120,6 @@ Context *os_trap(Event ev, Context *context) {
     }
   }
   if (!next) {
-    
     LOG_USER("%s %d %p", cur_task->name, cur_task->pid, cur_task->context);
     panic_on(!next, "returning NULL context");
   }

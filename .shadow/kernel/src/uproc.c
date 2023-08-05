@@ -18,7 +18,7 @@ static int next_pid = 1;
 static int pid_alloc() {
   kmt->spin_lock(&pid_lock);
   int pid = next_pid;
-  panic_on(pinfo[pid].valid == 0, "NEXT_PID INVALID");
+  panic_on(!pinfo[pid].valid, "NEXT_PID INVALID");
   pinfo[pid].valid = 0;
   for (next_pid = pid + 1; next_pid != pid; next_pid++) {
     if (pinfo[next_pid].valid) {
@@ -28,7 +28,7 @@ static int pid_alloc() {
       next_pid = 0;
   }
   LOG_USER("%d %d", pid, next_pid);
-  panic_on(pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
+  panic_on(!pinfo[next_pid].valid, "UPROC PID NUM RUNNING OUT");
   kmt->spin_unlock(&pid_lock);
   return pid;
 }

@@ -17,6 +17,7 @@ typedef struct task {
   pid_t pid;
   pid_t ppid;
   bool killed;
+  int64_t waketime;
   AddrSpace as;
   int canary;
 } task_t;

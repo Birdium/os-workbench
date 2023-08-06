@@ -12,6 +12,9 @@
 pid_entry_t pinfo[UPROC_PID_NUM];
 
 spinlock_t pid_lock;
+spinlock_t sleep_lock;
+
+LIST_PTR_DEC(task_t_ptr, sleeping_tasks);
 
 static int next_pid = 1;
 
@@ -136,12 +139,31 @@ static Context *error_handler(Event ev, Context *context) {
 	return NULL;
 }
 
+static Context *waker(Event ev, Context *context) {
+	kmt->spin_lock(&sleep_lock);
+	int64_t time = io_read(AM_TIMER_UPTIME).us / 1000;
+	for_list(task_t_ptr, it, sleeping_tasks) {
+		if (it->elem->waketime < time) {
+			it->elem->status = RUNNABLE;
+			task_t_ptr_list_node *new_it = it->next;
+			sleeping_tasks->remove(sleeping_tasks, it);
+			it = new_it;
+			if (it == NULL) break;
+		}
+	}
+	kmt->spin_unlock(&sleep_lock);
+	return NULL;
+}
+
 void uproc_init() {
   vme_init((void *(*)(int))pmm->alloc, pmm->free);
   kmt->spin_init(&pid_lock, "pid lock");
+  kmt->spin_init(&sleep_lock, "sleep lock");
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
   os->on_irq(0, EVENT_ERROR, error_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
+  os->on_irq(0, EVENT_NULL, waker);
+  LIST_PTR_INIT(task_t_ptr, sleeping_tasks);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 1;
   }
@@ -235,9 +257,18 @@ int uproc_getpid(task_t *task) {
 }
 
 int uproc_sleep(task_t *task, int seconds) {
-	panic("TODO");
+	kmt->spin_lock(&sleep_lock);
+	int64_t time = io_read(AM_TIMER_UPTIME).us / 1000;
+	time += seconds * 1000;
+	task->waketime = time;
+	task->status = SLEEPING;
+	sleeping_tasks->push_back(sleeping_tasks, task);
+	kmt->spin_unlock(&sleep_lock);
+
+	yield();
 	return 0;
 }
+
 int64_t uproc_uptime(task_t *task) {
 	int64_t time = io_read(AM_TIMER_UPTIME).us / 1000;
   	return time;

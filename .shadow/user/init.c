@@ -49,14 +49,14 @@ int main() {
   // kputc('\n');
   int fk = fork();
   kputc('0' + fk);
-  if (fk == 0) {
-    sleep(1);
-  }
-  else {
-    sleep(10);
-  }
-  // int fk2 = fork();
-  // kputc('0' + fk2);
+  // if (fk == 0) {
+  //   sleep(1);
+  // }
+  // else {
+  //   sleep(10);
+  // }
+  int fk2 = fork();
+  kputc('0' + fk2);
   int p = getpid();
   int64_t lt = 0;
   while(1){

@@ -199,25 +199,25 @@ static Context *waker(Event ev, Context *context) {
 
 void *ualloc(int size) {
 	void *pa = pmm->alloc(size);
-	kmt->spin_lock(&refcnt_lock);
-	inc_refcnt(pa);
-	kmt->spin_unlock(&refcnt_lock);
-	// LOG_USER("%p", pa);
+	// kmt->spin_lock(&refcnt_lock);
+	// inc_refcnt(pa);
+	// kmt->spin_unlock(&refcnt_lock);
+	// // LOG_USER("%p", pa);
 	return pa;
 }
 
 void ufree(void *pa) {
 	// LOG_USER("%p", pa);
-	kmt->spin_lock(&refcnt_lock);
-	dec_refcnt(pa);
-	int pa_ref = get_refcnt(pa);
-	if (pa_ref == 0) {
+	// kmt->spin_lock(&refcnt_lock);
+	// dec_refcnt(pa);
+	// int pa_ref = get_refcnt(pa);
+	// if (pa_ref == 0) {
 		pmm->free(pa);
-	}
-	if (pa_ref < 0){
-		panic("page with refcnt < 0");
-	}
-	kmt->spin_unlock(&refcnt_lock);
+	// }
+	// if (pa_ref < 0){
+	// 	panic("page with refcnt < 0");
+	// }
+	// kmt->spin_unlock(&refcnt_lock);
 }
 
 void uproc_init() {

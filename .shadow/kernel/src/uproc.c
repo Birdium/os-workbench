@@ -202,12 +202,12 @@ void *ualloc(int size) {
 	kmt->spin_lock(&refcnt_lock);
 	inc_refcnt(pa);
 	kmt->spin_unlock(&refcnt_lock);
-	LOG_USER("%p", pa);
+	// LOG_USER("%p", pa);
 	return pa;
 }
 
 void ufree(void *pa) {
-	LOG_USER("%p", pa);
+	// LOG_USER("%p", pa);
 	kmt->spin_lock(&refcnt_lock);
 	dec_refcnt(pa);
 	int pa_ref = get_refcnt(pa);

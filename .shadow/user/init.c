@@ -2,6 +2,10 @@
 #include <string.h>
 
 void puti(int x) {
+  if (x == 0) {
+    kputc('0');
+    return;
+  }
   char buf[10];
   for (int i = 0; i < 10; i++) {
     buf[i] = 0;
@@ -17,6 +21,10 @@ void puti(int x) {
 }
 
 void puti64(int64_t x) {
+  if (x == 0) {
+    kputc('0');
+    return;
+  }
   char buf[10];
   for (int i = 0; i < 10; i++) {
     buf[i] = 0;

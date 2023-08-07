@@ -131,6 +131,8 @@ task_t *new_task(pid_t ppid) {
   kmt_ucreate(task, "init", pid, ppid);
   LIST_PTR_INIT(mapping_t, pinfo[pid].mappings);
   pinfo[pid].task = task;
+  task->child_cnt = 0;
+  task->waiting = false;
   return task;
 }
 
@@ -189,6 +191,7 @@ int uproc_fork(task_t *father) {
 	task_t *son = new_task(ppid);
 	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
+	father->child_cnt++;
 	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;
@@ -220,6 +223,7 @@ int uproc_fork(task_t *father) {
 
 int uproc_wait(task_t *task, int *status) {
 	panic("TODO");
+	// kmt->spin_lock();
 	return 0;
 }
 
@@ -233,6 +237,9 @@ int uproc_exit(task_t *task, int status) {
 		pmm->free(pa);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
+	for (int i = 1; i < UPROC_PID_NUM; i++) {
+
+	}
 	// TODO: wake up
 	kmt->teardown(task);
 	kmt->spin_unlock(&pid_lock);

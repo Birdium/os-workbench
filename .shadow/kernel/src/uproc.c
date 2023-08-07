@@ -199,12 +199,12 @@ static Context *waker(Event ev, Context *context) {
 
 void *ualloc(int size) {
 	void *pa = pmm->alloc(size);
-	LOG_USER("%p\n", pa);
+	LOG_USER("%p", pa);
 	return pa;
 }
 
 void ufree(void *pa) {
-	LOG_USER("%p\n", pa);
+	LOG_USER("%p", pa);
 	kmt->spin_lock(&refcnt_lock);
 	dec_refcnt(pa);
 	int pa_ref = get_refcnt(pa);

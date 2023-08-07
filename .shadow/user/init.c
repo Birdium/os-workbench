@@ -52,8 +52,9 @@ int main() {
   if (fk) {
     int res = -1;
     int ret = wait(&res);
+    puti('\n');
     puti(ret);
-    puti(res);
+    // puti(res);
   }
   else {
     sleep(1);

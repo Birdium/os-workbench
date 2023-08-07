@@ -210,7 +210,7 @@ int uproc_fork(task_t *father) {
 		void *spa = pmm->alloc(pgsize);
 		memcpy(spa, fpa, pgsize);
 		LOG_USER("%p %p %p", va, fpa, spa);
-		pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
+		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE, it->elem.flags);
 	}
 
 	son->status = RUNNABLE;

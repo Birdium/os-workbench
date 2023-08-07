@@ -117,7 +117,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
-    LOG_USER("%d[%s]: %p <- %p", task->pid, task->name, va, pa);
+    LOG_USER("%d[%s]: %p <- %p, (%d %d)", task->pid, task->name, va, pa, prot, flags);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
@@ -135,8 +135,8 @@ static Context *pagefault_handler(Event ev, Context *context) {
   int pg_mask = ~(as->pgsize - 1);
   void *pa = pmm->alloc(as->pgsize);
   void *va = (void *)(ev.ref & pg_mask);
-  LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
-  LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
+//   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE, MAP_PRIVATE);
   return NULL;
 }
@@ -229,7 +229,6 @@ int uproc_fork(task_t *father) {
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
 	task_t *son = new_task(ppid);
-	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
 	father->child_cnt++;
 	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
@@ -248,13 +247,13 @@ int uproc_fork(task_t *father) {
 		void *va = it->elem.va;
 		void *fpa = it->elem.pa;
 		if (it->elem.flags == MAP_SHARED) {
-			LOG_USER("%p %p %p", va, fpa, fpa);
+			// LOG_USER("%p %p %p", va, fpa, fpa);
 			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 		}
 		else if (it->elem.flags == MAP_PRIVATE){
 			void *spa = pmm->alloc(pgsize);
 			memcpy(spa, fpa, pgsize);
-			LOG_USER("%p %p %p", va, fpa, spa);
+			// LOG_USER("%p %p %p", va, fpa, spa);
 			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
 		}
 		else {

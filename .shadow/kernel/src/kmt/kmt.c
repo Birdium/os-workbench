@@ -87,7 +87,7 @@ static Context *kmt_schedule(Event ev, Context *context) {
     //     default:
     //         break;
     // }
-    LOG_USER("scheduled from task %d to task %d, ctx %p", prev_task->pid, cur_task->pid, cur_task->context);
+    // LOG_USER("scheduled from task %d to task %d, ctx %p", prev_task->pid, cur_task->pid, cur_task->context);
     // printf("scheduled from task %d to task %d, ctx %p, %d\n", prev_task->pid, cur_task->pid, cur_task->context, ev.event);
     return cur_task->context;
 }

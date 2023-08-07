@@ -207,10 +207,19 @@ int uproc_fork(task_t *father) {
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;
 		void *fpa = it->elem.pa;
-		void *spa = pmm->alloc(pgsize);
-		memcpy(spa, fpa, pgsize);
-		LOG_USER("%p %p %p", va, fpa, spa);
-		pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
+		if (it->elem.flags == MAP_SHARED) {
+			LOG_USER("%p %p %p", va, fpa, fpa);
+			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
+		}
+		else if (it->elem.flags == MAP_SHARED){
+			void *spa = pmm->alloc(pgsize);
+			memcpy(spa, fpa, pgsize);
+			LOG_USER("%p %p %p", va, fpa, spa);
+			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
+		}
+		else {
+			panic("invalid mapping flags");
+		}
 	}
 
 	son->status = RUNNABLE;

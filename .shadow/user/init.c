@@ -52,7 +52,7 @@ int main() {
   if (fk) {
     int res = -1;
     int ret = wait(&res);
-    puti('\n');
+    kputc('\n');
     puti(ret);
     // puti(res);
   }

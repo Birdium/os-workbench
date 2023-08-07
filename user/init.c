@@ -63,6 +63,7 @@ int main() {
   if (fk2) {
     int res = 10;
     int ret = wait(&res);
+    if (fk) res += 1;
     puti(ret);
     kputc('\n');
     puti(res);

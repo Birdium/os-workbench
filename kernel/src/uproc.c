@@ -13,10 +13,35 @@ pid_entry_t pinfo[UPROC_PID_NUM];
 
 spinlock_t pid_lock;
 spinlock_t sleep_lock;
+spinlock_t refcnt_lock;
 
 LIST_PTR_DEC(task_t_ptr, sleeping_tasks);
 
 static int next_pid = 1;
+static int *refcnt;
+
+void init_refcnt() {
+	int refsize = sizeof(int) * ((heap.end - heap.start) / PAGE_SIZE);
+	refcnt = pmm->alloc(refsize);
+	memset(refcnt, 0, refsize);
+}
+
+inline static int get_refcnt(void *pa) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	return refcnt[idx];
+}
+
+inline static void inc_refcnt(void *pa) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	++refcnt[idx];
+	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] - 1, refcnt[idx]);
+}
+
+inline static void dec_refcnt(void *pa) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	--refcnt[idx];
+	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] + 1, refcnt[idx]);
+}
 
 static int pid_alloc() {
   kmt->spin_lock(&pid_lock);
@@ -81,13 +106,16 @@ static Context *syscall_handler(Event ev, Context *context) {
   return NULL;
 }
 
-void pgnewmap(task_t *task, void *va, void *pa, int prot) {
-    LOG_USER("%d[%s]: %p <- %p", task->pid, task->name, va, pa);
+void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
+    LOG_USER("%d[%s]: %p <- %p, (%d %d)", task->pid, task->name, va, pa, prot, flags);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
-	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
+	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa, .prot = prot, .flags = flags});
 	map(as, va, pa, prot);
+	kmt->spin_lock(&refcnt_lock);
+	inc_refcnt(pa);
+	kmt->spin_unlock(&refcnt_lock);
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
@@ -97,9 +125,9 @@ static Context *pagefault_handler(Event ev, Context *context) {
   int pg_mask = ~(as->pgsize - 1);
   void *pa = pmm->alloc(as->pgsize);
   void *va = (void *)(ev.ref & pg_mask);
-  LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
-  LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE);
+//   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
+  pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE, MAP_PRIVATE);
   return NULL;
 }
 
@@ -119,7 +147,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
   }
   memcpy(pa, _init, _init_len);
   return;
@@ -161,10 +189,12 @@ void uproc_init() {
   vme_init((void *(*)(int))pmm->alloc, pmm->free);
   kmt->spin_init(&pid_lock, "pid lock");
   kmt->spin_init(&sleep_lock, "sleep lock");
+  kmt->spin_init(&refcnt_lock, "refcnt lock");
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
   os->on_irq(0, EVENT_ERROR, error_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
   os->on_irq(0, EVENT_NULL, waker);
+  init_refcnt();
   LIST_PTR_INIT(task_t_ptr, sleeping_tasks);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 1;
@@ -173,7 +203,6 @@ void uproc_init() {
   init_alloc(task);
   task->status = RUNNABLE;
 //   panic_on(task->pid != 1, "first uproc id not 1");
-//   LOG_INFO("%p", task->context->rsp);
 //   task_t *task2 = new_task(0);
 //   init_alloc(task2);
 //   task2->status = RUNNABLE;
@@ -189,7 +218,6 @@ int uproc_fork(task_t *father) {
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
 	task_t *son = new_task(ppid);
-	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
 	father->child_cnt++;
 	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
@@ -199,7 +227,7 @@ int uproc_fork(task_t *father) {
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;
-	LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
+	// LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;
@@ -207,10 +235,20 @@ int uproc_fork(task_t *father) {
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;
 		void *fpa = it->elem.pa;
-		void *spa = pmm->alloc(pgsize);
-		memcpy(spa, fpa, pgsize);
-		LOG_USER("%p %p %p", va, fpa, spa);
-		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
+		if (it->elem.flags == MAP_SHARED) {
+			// LOG_USER("shared %p %p %p", va, fpa, fpa);
+			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
+		}
+		else if (it->elem.flags == MAP_PRIVATE){
+			void *spa = pmm->alloc(pgsize);
+			memcpy(spa, fpa, pgsize);
+			// LOG_USER("private %p %p %p", va, fpa, spa);
+			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
+		}
+		else {
+			printf("%d \n", it->elem.flags);
+			panic("invalid mapping flags");
+		}
 	}
 
 	son->status = RUNNABLE;
@@ -222,14 +260,12 @@ int uproc_fork(task_t *father) {
 }
 
 int uproc_wait(task_t *task, int *status) {
-	// panic("TODO");
 	if (task->child_cnt == 0) return -1;
 	else {
 		task->waiting = 1;
 		task->status = SLEEPING;
 		yield();
 	}
-	// FIXME: status is va
 	int *status_pa = NULL;
 	for_list(mapping_t, it, pinfo[task->pid].mappings) {
 		void *va = it->elem.va;
@@ -249,9 +285,20 @@ int uproc_exit(task_t *task, int status) {
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
+	// // replaced by ufree
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
-		pmm->free(pa);
+		kmt->spin_lock(&refcnt_lock);
+		dec_refcnt(pa);
+		int pa_ref = get_refcnt(pa);
+		if (pa_ref == 0) {
+			pmm->free(pa);
+		}
+		if (pa_ref < 0){
+			panic("page with refcnt < 0");
+		}
+		kmt->spin_unlock(&refcnt_lock);
+		// ufree(pa);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc
@@ -272,6 +319,7 @@ int uproc_exit(task_t *task, int status) {
 	// }
 	// TODO: wake up
 	kmt->spin_unlock(&pid_lock);
+	unprotect(&(task->as));
 	kmt->teardown(task);
 	iset(true);
 	return status;
@@ -285,7 +333,8 @@ int uproc_kill(task_t *task, int pid) {
 }
 
 void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
-	panic("TODO");
+	// panic("TODO");
+
 	return NULL;
 }
 

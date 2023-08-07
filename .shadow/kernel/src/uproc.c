@@ -152,6 +152,7 @@ void init_alloc(task_t *init_task) {
     pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
   }
   memcpy(pa, _init, _init_len);
+	LOG_USER("%p %d", 0x2029000, get_refcnt((void*)0x2029000));
   return;
 }
 

@@ -59,7 +59,7 @@ int main() {
   kputc('0' + fk);
   int fk2 = fork();
   kputc('0' + fk2);
-  if (fk) {
+  if (fk2) {
     int res = 10;
     int ret = wait(&res);
     kputc('\n');

@@ -107,7 +107,6 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
-	LOG_USER("%p %d", 0x2029000, get_refcnt((void*)0x2029000));
     LOG_USER("%d[%s]: %p <- %p, (%d %d)", task->pid, task->name, va, pa, prot, flags);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
@@ -116,7 +115,6 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
 	map(as, va, pa, prot);
 	kmt->spin_lock(&refcnt_lock);
 	inc_refcnt(pa);
-	LOG_USER("%p %d", 0x2029000, get_refcnt((void*)0x2029000));
 	kmt->spin_unlock(&refcnt_lock);
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }

@@ -55,15 +55,15 @@ int main() {
   // kputc('d');
   // kputc('!');
   // kputc('\n');
-  // int fk = fork();
-  // kputc('0' + fk);
+  int fk = fork();
+  kputc('0' + fk);
   int fk2 = fork();
   kputc('0' + fk2);
   kputc('\n');
   if (fk2) {
     int res = 10;
     int ret = wait(&res);
-    // if (fk) res += 1;
+    if (fk) res += 1;
     puti(ret);
     kputc('\n');
     puti(res);
@@ -84,7 +84,7 @@ int main() {
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {
-      puti(p);
+      // puti(p);
       lt = t;
       // if (fk && t / 100 == 10) {
       //   kill(fk);

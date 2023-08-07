@@ -115,7 +115,7 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
 	map(as, va, pa, prot);
 	kmt->spin_lock(&refcnt_lock);
 	inc_refcnt(pa);
-	LOG_USER("%d", get_refcnt(pa));
+	LOG_USER("%p %d", pa, get_refcnt(pa));
 	kmt->spin_unlock(&refcnt_lock);
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }

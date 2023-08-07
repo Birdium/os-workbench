@@ -324,7 +324,17 @@ int uproc_exit(task_t *task, int status) {
 	// // replaced by ufree
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
-		ufree(pa);
+		kmt->spin_lock(&refcnt_lock);
+		dec_refcnt(pa);
+		int pa_ref = get_refcnt(pa);
+		if (pa_ref == 0) {
+			pmm->free(pa);
+		}
+		if (pa_ref < 0){
+			panic("page with refcnt < 0");
+		}
+		kmt->spin_unlock(&refcnt_lock);
+		// ufree(pa);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc

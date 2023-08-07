@@ -238,7 +238,7 @@ int uproc_fork(task_t *father) {
 		void *fpa = it->elem.pa;
 		if (it->elem.flags == MAP_SHARED) {
 			LOG_USER("shared %p %p %p", va, fpa, fpa);
-			LOG_USER("fpa %d", get_refcnt(fpa));
+			LOG_USER("fpa %p %d", fpa, get_refcnt(fpa));
 			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 		}
 		else if (it->elem.flags == MAP_PRIVATE){

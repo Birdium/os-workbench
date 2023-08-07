@@ -199,6 +199,9 @@ static Context *waker(Event ev, Context *context) {
 
 void *ualloc(int size) {
 	void *pa = pmm->alloc(size);
+	kmt->spin_lock(&refcnt_lock);
+	inc_refcnt(pa);
+	kmt->spin_unlock(&refcnt_lock);
 	LOG_USER("%p", pa);
 	return pa;
 }

@@ -69,7 +69,7 @@ int main() {
     kputc('\n');
   }
   else {
-    sleep(1);
+    sleep(10);
     exit(5);
   }
   // if (fk == 0) {

@@ -35,7 +35,7 @@ inline static void inc_refcnt(void *pa) {
 	int idx = (pa - heap.start) / PAGE_SIZE;
 	// kmt->spin_lock(&refcnt_lock);
 	++refcnt[idx];
-	LOG_USER("%p %d -> %d", pa, refcnt[idx] - 1, refcnt[idx]);
+	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] - 1, refcnt[idx]);
 	// kmt->spin_unlock(&refcnt_lock);
 }
 
@@ -43,7 +43,7 @@ inline static void dec_refcnt(void *pa) {
 	int idx = (pa - heap.start) / PAGE_SIZE;
 	// kmt->spin_lock(&refcnt_lock);
 	--refcnt[idx];
-	LOG_USER("%p %d -> %d", pa, refcnt[idx] + 1, refcnt[idx]);
+	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] + 1, refcnt[idx]);
 	// kmt->spin_unlock(&refcnt_lock);
 }
 

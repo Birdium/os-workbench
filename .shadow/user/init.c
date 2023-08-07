@@ -55,19 +55,19 @@ int main() {
   // kputc('d');
   // kputc('!');
   // kputc('\n');
-  int fk = fork();
-  kputc('0' + fk);
+  // int fk = fork();
+  // kputc('0' + fk);
   int fk2 = fork();
   kputc('0' + fk2);
   kputc('\n');
   if (fk2) {
     int res = 10;
     int ret = wait(&res);
-    if (fk) res += 1;
-    puti(ret);
-    kputc('\n');
-    puti(res);
-    kputc('\n');
+    // if (fk) res += 1;
+    // puti(ret);
+    // kputc('\n');
+    // puti(res);
+    // kputc('\n');
   }
   else {
     sleep(3);

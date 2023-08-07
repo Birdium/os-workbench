@@ -244,8 +244,6 @@ int uproc_fork(task_t *father) {
 			void *spa = pmm->alloc(pgsize);
 			memcpy(spa, fpa, pgsize);
 			LOG_USER("private %p %p %p", va, fpa, spa);
-			LOG_USER("fpa %d", get_refcnt(fpa));
-			LOG_USER("spa %d", get_refcnt(spa));
 			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
 		}
 		else {

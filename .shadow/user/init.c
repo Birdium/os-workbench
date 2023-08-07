@@ -56,7 +56,7 @@ int main() {
     puti(res);
   }
   else {
-    sleep(10);
+    sleep(1);
     exit(5);
   }
   // if (fk == 0) {

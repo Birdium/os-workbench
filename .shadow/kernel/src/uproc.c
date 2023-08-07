@@ -222,8 +222,15 @@ int uproc_fork(task_t *father) {
 }
 
 int uproc_wait(task_t *task, int *status) {
-	panic("TODO");
-	// kmt->spin_lock();
+	// panic("TODO");
+	if (task->child_cnt == 0) return -1;
+	else {
+		task->waiting = 1;
+		task->status = SLEEPING;
+		yield();
+	}
+	// FIXME: status is va
+	// *status = task->child_status;
 	return 0;
 }
 
@@ -231,18 +238,30 @@ int uproc_exit(task_t *task, int status) {
 	iset(false);
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
-	pinfo[pid].valid = 1;
+	pinfo[pid].valid = 0;
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
 		pmm->free(pa);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
-	for (int i = 1; i < UPROC_PID_NUM; i++) {
-
+	// FIXME: orphan proc
+	if (pinfo[task->ppid].valid) {
+		task_t *father = pinfo[task->ppid].task;
+		father->child_cnt--;
+		if (father->waiting) {
+			father->waiting = 0;
+			father->status = RUNNABLE;
+			father->child_status = status;
+		}
 	}
+	// for (int i = 1; i < UPROC_PID_NUM; i++) { 
+	// 	if (pinfo[i].valid && pinfo[i].ppid == pid) {
+	// 		pinfo[i].ppid = 1; // TODO
+	// 	}
+	// }
 	// TODO: wake up
-	kmt->teardown(task);
 	kmt->spin_unlock(&pid_lock);
+	kmt->teardown(task);
 	iset(true);
 	return status;
 }

@@ -57,6 +57,8 @@ int main() {
   // kputc('\n');
   int fk = fork();
   kputc('0' + fk);
+  int fk2 = fork();
+  kputc('0' + fk2);
   if (fk) {
     int res = 10;
     int ret = wait(&res);
@@ -76,8 +78,6 @@ int main() {
   // else {
   //   sleep(10);
   // }
-  // int fk2 = fork();
-  // kputc('0' + fk2);
   int p = getpid();
   int64_t lt = 0;
   while(1){

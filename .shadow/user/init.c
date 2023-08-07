@@ -58,7 +58,7 @@ int main() {
   int fk = fork();
   kputc('0' + fk);
   if (fk) {
-    int res = -1;
+    int res = 10;
     int ret = wait(&res);
     kputc('\n');
     puti(ret);

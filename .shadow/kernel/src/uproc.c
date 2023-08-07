@@ -230,7 +230,17 @@ int uproc_wait(task_t *task, int *status) {
 		yield();
 	}
 	// FIXME: status is va
-	// *status = task->child_status;
+	int *status_pa = NULL;
+	for_list(mapping_t, it, pinfo[task->pid].mappings) {
+		void *va = it->elem.va;
+		void *pa = it->elem.pa;
+		if (va <= (void*)status && (void*)status < va + task->as.pgsize) {
+			status_pa = pa + ((void*)status - va);
+			break; 
+		}
+	}
+	panic_on(status_pa == NULL, "invalid status");
+	*status_pa = task->child_status;
 	return 0;
 }
 

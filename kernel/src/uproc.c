@@ -131,6 +131,8 @@ task_t *new_task(pid_t ppid) {
   kmt_ucreate(task, "init", pid, ppid);
   LIST_PTR_INIT(mapping_t, pinfo[pid].mappings);
   pinfo[pid].task = task;
+  task->child_cnt = 0;
+  task->waiting = false;
   return task;
 }
 
@@ -189,6 +191,7 @@ int uproc_fork(task_t *father) {
 	task_t *son = new_task(ppid);
 	LOG_USER("%p %p", son->context, father->context);
 	son->name = father->name;
+	father->child_cnt++;
 	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
 	uintptr_t rsp0 = son->context->rsp0;
 	void *cr3 = son->context->cr3;
@@ -219,7 +222,25 @@ int uproc_fork(task_t *father) {
 }
 
 int uproc_wait(task_t *task, int *status) {
-	panic("TODO");
+	// panic("TODO");
+	if (task->child_cnt == 0) return -1;
+	else {
+		task->waiting = 1;
+		task->status = SLEEPING;
+		yield();
+	}
+	// FIXME: status is va
+	int *status_pa = NULL;
+	for_list(mapping_t, it, pinfo[task->pid].mappings) {
+		void *va = it->elem.va;
+		void *pa = it->elem.pa;
+		if (va <= (void*)status && (void*)status < va + task->as.pgsize) {
+			status_pa = pa + ((void*)status - va);
+			break; 
+		}
+	}
+	panic_on(status_pa == NULL, "invalid status");
+	*status_pa = task->child_status;
 	return 0;
 }
 
@@ -233,9 +254,25 @@ int uproc_exit(task_t *task, int status) {
 		pmm->free(pa);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
+	// FIXME: orphan proc
+	// printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
+	if (!pinfo[task->ppid].valid) {
+		task_t *father = pinfo[task->ppid].task;
+		father->child_cnt--;
+		if (father->waiting) {
+			father->waiting = 0;
+			father->status = RUNNABLE;
+			father->child_status = status;
+		}
+	}
+	// for (int i = 1; i < UPROC_PID_NUM; i++) { 
+	// 	if (pinfo[i].valid && pinfo[i].ppid == pid) {
+	// 		pinfo[i].ppid = 1; // TODO
+	// 	}
+	// }
 	// TODO: wake up
-	kmt->teardown(task);
 	kmt->spin_unlock(&pid_lock);
+	kmt->teardown(task);
 	iset(true);
 	return status;
 }

@@ -2,6 +2,10 @@
 #include <string.h>
 
 void puti(int x) {
+  if (x == 0) {
+    kputc('0');
+    return;
+  }
   char buf[10];
   for (int i = 0; i < 10; i++) {
     buf[i] = 0;
@@ -17,6 +21,10 @@ void puti(int x) {
 }
 
 void puti64(int64_t x) {
+  if (x == 0) {
+    kputc('0');
+    return;
+  }
   char buf[10];
   for (int i = 0; i < 10; i++) {
     buf[i] = 0;
@@ -49,20 +57,33 @@ int main() {
   // kputc('\n');
   int fk = fork();
   kputc('0' + fk);
-  if (fk == 0) {
-    sleep(1);
+  int fk2 = fork();
+  kputc('0' + fk2);
+  kputc('\n');
+  if (fk2) {
+    int res = 10;
+    int ret = wait(&res);
+    puti(ret);
+    kputc('\n');
+    puti(res);
+    kputc('\n');
   }
   else {
-    sleep(10);
+    sleep(3);
+    exit(5);
   }
-  // int fk2 = fork();
-  // kputc('0' + fk2);
+  // if (fk == 0) {
+  //   sleep(1);
+  // }
+  // else {
+  //   sleep(10);
+  // }
   int p = getpid();
   int64_t lt = 0;
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {
-      puti(p);
+      // puti(p);
       lt = t;
       // if (fk && t / 100 == 10) {
       //   kill(fk);

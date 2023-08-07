@@ -197,7 +197,14 @@ static Context *waker(Event ev, Context *context) {
 	return NULL;
 }
 
+void *ualloc(int size) {
+	void *pa = pmm->alloc(size);
+	LOG_USER("%p\n", pa);
+	return pa;
+}
+
 void ufree(void *pa) {
+	LOG_USER("%p\n", pa);
 	kmt->spin_lock(&refcnt_lock);
 	dec_refcnt(pa);
 	int pa_ref = get_refcnt(pa);
@@ -211,7 +218,7 @@ void ufree(void *pa) {
 }
 
 void uproc_init() {
-  vme_init((void *(*)(int))pmm->alloc, ufree);
+  vme_init(ualloc, ufree);
   kmt->spin_init(&pid_lock, "pid lock");
   kmt->spin_init(&sleep_lock, "sleep lock");
   kmt->spin_init(&refcnt_lock, "refcnt lock");

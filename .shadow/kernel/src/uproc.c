@@ -245,9 +245,8 @@ int uproc_exit(task_t *task, int status) {
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc
-	printf("111 %d\n", task->ppid);
+	printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
 	if (pinfo[task->ppid].valid) {
-	printf("111 %d\n", task->ppid);
 		task_t *father = pinfo[task->ppid].task;
 		father->child_cnt--;
 		if (father->waiting) {

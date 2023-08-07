@@ -84,7 +84,7 @@ int main() {
   while(1){
     int64_t t = uptime();
     if (t - lt >= 100) {
-      // puti(p);
+      puti(p);
       lt = t;
       // if (fk && t / 100 == 10) {
       //   kill(fk);

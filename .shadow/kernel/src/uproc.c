@@ -35,6 +35,7 @@ inline static void inc_refcnt(void *pa) {
 	int idx = (pa - heap.start) / PAGE_SIZE;
 	++refcnt[idx];
 	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] - 1, refcnt[idx]);
+	LOG_USER("%d", get_refcnt(pa));
 }
 
 inline static void dec_refcnt(void *pa) {

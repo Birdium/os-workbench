@@ -195,6 +195,7 @@ void uproc_init() {
   os->on_irq(0, EVENT_ERROR, error_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
   os->on_irq(0, EVENT_NULL, waker);
+  init_refcnt();
   LIST_PTR_INIT(task_t_ptr, sleeping_tasks);
   for (int i = 1; i < UPROC_PID_NUM; i++) {
     pinfo[i].valid = 1;
@@ -202,7 +203,6 @@ void uproc_init() {
   task_t *task = new_task(0);
   init_alloc(task);
   task->status = RUNNABLE;
-  init_refcnt();
 //   panic_on(task->pid != 1, "first uproc id not 1");
 //   task_t *task2 = new_task(0);
 //   init_alloc(task2);

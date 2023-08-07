@@ -31,14 +31,6 @@ inline static int get_refcnt(void *pa) {
 	return refcnt[idx];
 }
 
-
-inline static void set_refcnt(void *pa, int val) {
-	int idx = (pa - heap.start) / PAGE_SIZE;
-	// kmt->spin_lock(&refcnt_lock);
-	refcnt[idx] = val;
-	// kmt->spin_unlock(&refcnt_lock);
-}
-
 inline static void inc_refcnt(void *pa) {
 	int idx = (pa - heap.start) / PAGE_SIZE;
 	// kmt->spin_lock(&refcnt_lock);

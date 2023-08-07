@@ -211,13 +211,14 @@ int uproc_fork(task_t *father) {
 			LOG_USER("%p %p %p", va, fpa, fpa);
 			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 		}
-		else if (it->elem.flags == MAP_SHARED){
+		else if (it->elem.flags == MAP_PRIVATE){
 			void *spa = pmm->alloc(pgsize);
 			memcpy(spa, fpa, pgsize);
 			LOG_USER("%p %p %p", va, fpa, spa);
 			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
 		}
 		else {
+			printf("%d \n", it->elem.flags);
 			panic("invalid mapping flags");
 		}
 	}

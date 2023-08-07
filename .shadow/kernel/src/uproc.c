@@ -195,8 +195,21 @@ static Context *waker(Event ev, Context *context) {
 	return NULL;
 }
 
+void ufree(void *pa) {
+	kmt->spin_lock(&refcnt_lock);
+	dec_refcnt(pa);
+	int pa_ref = get_refcnt(pa);
+	if (pa_ref == 0) {
+		pmm->free(pa);
+	}
+	if (pa_ref < 0){
+		panic("page with refcnt < 0");
+	}
+	kmt->spin_unlock(&refcnt_lock);
+}
+
 void uproc_init() {
-  vme_init((void *(*)(int))pmm->alloc, pmm->free);
+  vme_init((void *(*)(int))pmm->alloc, ufree);
   kmt->spin_init(&pid_lock, "pid lock");
   kmt->spin_init(&sleep_lock, "sleep lock");
   kmt->spin_init(&refcnt_lock, "refcnt lock");
@@ -238,7 +251,7 @@ int uproc_fork(task_t *father) {
 	son->context->rsp0 = rsp0;
 	son->context->cr3 = cr3;
 	son->context->GPRx = 0;
-	LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
+	// LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
 
 	AddrSpace *as = &(cur_task->as);
 	int pgsize = as->pgsize;
@@ -296,19 +309,20 @@ int uproc_exit(task_t *task, int status) {
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
-	for_list(mapping_t, it, pinfo[pid].mappings) {
-		void *pa = it->elem.pa;
-		kmt->spin_lock(&refcnt_lock);
-		dec_refcnt(pa);
-		int pa_ref = get_refcnt(pa);
-		if (pa_ref == 0) {
-			pmm->free(pa);
-		}
-		if (pa_ref < 0){
-			panic("page with refcnt < 0");
-		}
-		kmt->spin_unlock(&refcnt_lock);
-	}
+	// // replaced by ufree
+	// for_list(mapping_t, it, pinfo[pid].mappings) {
+	// 	void *pa = it->elem.pa;
+	// 	kmt->spin_lock(&refcnt_lock);
+	// 	dec_refcnt(pa);
+	// 	int pa_ref = get_refcnt(pa);
+	// 	if (pa_ref == 0) {
+	// 		pmm->free(pa);
+	// 	}
+	// 	if (pa_ref < 0){
+	// 		panic("page with refcnt < 0");
+	// 	}
+	// 	kmt->spin_unlock(&refcnt_lock);
+	// }
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc
 	// printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
@@ -328,6 +342,7 @@ int uproc_exit(task_t *task, int status) {
 	// }
 	// TODO: wake up
 	kmt->spin_unlock(&pid_lock);
+	unprotect(&(task->as));
 	kmt->teardown(task);
 	iset(true);
 	return status;

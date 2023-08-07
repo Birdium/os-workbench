@@ -13,10 +13,45 @@ pid_entry_t pinfo[UPROC_PID_NUM];
 
 spinlock_t pid_lock;
 spinlock_t sleep_lock;
+spinlock_t refcnt_lock;
 
 LIST_PTR_DEC(task_t_ptr, sleeping_tasks);
 
 static int next_pid = 1;
+static int *refcnt;
+
+void init_refcnt() {
+	int refsize = sizeof(int) * ((heap.end - heap.start) / PAGE_SIZE);
+	refcnt = pmm->alloc(refsize);
+	memset(refcnt, 0, refsize);
+}
+
+inline static int get_refcnt(void *pa) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	return refcnt[idx];
+}
+
+
+inline static void set_refcnt(void *pa, int val) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	// kmt->spin_lock(&refcnt_lock);
+	refcnt[idx] = val;
+	// kmt->spin_unlock(&refcnt_lock);
+}
+
+inline static void inc_refcnt(void *pa) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	// kmt->spin_lock(&refcnt_lock);
+	++refcnt[idx];
+	// kmt->spin_unlock(&refcnt_lock);
+}
+
+inline static void dec_refcnt(void *pa) {
+	int idx = (pa - heap.start) / PAGE_SIZE;
+	// kmt->spin_lock(&refcnt_lock);
+	--refcnt[idx];
+	// kmt->spin_unlock(&refcnt_lock);
+}
 
 static int pid_alloc() {
   kmt->spin_lock(&pid_lock);
@@ -88,6 +123,9 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
 	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa, .prot = prot, .flags = flags});
 	map(as, va, pa, prot);
+	kmt->spin_lock(&refcnt_lock);
+	inc_refcnt(pa);
+	kmt->spin_unlock(&refcnt_lock);
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
@@ -161,6 +199,7 @@ void uproc_init() {
   vme_init((void *(*)(int))pmm->alloc, pmm->free);
   kmt->spin_init(&pid_lock, "pid lock");
   kmt->spin_init(&sleep_lock, "sleep lock");
+  kmt->spin_init(&refcnt_lock, "refcnt lock");
   os->on_irq(0, EVENT_SYSCALL, syscall_handler);
   os->on_irq(0, EVENT_ERROR, error_handler);
   os->on_irq(0, EVENT_PAGEFAULT, pagefault_handler);
@@ -172,6 +211,7 @@ void uproc_init() {
   task_t *task = new_task(0);
   init_alloc(task);
   task->status = RUNNABLE;
+  init_refcnt();
 //   panic_on(task->pid != 1, "first uproc id not 1");
 //   LOG_INFO("%p", task->context->rsp);
 //   task_t *task2 = new_task(0);
@@ -259,7 +299,16 @@ int uproc_exit(task_t *task, int status) {
 	pinfo[pid].valid = 1;
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
-		pmm->free(pa);
+		kmt->spin_lock(&refcnt_lock);
+		dec_refcnt(pa);
+		int pa_ref = get_refcnt(pa);
+		if (pa_ref == 0) {
+			pmm->free(pa);
+		}
+		if (pa_ref < 0){
+			panic("page with refcnt < 0");
+		}
+		kmt->spin_unlock(&refcnt_lock);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc

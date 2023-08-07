@@ -62,6 +62,7 @@ int main() {
     int ret = wait(&res);
     kputc('\n');
     puti(ret);
+    kputc('\n');
     // puti(res);
   }
   else {

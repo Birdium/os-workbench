@@ -81,12 +81,12 @@ static Context *syscall_handler(Event ev, Context *context) {
   return NULL;
 }
 
-void pgnewmap(task_t *task, void *va, void *pa, int prot) {
+void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
     LOG_USER("%d[%s]: %p <- %p", task->pid, task->name, va, pa);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
-	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa});
+	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa, .prot = prot, .flags = flags});
 	map(as, va, pa, prot);
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
@@ -99,7 +99,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
   void *va = (void *)(ev.ref & pg_mask);
   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE);
+  pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE, MAP_PRIVATE);
   return NULL;
 }
 
@@ -119,7 +119,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ | MMAP_WRITE);
+    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
   }
   memcpy(pa, _init, _init_len);
   return;
@@ -210,7 +210,7 @@ int uproc_fork(task_t *father) {
 		void *spa = pmm->alloc(pgsize);
 		memcpy(spa, fpa, pgsize);
 		LOG_USER("%p %p %p", va, fpa, spa);
-		pgnewmap(son, va, spa, MMAP_READ | MMAP_WRITE);
+		pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
 	}
 
 	son->status = RUNNABLE;
@@ -222,14 +222,12 @@ int uproc_fork(task_t *father) {
 }
 
 int uproc_wait(task_t *task, int *status) {
-	// panic("TODO");
 	if (task->child_cnt == 0) return -1;
 	else {
 		task->waiting = 1;
 		task->status = SLEEPING;
 		yield();
 	}
-	// FIXME: status is va
 	int *status_pa = NULL;
 	for_list(mapping_t, it, pinfo[task->pid].mappings) {
 		void *va = it->elem.va;
@@ -285,7 +283,8 @@ int uproc_kill(task_t *task, int pid) {
 }
 
 void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
-	panic("TODO");
+	// panic("TODO");
+
 	return NULL;
 }
 

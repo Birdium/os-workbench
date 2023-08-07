@@ -33,18 +33,14 @@ inline static int get_refcnt(void *pa) {
 
 inline static void inc_refcnt(void *pa) {
 	int idx = (pa - heap.start) / PAGE_SIZE;
-	// kmt->spin_lock(&refcnt_lock);
 	++refcnt[idx];
 	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] - 1, refcnt[idx]);
-	// kmt->spin_unlock(&refcnt_lock);
 }
 
 inline static void dec_refcnt(void *pa) {
 	int idx = (pa - heap.start) / PAGE_SIZE;
-	// kmt->spin_lock(&refcnt_lock);
 	--refcnt[idx];
 	LOG_USER("%p(%d) %d -> %d", pa, idx, refcnt[idx] + 1, refcnt[idx]);
-	// kmt->spin_unlock(&refcnt_lock);
 }
 
 static int pid_alloc() {
@@ -207,7 +203,6 @@ void uproc_init() {
   task->status = RUNNABLE;
   init_refcnt();
 //   panic_on(task->pid != 1, "first uproc id not 1");
-//   LOG_INFO("%p", task->context->rsp);
 //   task_t *task2 = new_task(0);
 //   init_alloc(task2);
 //   task2->status = RUNNABLE;
@@ -291,20 +286,20 @@ int uproc_exit(task_t *task, int status) {
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
 	// // replaced by ufree
-	for_list(mapping_t, it, pinfo[pid].mappings) {
-		void *pa = it->elem.pa;
-		kmt->spin_lock(&refcnt_lock);
-		dec_refcnt(pa);
-		int pa_ref = get_refcnt(pa);
-		if (pa_ref == 0) {
-			pmm->free(pa);
-		}
-		if (pa_ref < 0){
-			panic("page with refcnt < 0");
-		}
-		kmt->spin_unlock(&refcnt_lock);
-		// ufree(pa);
-	}
+	// for_list(mapping_t, it, pinfo[pid].mappings) {
+	// 	void *pa = it->elem.pa;
+	// 	kmt->spin_lock(&refcnt_lock);
+	// 	dec_refcnt(pa);
+	// 	int pa_ref = get_refcnt(pa);
+	// 	if (pa_ref == 0) {
+	// 		pmm->free(pa);
+	// 	}
+	// 	if (pa_ref < 0){
+	// 		panic("page with refcnt < 0");
+	// 	}
+	// 	kmt->spin_unlock(&refcnt_lock);
+	// 	// ufree(pa);
+	// }
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc
 	// printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);

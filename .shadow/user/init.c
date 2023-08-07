@@ -63,7 +63,8 @@ int main() {
     kputc('\n');
     puti(ret);
     kputc('\n');
-    // puti(res);
+    puti(res);
+    kputc('\n');
   }
   else {
     sleep(1);

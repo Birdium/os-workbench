@@ -64,10 +64,10 @@ int main() {
     int res = 10;
     int ret = wait(&res);
     // if (fk) res += 1;
-    // puti(ret);
-    // kputc('\n');
-    // puti(res);
-    // kputc('\n');
+    puti(ret);
+    kputc('\n');
+    puti(res);
+    kputc('\n');
   }
   else {
     sleep(3);

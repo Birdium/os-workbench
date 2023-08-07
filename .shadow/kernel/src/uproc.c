@@ -238,15 +238,15 @@ int uproc_exit(task_t *task, int status) {
 	iset(false);
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
-	pinfo[pid].valid = 0;
+	pinfo[pid].valid = 1;
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
 		pmm->free(pa);
 	}
 	pinfo[pid].mappings->free(pinfo[pid].mappings);
 	// FIXME: orphan proc
-	printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
-	if (pinfo[task->ppid].valid) {
+	// printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
+	if (!pinfo[task->ppid].valid) {
 		task_t *father = pinfo[task->ppid].task;
 		father->child_cnt--;
 		if (father->waiting) {

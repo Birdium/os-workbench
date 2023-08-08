@@ -279,7 +279,9 @@ int uproc_fork(task_t *father) {
 	}
 
 	for_list(Area, it, pinfo[ppid].mareas) {
+		LOG_USER("1");
 		pinfo[ppid].mareas->push_back(pinfo[ppid].mareas, it->elem);
+		LOG_USER("2");
 	}
 
 	son->status = RUNNABLE;

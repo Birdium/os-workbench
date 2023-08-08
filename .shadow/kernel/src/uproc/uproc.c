@@ -363,6 +363,7 @@ int uproc_kill(task_t *task, int pid) {
 void *mmap_alloc(task_t *task, void *addr, int length) {
 	int pid = task->pid;
 	void *ans = (void*)(-1);
+	LOG_USER("%d", pinfo[pid].mareas->size);
 	for_list(Area, it, pinfo[pid].mareas) {
 		if (it->elem.start >= addr && (it->elem.end - it->elem.start >= length)) {
 			ans = it->elem.start;

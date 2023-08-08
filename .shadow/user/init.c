@@ -151,7 +151,7 @@ int munmaptest() {
 int main() {
   // helloworld();
   // forktest();
-  mmaptest();
+  // mmaptest();
   munmaptest();
   // ...
   return 0;

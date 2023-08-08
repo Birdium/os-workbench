@@ -126,8 +126,8 @@ static Context *pagefault_handler(Event ev, Context *context) {
   int pg_mask = ~(as->pgsize - 1);
   void *pa = pmm->alloc(as->pgsize);
   void *va = (void *)(ev.ref & pg_mask);
-  LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
-  LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
+//   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   return NULL;
 }
@@ -404,6 +404,7 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 			}
 		}
 		LOG_USER("%p", result);
+		return result;
 	}
 	else {
 		void * addr_end = addr + length;

@@ -107,11 +107,13 @@ int mmaptest() {
   int pid = fork();
   int res = 0;
   if (pid == 0) {
+    *addr = 'b';
     sleep(3);
     exit(1);
   }
   else {
     wait(&res);
+    kputc(*addr);
     if (res != 1) {
       kputc('W');
     }

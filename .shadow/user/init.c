@@ -1,6 +1,14 @@
 #include "ulib.h"
 #include <string.h>
 
+void puts(char *s) {
+  while (*s) {
+    kputc(*s);
+    s++;
+  }
+  kputc('\n');
+}
+
 void puti(int x) {
   if (x == 0) {
     kputc('0');
@@ -99,6 +107,7 @@ int forktest() {
 }
 
 int mmaptest() {
+  puts("mmaptest");
   int length = 8192;
   char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   for (int i = 0; i < length; i++) {
@@ -125,6 +134,7 @@ int mmaptest() {
 }
 
 int munmaptest() {
+  puts("munmaptest");
   int length = 8192 + 4096;
   char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   char *un = mmap(addr + 4096, 4096, PROT_READ | PROT_WRITE, MAP_UNMAP);
@@ -139,7 +149,7 @@ int munmaptest() {
 }
 
 int main() {
-  helloworld();
+  // helloworld();
   // forktest();
   mmaptest();
   munmaptest();

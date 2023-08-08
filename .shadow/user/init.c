@@ -68,11 +68,13 @@ int helloworld() {
 int forktest() {
   // Example:
   int fk = fork();
-  kputc('0' + fk);
+  // kputc('0' + fk);
   int fk2 = fork();
-  kputc('0' + fk2);
-  kputc('\n');
+  // kputc('0' + fk2);
+  // kputc('\n');
   if (fk2) {
+    int p = getpid();
+    kputc('0' + p);
     int res = 10;
     int ret = wait(&res);
   }
@@ -86,7 +88,6 @@ int forktest() {
   // else {
   //   sleep(10);
   // }
-  int p = getpid();
   // int64_t lt = 0;
   // while(1){
   //   int64_t t = uptime();
@@ -98,7 +99,6 @@ int forktest() {
   //     // }
   //   }
   // }
-  kputc('0' + p);
   return p;
 }
 

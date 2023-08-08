@@ -75,14 +75,9 @@ int forktest() {
   if (fk2) {
     int res = 10;
     int ret = wait(&res);
-    if (fk) res += 1;
-    puti(ret);
-    kputc('\n');
-    puti(res);
-    kputc('\n');
   }
   else {
-    sleep(3);
+    sleep(1);
     exit(5);
   }
   // if (fk == 0) {
@@ -103,6 +98,7 @@ int forktest() {
   //     // }
   //   }
   // }
+  kputc('0' + p);
   return p;
 }
 

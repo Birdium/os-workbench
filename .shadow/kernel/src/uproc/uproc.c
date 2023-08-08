@@ -4,6 +4,7 @@
 #include <os.h>
 #include <stdio.h>
 #include <syscall.h>
+#include <user.h>
 
 #include "common.h"
 #include "../initcode.inc"
@@ -127,7 +128,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
   void *va = (void *)(ev.ref & pg_mask);
 //   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
 //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE, MAP_PRIVATE);
+  pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   return NULL;
 }
 
@@ -147,7 +148,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < pa_size; offset += as->pgsize) {
-    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
+    pgnewmap(init_task, va + offset, pa + offset, PROT_READ, MAP_SHARED);
   }
   memcpy(pa, _init, _init_len);
   int pid = init_task->pid;

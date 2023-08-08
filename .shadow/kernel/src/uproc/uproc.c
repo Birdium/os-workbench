@@ -143,16 +143,16 @@ static inline size_t align(size_t size) {
 
 void init_alloc(task_t *init_task) {
   AddrSpace *as = &(init_task->as);
-  int pa_size = _init_len > as->pgsize ? _init_len : as->pgsize;
+  int pa_size = _init_len > as->pgsize ? align(_init_len) : as->pgsize;
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
-  for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
+  for (int offset = 0; offset < pa_size; offset += as->pgsize) {
     pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
   }
   memcpy(pa, _init, _init_len);
   int pid = init_task->pid;
   panic_on(pid != 1, "init task pid not 1");
-  pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = as->area.start + align(_init_len), .end = as->area.end});
+  pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = as->area.start + pa_size, .end = as->area.end});
   return;
 }
 

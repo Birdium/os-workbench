@@ -39,22 +39,26 @@ void puti64(int64_t x) {
   }
 }
 
-int main() {
+int helloworld() {
+  kputc('H');
+  kputc('e');
+  kputc('l');
+  kputc('l');
+  kputc('o');
+  kputc(',');
+  kputc(' ');
+  kputc('w');
+  kputc('o');
+  kputc('r');
+  kputc('l');
+  kputc('d');
+  kputc('!');
+  kputc('\n');
+  return 0;
+}
+
+int forktest() {
   // Example:
-  // kputc('H');
-  // kputc('e');
-  // kputc('l');
-  // kputc('l');
-  // kputc('o');
-  // kputc(',');
-  // kputc(' ');
-  // kputc('w');
-  // kputc('o');
-  // kputc('r');
-  // kputc('l');
-  // kputc('d');
-  // kputc('!');
-  // kputc('\n');
   int fk = fork();
   kputc('0' + fk);
   int fk2 = fork();
@@ -92,4 +96,21 @@ int main() {
   //   }
   // }
   return p;
+}
+
+int mmaptest() {
+  int length = 16384;
+  char *addr = mmap(NULL, length, MAP_PRIVATE, PROT_READ | PROT_WRITE);
+  for (int i = 0; i < length; i++) {
+    *(addr + i) = 'a';
+  }
+  return 1;
+}
+
+int main() {
+  helloworld();
+  // forktest();
+  mmaptest();
+  // ...
+  return 0;
 }

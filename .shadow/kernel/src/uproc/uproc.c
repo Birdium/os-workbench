@@ -338,9 +338,76 @@ int uproc_kill(task_t *task, int pid) {
 	return 0;
 }
 
+void *mmap_alloc(task_t *task, void *addr, int length) {
+	int pid = task->pid;
+	void *ans = (void*)(-1);
+	for_list(Area, it, pinfo[pid].mareas) {
+		if (it->elem.start >= addr && (it->elem.end - it->elem.start >= length)) {
+			ans = it->elem.start;
+			if (it->elem.end - it->elem.start == length) {
+				pinfo[pid].mareas->remove(pinfo[pid].mareas, it);
+			}
+			else {
+				it->elem.start += length;
+			}
+			break;
+		}
+	}
+	return ans;
+}
+
+void* mmap_free(task_t *task, void *addr, int length) {
+	int pid = task->pid;
+	for_list(Area, it, pinfo[pid].mareas) {
+		if (it->elem.start > addr + length) {
+			pinfo[pid].mareas->insert_prev(pinfo[pid].mareas, it, (Area){.start = addr, .end = addr + length});
+			return NULL;
+		}
+		if (it->elem.start == addr + length) {
+			it->elem.start -= length;
+			return NULL;
+		}
+		if (it->elem.end > addr) {
+			return (void*)(-1);
+		}
+		if (it->elem.end == addr) {
+			it->elem.end += length;
+			for (Area_list_node *nd = it; nd != NULL && nd->elem.start == it->elem.end; ) {
+				it->elem.end += nd->elem.end - nd->elem.start;
+				Area_list_node *nxt = nd;
+				pinfo[pid].mareas->remove(pinfo[pid].mareas, nd);
+				nd = nxt;
+			}
+			return NULL;
+		}
+	}			
+	pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = addr, .end = addr + length});
+	return NULL;
+}	
+
 void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 	// panic("TODO");
-
+	int pgsize = task->as.pgsize;
+	if (flags != MAP_UNMAP) {
+		addr = (void*)ROUNDUP(addr, PAGE_SIZE);
+		length = align(length);
+		void *result = mmap_alloc(task, addr, length);
+		if (result == (void*)(-1)) {
+			return result;
+		}
+		else {
+			for (void *va = addr; va - addr < length; va += pgsize) {
+				void *pa = pmm->alloc(pgsize);
+				pgnewmap(task, va, pa, prot, flags);
+			}
+		}
+	}
+	else {
+		void * addr_end = addr + length;
+		addr = (void*)ROUNDDOWN(addr, PAGE_SIZE);
+		addr_end = (void*)ROUNDUP(addr_end, PAGE_SIZE);
+		return mmap_free(task, addr, addr_end - addr);
+	}
 	return NULL;
 }
 

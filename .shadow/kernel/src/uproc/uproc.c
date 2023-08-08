@@ -414,6 +414,7 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 		addr = (void*)ROUNDUP(addr, PAGE_SIZE);
 		length = align(length);
 		void *result = mmap_alloc(task, addr, length);
+		LOG_USER("%p", result);
 		if (result == (void*)(-1)) {
 			return result;
 		}
@@ -423,6 +424,7 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 				pgnewmap(task, va, pa, prot, flags);
 			}
 		}
+		LOG_USER("%p", result);
 		return result;
 	}
 	else {

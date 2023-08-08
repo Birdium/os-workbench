@@ -127,9 +127,8 @@ void pgunmap(task_t *task, void *va) {
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		if (it->elem.va == va) {
 			void *pa = it->elem.pa;
-			int prot = it->elem.prot;
     		LOG_USER("%d[%s]: %p </- %p", task->pid, task->name, va, pa);
-			map(as, va, NULL, prot);
+			map(as, va, NULL, MMAP_NONE);
 			kmt->spin_lock(&refcnt_lock);
 			dec_refcnt(pa);
 			kmt->spin_unlock(&refcnt_lock);

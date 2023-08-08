@@ -99,8 +99,8 @@ int forktest() {
 }
 
 int mmaptest() {
-  int length = 16384;
-  char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
+  int length = 8192;
+  char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED);
   for (int i = 0; i < length; i++) {
     *(addr + i) = 'a';
   }

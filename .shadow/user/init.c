@@ -125,9 +125,16 @@ int mmaptest() {
 }
 
 int munmaptest() {
-  int length = 8192;
+  int length = 8192 + 4096;
   char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
-  char *um = mmap(NULL, length, PROT_READ)
+  char *un = mmap(addr + 4096, 4096, PROT_READ | PROT_WRITE, MAP_UNMAP);
+  if (un != 0) {
+    while (1) {
+      kputc('W');
+    }
+  }
+  *(addr) = 'A';
+  *(addr + 8192) = 'A';
   return 1;
 }
 

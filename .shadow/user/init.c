@@ -80,7 +80,7 @@ int main() {
   //   sleep(10);
   // }
   int p = getpid();
-  int64_t lt = 0;
+  // int64_t lt = 0;
   // while(1){
   //   int64_t t = uptime();
   //   if (t - lt >= 100) {

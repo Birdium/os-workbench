@@ -318,6 +318,7 @@ int uproc_exit(task_t *task, int status) {
 	// // replaced by ufree
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
+		LOG_USER("%d[%s]: %p </- %p", task->pid, task->name, it->elem.va, pa);
 		kmt->spin_lock(&refcnt_lock);
 		dec_refcnt(pa);
 		int pa_ref = get_refcnt(pa);

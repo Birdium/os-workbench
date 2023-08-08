@@ -149,6 +149,7 @@ void init_alloc(task_t *init_task) {
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
     pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
   }
+  printf("Got AS: %p %p\n", as->area.start, as->area.end);
   memcpy(pa, _init, _init_len);
   return;
 }

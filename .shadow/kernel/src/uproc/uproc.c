@@ -402,6 +402,7 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 				pgnewmap(task, va, pa, prot, flags);
 			}
 		}
+		LOG_USER("%p", result);
 	}
 	else {
 		void * addr_end = addr + length;

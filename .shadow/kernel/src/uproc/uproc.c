@@ -278,6 +278,10 @@ int uproc_fork(task_t *father) {
 		}
 	}
 
+	for_list(Area, it, pinfo[ppid].mareas) {
+		pinfo[ppid].mareas->push_back(pinfo[ppid].mareas, it->elem);
+	}
+
 	son->status = RUNNABLE;
 
 	int pid = son->pid;

@@ -120,6 +120,28 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
+void pgunmap(task_t *task, void *va) {
+	AddrSpace *as = &(task->as);
+	int pid = task->pid;
+	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
+	for_list(mapping_t, it, pinfo[pid].mappings) {
+		if (it->elem.va == va) {
+			void *pa = it->elem.pa;
+			int prot = it->elem.prot;
+    		LOG_USER("%d[%s]: %p </- %p", task->pid, task->name, va, pa);
+			map(as, va, NULL, prot);
+			kmt->spin_lock(&refcnt_lock);
+			dec_refcnt(pa);
+			kmt->spin_unlock(&refcnt_lock);
+			pinfo[pid].mappings->remove(pinfo[pid].mappings, it);
+			return;
+		}
+	}
+	printf("cannot find va %p!\n");
+	panic("pgunmap");
+	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
+}
+
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with COW
   AddrSpace *as = &(cur_task->as);
@@ -410,7 +432,15 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 		void * addr_end = addr + length;
 		addr = (void*)ROUNDDOWN(addr, PAGE_SIZE);
 		addr_end = (void*)ROUNDUP(addr_end, PAGE_SIZE);
-		return mmap_free(task, addr, addr_end - addr);
+		void *result = mmap_free(task, addr, addr_end - addr);
+		if (result == (void*)(-1)) {
+			return result;
+		}
+		else {
+			for (void *va = addr; va - addr < length; va += pgsize) {
+				pgunmap(task, va);
+			}
+		}
 	}
 	return NULL;
 }

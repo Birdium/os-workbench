@@ -124,10 +124,18 @@ int mmaptest() {
   return 1;
 }
 
+int munmaptest() {
+  int length = 8192;
+  char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
+  char *um = mmap(NULL, length, PROT_READ)
+  return 1;
+}
+
 int main() {
   helloworld();
   // forktest();
   mmaptest();
+  munmaptest();
   // ...
   return 0;
 }

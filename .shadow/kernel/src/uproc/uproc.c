@@ -149,8 +149,10 @@ void init_alloc(task_t *init_task) {
   for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
     pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
   }
-  printf("Got AS: %p %p\n", as->area.start, as->area.end);
   memcpy(pa, _init, _init_len);
+  int pid = init_task->pid;
+  panic_on(pid != 1, "init task pid not 1");
+  pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = as->area.start + _init_len, .end = as->area.end});
   return;
 }
 
@@ -159,9 +161,11 @@ task_t *new_task(pid_t ppid) {
   int pid = pid_alloc();
   kmt_ucreate(task, "init", pid, ppid);
   LIST_PTR_INIT(mapping_t, pinfo[pid].mappings);
+  LIST_PTR_INIT(Area, pinfo[pid].mareas);
   pinfo[pid].task = task;
-  task->child_cnt = 0;
+  task->killed = 0;
   task->waiting = false;
+  task->child_cnt = 0;
   return task;
 }
 
@@ -301,7 +305,8 @@ int uproc_exit(task_t *task, int status) {
 		kmt->spin_unlock(&refcnt_lock);
 		// ufree(pa);
 	}
-	pinfo[pid].mappings->free(pinfo[pid].mappings);
+	pinfo[pid].mappings->clear(pinfo[pid].mappings);
+	pinfo[pid].mareas->clear(pinfo[pid].mareas);
 	// FIXME: orphan proc
 	// printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
 	if (!pinfo[task->ppid].valid) {

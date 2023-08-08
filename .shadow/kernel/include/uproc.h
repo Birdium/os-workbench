@@ -21,11 +21,13 @@ typedef struct mapping {
 } mapping_t;
 
 DEF_LIST(mapping_t);
+DEF_LIST(Area);
 
 typedef struct pid_entry {
 	int valid;
 	task_t *task;
 	mapping_t_list *mappings;
+	Area_list *mareas;
 } pid_entry_t;
 
 #endif

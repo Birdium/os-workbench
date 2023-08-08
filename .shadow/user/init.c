@@ -127,7 +127,7 @@ int mmaptest() {
 int munmaptest() {
   int length = 8192 + 4096;
   char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
-  char *un = mmap(addr + 4096, 4096, PROT_READ | PROT_WRITE, MAP_UNMAP);
+  char *un = mmap(addr + 4096, 4096, PROT_NONE, MAP_UNMAP);
   if (un != 0) {
     while (1) {
       kputc('W');

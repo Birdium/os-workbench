@@ -152,7 +152,7 @@ void init_alloc(task_t *init_task) {
   memcpy(pa, _init, _init_len);
   int pid = init_task->pid;
   panic_on(pid != 1, "init task pid not 1");
-  pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = as->area.start + _init_len, .end = as->area.end});
+  pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = as->area.start + align(_init_len), .end = as->area.end});
   return;
 }
 

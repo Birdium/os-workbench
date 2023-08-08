@@ -100,7 +100,7 @@ int forktest() {
 
 int mmaptest() {
   int length = 16384;
-  char *addr = mmap(NULL, length, MAP_PRIVATE, PROT_READ | PROT_WRITE);
+  char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   for (int i = 0; i < length; i++) {
     *(addr + i) = 'a';
   }

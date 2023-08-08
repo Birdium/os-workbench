@@ -104,6 +104,21 @@ int mmaptest() {
   for (int i = 0; i < length; i++) {
     *(addr + i) = 'a';
   }
+  int pid = fork();
+  int res = 0;
+  if (pid == 0) {
+    sleep(3);
+    exit(1);
+  }
+  else {
+    wait(&res);
+    if (res != 1) {
+      kputc('W');
+    }
+    else {
+      kputc('A');
+    }
+  }
   return 1;
 }
 

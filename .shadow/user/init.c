@@ -67,16 +67,19 @@ int helloworld() {
 
 int forktest() {
   // Example:
-  int fk = fork();
+  // int fk = 
+  fork();
   // kputc('0' + fk);
   int fk2 = fork();
   // kputc('0' + fk2);
   // kputc('\n');
+  
   if (fk2) {
     int p = getpid();
     kputc('0' + p);
     int res = 10;
-    int ret = wait(&res);
+    // int ret = 
+    wait(&res);
   }
   else {
     sleep(1);
@@ -99,7 +102,7 @@ int forktest() {
   //     // }
   //   }
   // }
-  return p;
+  return 0;
 }
 
 int mmaptest() {

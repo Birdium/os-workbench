@@ -67,22 +67,22 @@ int helloworld() {
 
 int forktest() {
   // Example:
-  int fk = fork();
-  kputc('0' + fk);
+  // int fk = 
+  fork();
+  // kputc('0' + fk);
   int fk2 = fork();
-  kputc('0' + fk2);
-  kputc('\n');
+  // kputc('0' + fk2);
+  // kputc('\n');
+  
   if (fk2) {
+    int p = getpid();
+    kputc('0' + p);
     int res = 10;
-    int ret = wait(&res);
-    if (fk) res += 1;
-    puti(ret);
-    kputc('\n');
-    puti(res);
-    kputc('\n');
+    // int ret = 
+    wait(&res);
   }
   else {
-    sleep(3);
+    sleep(1);
     exit(5);
   }
   // if (fk == 0) {
@@ -91,7 +91,6 @@ int forktest() {
   // else {
   //   sleep(10);
   // }
-  int p = getpid();
   // int64_t lt = 0;
   // while(1){
   //   int64_t t = uptime();
@@ -103,7 +102,7 @@ int forktest() {
   //     // }
   //   }
   // }
-  return p;
+  return 0;
 }
 
 int mmaptest() {
@@ -150,8 +149,8 @@ int munmaptest() {
 
 int main() {
   // helloworld();
-  // forktest();
-  // mmaptest();
+  forktest();
+  mmaptest();
   munmaptest();
   // ...
   return 0;

@@ -245,6 +245,7 @@ int uproc_fork(task_t *father) {
 	LOG_USER("forking %d[%s]", father->pid, father->name);
 	int ppid = father->pid;
 	task_t *son = new_task(ppid);
+	int pid = son->pid;
 	son->name = father->name;
 	father->child_cnt++;
 	// memcpy(son->stack, father->stack, KMT_STACK_SIZE);
@@ -278,9 +279,11 @@ int uproc_fork(task_t *father) {
 		}
 	}
 
-	son->status = RUNNABLE;
+	for_list(Area, it, pinfo[ppid].mareas) {
+		pinfo[pid].mareas->push_back(pinfo[pid].mareas, it->elem);
+	}
 
-	int pid = son->pid;
+	son->status = RUNNABLE;
 
 	iset(true);
 	return pid;
@@ -315,6 +318,7 @@ int uproc_exit(task_t *task, int status) {
 	// // replaced by ufree
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
+		LOG_USER("%d[%s]: %p </- %p", task->pid, task->name, it->elem.va, pa);
 		kmt->spin_lock(&refcnt_lock);
 		dec_refcnt(pa);
 		int pa_ref = get_refcnt(pa);

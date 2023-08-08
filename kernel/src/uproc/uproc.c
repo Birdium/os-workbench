@@ -4,6 +4,7 @@
 #include <os.h>
 #include <stdio.h>
 #include <syscall.h>
+#include <user.h>
 
 #include "common.h"
 #include "../initcode.inc"
@@ -119,6 +120,27 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
 	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
 }
 
+void pgunmap(task_t *task, void *va) {
+	AddrSpace *as = &(task->as);
+	int pid = task->pid;
+	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
+	for_list(mapping_t, it, pinfo[pid].mappings) {
+		if (it->elem.va == va) {
+			void *pa = it->elem.pa;
+    		LOG_USER("%d[%s]: %p </- %p", task->pid, task->name, va, pa);
+			map(as, va, NULL, MMAP_NONE);
+			kmt->spin_lock(&refcnt_lock);
+			dec_refcnt(pa);
+			kmt->spin_unlock(&refcnt_lock);
+			pinfo[pid].mappings->remove(pinfo[pid].mappings, it);
+			return;
+		}
+	}
+	printf("cannot find va %p!\n");
+	panic("pgunmap");
+	// LOG_USER("%d %d\n", pid, pinfo[pid].mappings->size);
+}
+
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with COW
   AddrSpace *as = &(cur_task->as);
@@ -127,7 +149,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
   void *va = (void *)(ev.ref & pg_mask);
 //   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
 //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  pgnewmap(cur_task, va, pa, MMAP_READ | MMAP_WRITE, MAP_PRIVATE);
+  pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   return NULL;
 }
 
@@ -143,13 +165,16 @@ static inline size_t align(size_t size) {
 
 void init_alloc(task_t *init_task) {
   AddrSpace *as = &(init_task->as);
-  int pa_size = _init_len > as->pgsize ? _init_len : as->pgsize;
+  int pa_size = _init_len > as->pgsize ? align(_init_len) : as->pgsize;
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
-  for (int offset = 0; offset < align(_init_len); offset += as->pgsize) {
-    pgnewmap(init_task, va + offset, pa + offset, MMAP_READ, MAP_SHARED);
+  for (int offset = 0; offset < pa_size; offset += as->pgsize) {
+    pgnewmap(init_task, va + offset, pa + offset, PROT_READ, MAP_SHARED);
   }
   memcpy(pa, _init, _init_len);
+  int pid = init_task->pid;
+  panic_on(pid != 1, "init task pid not 1");
+  pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = as->area.start + pa_size, .end = as->area.end});
   return;
 }
 
@@ -158,9 +183,11 @@ task_t *new_task(pid_t ppid) {
   int pid = pid_alloc();
   kmt_ucreate(task, "init", pid, ppid);
   LIST_PTR_INIT(mapping_t, pinfo[pid].mappings);
+  LIST_PTR_INIT(Area, pinfo[pid].mareas);
   pinfo[pid].task = task;
-  task->child_cnt = 0;
+  task->killed = 0;
   task->waiting = false;
+  task->child_cnt = 0;
   return task;
 }
 
@@ -300,7 +327,8 @@ int uproc_exit(task_t *task, int status) {
 		kmt->spin_unlock(&refcnt_lock);
 		// ufree(pa);
 	}
-	pinfo[pid].mappings->free(pinfo[pid].mappings);
+	pinfo[pid].mappings->clear(pinfo[pid].mappings);
+	pinfo[pid].mareas->clear(pinfo[pid].mareas);
 	// FIXME: orphan proc
 	// printf("111 %d %d\n", task->ppid, pinfo[task->ppid].valid);
 	if (!pinfo[task->ppid].valid) {
@@ -332,9 +360,87 @@ int uproc_kill(task_t *task, int pid) {
 	return 0;
 }
 
+void *mmap_alloc(task_t *task, void *addr, int length) {
+	int pid = task->pid;
+	void *ans = (void*)(-1);
+	for_list(Area, it, pinfo[pid].mareas) {
+		if (it->elem.start >= addr && (it->elem.end - it->elem.start >= length)) {
+			ans = it->elem.start;
+			if (it->elem.end - it->elem.start == length) {
+				pinfo[pid].mareas->remove(pinfo[pid].mareas, it);
+			}
+			else {
+				it->elem.start += length;
+			}
+			break;
+		}
+	}
+	return ans;
+}
+
+void* mmap_free(task_t *task, void *addr, int length) {
+	int pid = task->pid;
+	for_list(Area, it, pinfo[pid].mareas) {
+		if (it->elem.start > addr + length) {
+			pinfo[pid].mareas->insert_prev(pinfo[pid].mareas, it, (Area){.start = addr, .end = addr + length});
+			return NULL;
+		}
+		if (it->elem.start == addr + length) {
+			it->elem.start -= length;
+			return NULL;
+		}
+		if (it->elem.end > addr) {
+			return (void*)(-1);
+		}
+		if (it->elem.end == addr) {
+			it->elem.end += length;
+			for (Area_list_node *nd = it; nd != NULL && nd->elem.start == it->elem.end; ) {
+				it->elem.end += nd->elem.end - nd->elem.start;
+				Area_list_node *nxt = nd;
+				pinfo[pid].mareas->remove(pinfo[pid].mareas, nd);
+				nd = nxt;
+			}
+			return NULL;
+		}
+	}			
+	pinfo[pid].mareas->push_back(pinfo[pid].mareas, (Area){.start = addr, .end = addr + length});
+	return NULL;
+}	
+
 void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 	// panic("TODO");
-
+	int pgsize = task->as.pgsize;
+	if (flags != MAP_UNMAP) {
+		addr = (void*)ROUNDUP(addr, PAGE_SIZE);
+		length = align(length);
+		void *result = mmap_alloc(task, addr, length);
+		LOG_USER("%p", result);
+		if (result == (void*)(-1)) {
+			return result;
+		}
+		else {
+			for (void *va = result; va - result < length; va += pgsize) {
+				void *pa = pmm->alloc(pgsize);
+				pgnewmap(task, va, pa, prot, flags);
+			}
+		}
+		LOG_USER("%p", result);
+		return result;
+	}
+	else {
+		void * addr_end = addr + length;
+		addr = (void*)ROUNDDOWN(addr, PAGE_SIZE);
+		addr_end = (void*)ROUNDUP(addr_end, PAGE_SIZE);
+		void *result = mmap_free(task, addr, addr_end - addr);
+		if (result == (void*)(-1)) {
+			return result;
+		}
+		else {
+			for (void *va = addr; va - addr < length; va += pgsize) {
+				pgunmap(task, va);
+			}
+		}
+	}
 	return NULL;
 }
 

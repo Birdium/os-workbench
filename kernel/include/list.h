@@ -31,6 +31,7 @@
         void (*remove)		(type##_list *l, type##_list_node *p); \
         void (*pop_front)	(type##_list *l); \
         void (*pop_back)	(type##_list *l); \
+		void (*clear)		(type##_list *l); \
 		void (*free)		(type##_list *l); \
         type (*front)       (type##_list *l); \
         type (*back)        (type##_list *l); \
@@ -107,6 +108,16 @@
 		} \
 		LIST_FREE(l); \
 	} \
+	static inline void type##_list_clear(type##_list *l) { \
+		type##_list_node *p = l->head; \
+		while (p) { \
+			type##_list_node *q = p->next; \
+			LIST_FREE(p); \
+			p = q; \
+		} \
+        l->size = 0; \
+        l->head = l->tail = NULL; \
+	} \
     static inline void type##_list_init(type##_list *l) { \
 		l->self = l; \
         l->size = 0; \
@@ -119,6 +130,7 @@
         l->pop_back 	= type##_list_pop_back; \
         l->remove       = type##_list_remove; \
 		l->free 		= type##_list_free; \
+		l->clear 		= type##_list_clear; \
         l->front        = type##_list_front; \
         l->back         = type##_list_back; \
     } \

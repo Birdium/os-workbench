@@ -6,7 +6,7 @@
 #include <syscall.h>
 
 #include "common.h"
-#include "initcode.inc"
+#include "../initcode.inc"
 #include "klib-macros.h"
 
 pid_entry_t pinfo[UPROC_PID_NUM];

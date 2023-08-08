@@ -397,7 +397,7 @@ void *uproc_mmap(task_t *task, void *addr, int length, int prot, int flags) {
 			return result;
 		}
 		else {
-			for (void *va = addr; va - addr < length; va += pgsize) {
+			for (void *va = result; va - result < length; va += pgsize) {
 				void *pa = pmm->alloc(pgsize);
 				pgnewmap(task, va, pa, prot, flags);
 			}

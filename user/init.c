@@ -1,6 +1,8 @@
 #include "ulib.h"
 #include <string.h>
 
+int a;
+
 void puts(char *s) {
   while (*s) {
     kputc(*s);
@@ -65,9 +67,26 @@ int helloworld() {
   return 0;
 }
 
+int gvartest() {
+  puts("gvartest");
+  if (fork() == 0) {
+    sleep(1);
+    kputc('0'+ a);
+    exit(1);
+  }
+  else {
+    a = 1;
+    int res;
+    wait(&res);
+    kputc('\n');
+  }
+  return 0;
+}
+
 int forktest() {
   // Example:
   // int fk = 
+  puts("forktest");
   fork();
   // kputc('0' + fk);
   int fk2 = fork();
@@ -149,6 +168,7 @@ int munmaptest() {
 
 int main() {
   // helloworld();
+  gvartest();
   forktest();
   mmaptest();
   munmaptest();

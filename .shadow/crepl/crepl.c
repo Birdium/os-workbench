@@ -96,7 +96,7 @@ int comp_func(char *line) {
       return -1;
     }
     if (is_func) {
-      printf("OK.\n");
+      printf("OK.\n");`
     }
     else {
       int (*expr)() = dlsym(handle, func_name);

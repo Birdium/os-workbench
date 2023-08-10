@@ -1,6 +1,8 @@
 #include "ulib.h"
 #include <string.h>
 
+int a;
+
 void puts(char *s) {
   while (*s) {
     kputc(*s);
@@ -149,6 +151,8 @@ int munmaptest() {
 
 int main() {
   // helloworld();
+  a = 1;
+  kputc('0'+ a);
   forktest();
   mmaptest();
   munmaptest();

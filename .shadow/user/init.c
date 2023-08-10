@@ -69,8 +69,15 @@ int helloworld() {
 
 int gvartest() {
   puts("gvartest");
-  a = 1;
-  kputc('0'+ a);
+  if (fork() == 0) {
+    sleep(1);
+    kputc('0'+ a);
+  }
+  else {
+    a = 1;
+    int res;
+    wait(&res);
+  }
   return 0;
 }
 

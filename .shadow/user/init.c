@@ -67,6 +67,11 @@ int helloworld() {
   return 0;
 }
 
+int gvartest() {
+  a = 1;
+  kputc('0'+ a);
+}
+
 int forktest() {
   // Example:
   // int fk = 
@@ -151,8 +156,7 @@ int munmaptest() {
 
 int main() {
   // helloworld();
-  a = 1;
-  kputc('0'+ a);
+  gvartest();
   forktest();
   mmaptest();
   munmaptest();

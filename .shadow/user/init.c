@@ -68,8 +68,10 @@ int helloworld() {
 }
 
 int gvartest() {
+  puts("gvartest");
   a = 1;
   kputc('0'+ a);
+  return 0;
 }
 
 int forktest() {

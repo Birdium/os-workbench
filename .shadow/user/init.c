@@ -72,6 +72,7 @@ int gvartest() {
   if (fork() == 0) {
     sleep(1);
     kputc('0'+ a);
+    exit(1);
   }
   else {
     a = 1;

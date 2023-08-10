@@ -169,7 +169,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < pa_size; offset += as->pgsize) {
-    pgnewmap(init_task, va + offset, pa + offset, PROT_READ, MAP_SHARED);
+    pgnewmap(init_task, va + offset, pa + offset, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   }
   memcpy(pa, _init, _init_len);
   int pid = init_task->pid;

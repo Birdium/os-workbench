@@ -77,6 +77,7 @@ int gvartest() {
     a = 1;
     int res;
     wait(&res);
+    kputc('\n');
   }
   return 0;
 }

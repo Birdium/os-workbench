@@ -85,6 +85,7 @@ int gvartest() {
 int forktest() {
   // Example:
   // int fk = 
+  puts("forktest");
   fork();
   // kputc('0' + fk);
   int fk2 = fork();

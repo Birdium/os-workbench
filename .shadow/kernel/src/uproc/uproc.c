@@ -147,6 +147,8 @@ static Context *pagefault_handler(Event ev, Context *context) {
   int pg_mask = ~(as->pgsize - 1);
   void *va = (void *)(ev.ref & pg_mask);
   void *pa = NULL;	
+  LOG_USER("task: %d[%s], %s, %d", cur_task->pid, cur_task->name, ev.msg, ev.cause);
+  LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   int pid = cur_task->pid;
   for_list(mapping_t, it, pinfo[pid].mappings) {
 	if (it->elem.va == va) {
@@ -177,12 +179,9 @@ static Context *pagefault_handler(Event ev, Context *context) {
 	}
   }
   if (pa == NULL) {
-				LOG_USER("1");
   	pa = pmm->alloc(as->pgsize);
   	pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   }
-  LOG_USER("task: %d[%s], %s, %d", cur_task->pid, cur_task->name, ev.msg, ev.cause);
-//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   return NULL;
 }
 

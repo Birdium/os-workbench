@@ -273,7 +273,6 @@ int uproc_fork(task_t *father) {
 				int prot = it->elem.prot ^ PROT_WRITE, flags = it->elem.flags;
 				map(&(father->as), va, NULL, MMAP_NONE);
 				map(&(father->as), va, fpa, flags);
-				LOG_USER("%d", flags);
 				pgnewmap(son, va, fpa, prot, flags);
 			}
 			else {

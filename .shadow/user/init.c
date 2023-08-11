@@ -170,8 +170,8 @@ int main() {
   // helloworld();
   gvartest();
   forktest();
-  // mmaptest();
-  // munmaptest();
+  mmaptest();
+  munmaptest();
   // ...
   return 0;
 }

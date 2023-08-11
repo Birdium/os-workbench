@@ -108,6 +108,7 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
+	prot /= 2;
     LOG_USER("%d[%s]: %p <- %p, (%d %d)", task->pid, task->name, va, pa, prot, flags);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
@@ -143,13 +144,13 @@ void pgunmap(task_t *task, void *va) {
 
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with COW
-//   AddrSpace *as = &(cur_task->as);
-//   int pg_mask = ~(as->pgsize - 1);
-//   void *pa = pmm->alloc(as->pgsize);
-//   void *va = (void *)(ev.ref & pg_mask);
+  AddrSpace *as = &(cur_task->as);
+  int pg_mask = ~(as->pgsize - 1);
+  void *pa = pmm->alloc(as->pgsize);
+  void *va = (void *)(ev.ref & pg_mask);
   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
-// //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-//   pgnewmap(cur_task, va, pa, PROT_READ, MAP_PRIVATE);
+//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
+  pgnewmap(cur_task, va, pa, PROT_READ, MAP_PRIVATE);
   return NULL;
 }
 
@@ -272,7 +273,7 @@ int uproc_fork(task_t *father) {
 			if (it->elem.prot & PROT_WRITE) {
 				it->elem.prot ^= PROT_WRITE;
 				map(&(father->as), va, NULL, MMAP_NONE);
-				map(&(father->as), va, fpa, it->elem.prot);
+				map(&(father->as), va, fpa, it->elem.prot / 2);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {

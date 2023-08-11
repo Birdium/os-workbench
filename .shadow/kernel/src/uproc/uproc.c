@@ -273,7 +273,7 @@ int uproc_fork(task_t *father) {
 				it->elem.prot ^= PROT_WRITE;
 				pgunmap(father, va);
 				pgnewmap(father, va, fpa, it->elem.prot, it->elem.flags);
-				LOG_USER("private %p %p %p", son, va, fpa);
+				LOG_USER("private %p %p %p %d", son, va, fpa, it->elem.prot);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {

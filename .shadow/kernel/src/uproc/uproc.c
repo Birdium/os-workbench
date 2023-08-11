@@ -177,6 +177,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
 	}
   }
   if (pa == NULL) {
+				LOG_USER("1");
   	pa = pmm->alloc(as->pgsize);
   	pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   }
@@ -309,7 +310,6 @@ int uproc_fork(task_t *father) {
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {				
-				LOG_USER("1");
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			// // no COW version

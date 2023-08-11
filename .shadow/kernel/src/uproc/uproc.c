@@ -271,8 +271,8 @@ int uproc_fork(task_t *father) {
 			// COW version
 			if (it->elem.prot | PROT_WRITE) {
 				int prot = it->elem.prot ^ PROT_WRITE, flags = it->elem.flags;
-				pgunmap(father, va);
-				pgnewmap(father, va, fpa, prot, flags);
+				map(&(father->as), va, NULL, MMAP_NONE);
+				map(&(father->as), va, fpa, flags);
 				pgnewmap(son, va, fpa, prot, flags);
 			}
 			else {

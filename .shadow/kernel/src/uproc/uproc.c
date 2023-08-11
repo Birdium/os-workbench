@@ -269,7 +269,7 @@ int uproc_fork(task_t *father) {
 		}
 		else if (it->elem.flags == MAP_PRIVATE){
 			// COW version
-			if (it->elem.prot | PROT_WRITE) {
+			if (it->elem.prot & PROT_WRITE) {
 				it->elem.prot ^= PROT_WRITE;
 				map(&(father->as), va, NULL, MMAP_NONE);
 				map(&(father->as), va, fpa, it->elem.prot);

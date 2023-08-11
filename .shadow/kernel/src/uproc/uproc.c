@@ -270,8 +270,8 @@ int uproc_fork(task_t *father) {
 		else if (it->elem.flags == MAP_PRIVATE){
 			// COW version
 			if (it->elem.prot | PROT_WRITE) {
-				it->elem.prot ^= PROT_WRITE;
-				pgunmap(father, va);
+				// it->elem.prot ^= PROT_WRITE;
+				// pgunmap(father, va);
 				pgnewmap(father, va, fpa, it->elem.prot, it->elem.flags);
 				LOG_USER("private %p %p %p %d", son, va, fpa, it->elem.prot);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);

@@ -163,8 +163,8 @@ static Context *pagefault_handler(Event ev, Context *context) {
 			LOG_USER("%d[%s]: %p </- %p, (%d -> %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
 			dec_refcnt(pa);
 			pa = pmm->alloc(as->pgsize);
-			inc_refcnt(pa);
 			LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
+			inc_refcnt(pa);
 			it->elem.prot |= PROT_WRITE;
 			memcpy(it->elem.pa, pa, as->pgsize);
 			it->elem.pa = pa;

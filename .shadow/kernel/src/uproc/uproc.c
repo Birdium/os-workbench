@@ -276,7 +276,7 @@ int uproc_fork(task_t *father) {
 			if (it->elem.prot & PROT_WRITE) {
 				it->elem.prot ^= PROT_WRITE;
 				map(&(father->as), va, NULL, MMAP_NONE);
-				map(&(father->as), va, fpa, it->elem.prot / 2);
+				map(&(father->as), va, fpa, MMAP_READ);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {

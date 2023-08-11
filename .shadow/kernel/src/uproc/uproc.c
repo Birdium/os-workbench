@@ -146,8 +146,11 @@ static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with COW
   AddrSpace *as = &(cur_task->as);
   int pg_mask = ~(as->pgsize - 1);
-  void *pa = pmm->alloc(as->pgsize);
   void *va = (void *)(ev.ref & pg_mask);
+//   kmt->spin_lock(&refcnt_lock);
+//   if (get_refcnt(va))
+//   kmt->spin_unlock(&refcnt_lock);
+  void *pa = pmm->alloc(as->pgsize);
   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
 //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   pgnewmap(cur_task, va, pa, PROT_READ, MAP_PRIVATE);
@@ -170,7 +173,7 @@ void init_alloc(task_t *init_task) {
   void *pa = pmm->alloc(pa_size);
   void *va = as->area.start;
   for (int offset = 0; offset < pa_size; offset += as->pgsize) {
-    pgnewmap(init_task, va + offset, pa + offset, PROT_READ, MAP_PRIVATE);
+    pgnewmap(init_task, va + offset, pa + offset, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   }
   memcpy(pa, _init, _init_len);
   int pid = init_task->pid;

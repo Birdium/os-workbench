@@ -257,8 +257,8 @@ int uproc_fork(task_t *father) {
 	son->context->GPRx = 0;
 	// LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
 
-	AddrSpace *as = &(cur_task->as);
-	int pgsize = as->pgsize;
+	// AddrSpace *as = &(cur_task->as);
+	// int pgsize = as->pgsize;
 
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;
@@ -268,10 +268,21 @@ int uproc_fork(task_t *father) {
 			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 		}
 		else if (it->elem.flags == MAP_PRIVATE){
-			void *spa = pmm->alloc(pgsize);
-			memcpy(spa, fpa, pgsize);
-			// LOG_USER("private %p %p %p", va, fpa, spa);
-			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
+			// COW version
+			if (it->elem.prot | PROT_WRITE) {
+				it->elem.prot ^= PROT_WRITE;
+				pgunmap(father, va);
+				pgnewmap(father, va, fpa, it->elem.prot, it->elem.flags);
+				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
+			}
+			else {
+				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
+			}
+			// // no COW version
+			// void *spa = pmm->alloc(pgsize);
+			// memcpy(spa, fpa, pgsize);
+			// // LOG_USER("private %p %p %p", va, fpa, spa);
+			// pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
 		}
 		else {
 			printf("%d \n", it->elem.flags);

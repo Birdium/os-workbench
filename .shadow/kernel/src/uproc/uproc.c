@@ -151,7 +151,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
 //   if (get_refcnt(va))
 //   kmt->spin_unlock(&refcnt_lock);
   void *pa = pmm->alloc(as->pgsize);
-  LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+  LOG_USER("task: %d[%s], %s, %d", cur_task->pid, cur_task->name, ev.msg, ev.cause);
 //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
   pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   return NULL;
@@ -274,7 +274,8 @@ int uproc_fork(task_t *father) {
 		else if (it->elem.flags == MAP_PRIVATE){
 			// COW version
 			if (it->elem.prot & PROT_WRITE) {
-				it->elem.prot ^= PROT_WRITE;
+				it->elem.prot ^= PROT_WRITE;    
+				LOG_USER("%d[%s]: %p <- %p, (%d %d)", father->pid, father->name, va, fpa, prot, flags);
 				map(&(father->as), va, NULL, MMAP_NONE);
 				map(&(father->as), va, fpa, MMAP_READ);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);

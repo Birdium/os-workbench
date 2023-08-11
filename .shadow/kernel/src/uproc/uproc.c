@@ -280,7 +280,10 @@ int uproc_fork(task_t *father) {
 				map(&(father->as), va, fpa, MMAP_READ);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
-			else {
+			else {				
+				LOG_USER("meow");
+
+
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			// // no COW version

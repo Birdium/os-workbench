@@ -143,13 +143,13 @@ void pgunmap(task_t *task, void *va) {
 
 static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with COW
-  AddrSpace *as = &(cur_task->as);
-  int pg_mask = ~(as->pgsize - 1);
-  void *pa = pmm->alloc(as->pgsize);
-  void *va = (void *)(ev.ref & pg_mask);
-  LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
-//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  pgnewmap(cur_task, va, pa, PROT_READ, MAP_PRIVATE);
+//   AddrSpace *as = &(cur_task->as);
+//   int pg_mask = ~(as->pgsize - 1);
+//   void *pa = pmm->alloc(as->pgsize);
+//   void *va = (void *)(ev.ref & pg_mask);
+//   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+// //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
+//   pgnewmap(cur_task, va, pa, PROT_READ, MAP_PRIVATE);
   return NULL;
 }
 

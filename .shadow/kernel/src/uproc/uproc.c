@@ -275,7 +275,7 @@ int uproc_fork(task_t *father) {
 			// COW version
 			if (it->elem.prot & PROT_WRITE) {
 				it->elem.prot ^= PROT_WRITE;    
-				LOG_USER("%d[%s]: %p <- %p, (%d %d)", father->pid, father->name, va, fpa, prot, flags);
+				LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", father->pid, father->name, va, fpa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
 				map(&(father->as), va, NULL, MMAP_NONE);
 				map(&(father->as), va, fpa, MMAP_READ);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);

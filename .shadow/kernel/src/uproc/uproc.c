@@ -271,6 +271,7 @@ int uproc_fork(task_t *father) {
 			// COW version
 			if (it->elem.prot | PROT_WRITE) {
 				it->elem.prot ^= PROT_WRITE;
+				LOG_USER("private %p %p %p", son, va, fpa);
 				pgunmap(father, va);
 				pgnewmap(father, va, fpa, it->elem.prot, it->elem.flags);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);

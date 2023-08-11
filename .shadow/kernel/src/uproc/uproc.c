@@ -273,6 +273,7 @@ int uproc_fork(task_t *father) {
 		}
 		else if (it->elem.flags == MAP_PRIVATE){
 			// COW version
+			LOG_USER("%d", it->elem.prot);
 			if (it->elem.prot & PROT_WRITE) {
 				it->elem.prot ^= PROT_WRITE;    
 				LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", father->pid, father->name, va, fpa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
@@ -281,9 +282,6 @@ int uproc_fork(task_t *father) {
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {				
-				LOG_USER("meow");
-
-
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			// // no COW version

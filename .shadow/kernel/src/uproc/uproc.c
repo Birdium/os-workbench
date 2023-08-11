@@ -147,23 +147,24 @@ static Context *pagefault_handler(Event ev, Context *context) {
   int pg_mask = ~(as->pgsize - 1);
   void *va = (void *)(ev.ref & pg_mask);
   void *pa = NULL;	
-  int prot, flags;
   int pid = cur_task->pid;
   for_list(mapping_t, it, pinfo[pid].mappings) {
 	if (it->elem.va == va) {
 		pa = it->elem.pa;
-		prot = it->elem.prot;
-		flags = it->elem.flags;
 		kmt->spin_lock(&refcnt_lock);
 		if (get_refcnt(pa) == 1) {
-			prot = it->elem.prot |= PROT_WRITE;
+			it->elem.prot |= PROT_WRITE;
 			map(as, va, NULL, MMAP_NONE);
 			map(as, va, pa, it->elem.prot / 2);
 		}
 		else {
 			dec_refcnt(pa);
-			pgunmap(cur_task, va);
-			pgnewmap(cur_task, va, pa, prot, flags);
+			it->elem.prot |= PROT_WRITE;
+			pa = pmm->alloc(as->pgsize);
+			memcpy(it->elem.pa, pa, as->pgsize);
+			it->elem.pa = pa;
+			map(as, va, NULL, MMAP_NONE);
+			map(as, va, pa, it->elem.prot / 2);
 		}
 		kmt->spin_unlock(&refcnt_lock);
 		break;

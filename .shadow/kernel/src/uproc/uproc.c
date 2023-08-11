@@ -153,7 +153,7 @@ static Context *pagefault_handler(Event ev, Context *context) {
   void *pa = pmm->alloc(as->pgsize);
   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
 //   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  pgnewmap(cur_task, va, pa, PROT_READ, MAP_PRIVATE);
+  pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   return NULL;
 }
 

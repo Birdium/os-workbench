@@ -153,18 +153,24 @@ static Context *pagefault_handler(Event ev, Context *context) {
 		pa = it->elem.pa;
 		kmt->spin_lock(&refcnt_lock);
 		if (get_refcnt(pa) == 1) {
+			LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
 			it->elem.prot |= PROT_WRITE;
 			map(as, va, NULL, MMAP_NONE);
-			map(as, va, pa, it->elem.prot / 2);
+			map(as, va, pa, it->elem.prot / 2);				
+
 		}
 		else {
+			LOG_USER("%d[%s]: %p </- %p, (%d -> %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
 			dec_refcnt(pa);
-			it->elem.prot |= PROT_WRITE;
 			pa = pmm->alloc(as->pgsize);
+			inc_refcnt(pa);
+			LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
+			it->elem.prot |= PROT_WRITE;
 			memcpy(it->elem.pa, pa, as->pgsize);
 			it->elem.pa = pa;
 			map(as, va, NULL, MMAP_NONE);
-			map(as, va, pa, it->elem.prot / 2);
+			map(as, va, pa, it->elem.prot / 2);				
+
 		}
 		kmt->spin_unlock(&refcnt_lock);
 		break;

@@ -309,6 +309,7 @@ int uproc_fork(task_t *father) {
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {				
+				LOG_USER("1");
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			// // no COW version

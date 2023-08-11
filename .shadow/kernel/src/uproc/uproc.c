@@ -108,13 +108,12 @@ static Context *syscall_handler(Event ev, Context *context) {
 }
 
 void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
-	prot /= 2;
     LOG_USER("%d[%s]: %p <- %p, (%d %d)", task->pid, task->name, va, pa, prot, flags);
 	AddrSpace *as = &(task->as);
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
 	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa, .prot = prot, .flags = flags});
-	map(as, va, pa, prot);
+	map(as, va, pa, prot / 2);
 	kmt->spin_lock(&refcnt_lock);
 	inc_refcnt(pa);
 	kmt->spin_unlock(&refcnt_lock);
@@ -278,7 +277,7 @@ int uproc_fork(task_t *father) {
 				it->elem.prot ^= PROT_WRITE;    
 				LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", father->pid, father->name, va, fpa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
 				map(&(father->as), va, NULL, MMAP_NONE);
-				map(&(father->as), va, fpa, MMAP_READ);
+				map(&(father->as), va, fpa, it->elem.prot / 2);
 				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 			}
 			else {				

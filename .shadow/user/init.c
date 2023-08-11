@@ -87,7 +87,7 @@ int forktest() {
   // Example:
   // int fk = 
   puts("forktest");
-  fork();
+  // fork();
   // kputc('0' + fk);
   int fk2 = fork();
   // kputc('0' + fk2);

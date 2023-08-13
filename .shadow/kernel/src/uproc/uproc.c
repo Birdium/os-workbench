@@ -113,7 +113,7 @@ void pgnewmap(task_t *task, void *va, void *pa, int prot, int flags) {
 	int pid = task->pid;
 	panic_on(pinfo[pid].mappings == 0, "invalid task mappings");
 	pinfo[pid].mappings->push_back(pinfo[pid].mappings, (mapping_t){.va = va, .pa = pa, .prot = prot, .flags = flags});
-	map(as, va, pa, prot / 2);
+	map(as, va, pa, prot);
 	kmt->spin_lock(&refcnt_lock);
 	inc_refcnt(pa);
 	kmt->spin_unlock(&refcnt_lock);
@@ -145,43 +145,11 @@ static Context *pagefault_handler(Event ev, Context *context) {
   // TODO: deal with COW
   AddrSpace *as = &(cur_task->as);
   int pg_mask = ~(as->pgsize - 1);
+  void *pa = pmm->alloc(as->pgsize);
   void *va = (void *)(ev.ref & pg_mask);
-  void *pa = NULL;	
-  LOG_USER("task: %d[%s], %s, %d", cur_task->pid, cur_task->name, ev.msg, ev.cause);
-  LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
-  int pid = cur_task->pid;
-  for_list(mapping_t, it, pinfo[pid].mappings) {
-	if (it->elem.va == va) {
-		pa = it->elem.pa;
-		kmt->spin_lock(&refcnt_lock);
-		if (get_refcnt(pa) == 1) {
-			LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
-			it->elem.prot |= PROT_WRITE;
-			map(as, va, NULL, MMAP_NONE);
-			map(as, va, pa, it->elem.prot / 2);				
-
-		}
-		else {
-			LOG_USER("%d[%s]: %p </- %p, %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.flags);
-			dec_refcnt(pa);
-			pa = pmm->alloc(as->pgsize);
-			it->elem.prot |= PROT_WRITE;
-			LOG_USER("%d[%s]: %p <- %p, %d, %d)", cur_task->pid, cur_task->name, va, pa, it->elem.prot, it->elem.flags);
-			inc_refcnt(pa);
-			memcpy(pa, it->elem.pa, as->pgsize);
-			it->elem.pa = pa;
-			map(as, va, NULL, MMAP_NONE);
-			map(as, va, pa, it->elem.prot / 2);				
-
-		}
-		kmt->spin_unlock(&refcnt_lock);
-		break;
-	}
-  }
-  if (pa == NULL) {
-  	pa = pmm->alloc(as->pgsize);
-  	pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
-  }
+//   LOG_USER("task: %s, %s, %d", cur_task->name, ev.msg, ev.cause);
+//   LOG_USER("%p %p %p(%p)", as, pa, va, ev.ref);
+  pgnewmap(cur_task, va, pa, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   return NULL;
 }
 
@@ -289,8 +257,8 @@ int uproc_fork(task_t *father) {
 	son->context->GPRx = 0;
 	// LOG_USER("%p %p %p %p", son->stack, son->context->rsp, father->stack, father->context->rsp);
 
-	// AddrSpace *as = &(cur_task->as);
-	// int pgsize = as->pgsize;
+	AddrSpace *as = &(cur_task->as);
+	int pgsize = as->pgsize;
 
 	for_list(mapping_t, it, pinfo[ppid].mappings) {
 		void *va = it->elem.va;
@@ -300,22 +268,10 @@ int uproc_fork(task_t *father) {
 			pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
 		}
 		else if (it->elem.flags == MAP_PRIVATE){
-			// COW version
-			if (it->elem.prot & PROT_WRITE) {
-				it->elem.prot ^= PROT_WRITE;    
-				LOG_USER("%d[%s]: %p <- %p, (%d -> %d, %d)", father->pid, father->name, va, fpa, it->elem.prot, it->elem.prot ^ PROT_WRITE, it->elem.flags);
-				map(&(father->as), va, NULL, MMAP_NONE);
-				map(&(father->as), va, fpa, it->elem.prot / 2);
-				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
-			}
-			else {				
-				pgnewmap(son, va, fpa, it->elem.prot, it->elem.flags);
-			}
-			// // no COW version
-			// void *spa = pmm->alloc(pgsize);
-			// memcpy(spa, fpa, pgsize);
-			// // LOG_USER("private %p %p %p", va, fpa, spa);
-			// pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
+			void *spa = pmm->alloc(pgsize);
+			memcpy(spa, fpa, pgsize);
+			// LOG_USER("private %p %p %p", va, fpa, spa);
+			pgnewmap(son, va, spa, it->elem.prot, it->elem.flags);
 		}
 		else {
 			printf("%d \n", it->elem.flags);
@@ -359,7 +315,6 @@ int uproc_exit(task_t *task, int status) {
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
-	LOG_USER("exit %d", task->pid);
 	// // replaced by ufree
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;

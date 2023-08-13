@@ -87,7 +87,7 @@ int forktest() {
   // Example:
   // int fk = 
   puts("forktest");
-  // fork();
+  fork();
   // kputc('0' + fk);
   int fk2 = fork();
   // kputc('0' + fk2);
@@ -127,7 +127,7 @@ int forktest() {
 int mmaptest() {
   puts("mmaptest");
   int length = 8192;
-  char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED);
+  char *addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE);
   for (int i = 0; i < length; i++) {
     *(addr + i) = 'a';
   }

@@ -359,6 +359,7 @@ int uproc_exit(task_t *task, int status) {
 	kmt->spin_lock(&pid_lock);
 	int pid = task->pid;
 	pinfo[pid].valid = 1;
+	LOG_USER("exit %d", task->pid);
 	// // replaced by ufree
 	for_list(mapping_t, it, pinfo[pid].mappings) {
 		void *pa = it->elem.pa;
